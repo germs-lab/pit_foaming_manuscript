@@ -1,0 +1,1390 @@
+### mcra adonis only ###
+totu<-t(data.frame(otu_table(mcra_1e5_ftype.phy)))
+si<-data.frame(sample_data(mcra_1e5_ftype.phy))
+cn<-names(si[, c(4, 6:12, 24, 78:80, 85:88)])
+df<-data.frame()
+for (i in names(si[, cn])){
+        tryCatch({
+		results.rela<-adonis(totu ~ as.factor(si[, i]), strata=si$barn.x)
+		df1<-data.frame(i, results.rela$aov.tab[5][1, ], results.rela$aov.tab[6][1, ])
+		totu.trans<-decostand(totu, "pa")
+		results.pa<-adonis(totu.trans ~ as.factor(si[, i]), strata=si$barn.x)
+		df2<-data.frame(i, results.pa$aov.tab[5][1, ], results.pa$aov.tab[6][1, ])
+		df.temp<-cbind(df1,df2)
+		df<-rbind(df, df.temp)
+        }, error=function(e){cat("ERROR :", conditionMessage(e), "\n")})
+}
+names(df)<-c("factor", "rela.adonis_R2", "rela.Pr(>F)", "factor", "pa.adonis_R2", "pa.Pr(>F)")
+
+
+### adonis only ###
+totu<-t(data.frame(otu_table(data_1e5)))
+si<-data.frame(sample_data(data_1e5))
+cn<-names(si[, c(2, 115, 13:14, 118, 122, 18:21)])
+df<-data.frame()
+for (i in names(si[, cn])){
+        tryCatch({
+		results.rela<-adonis(totu ~ as.factor(si[, i]), strata=si$id)
+		df1<-data.frame(i, results.rela$aov.tab[5][1, ], results.rela$aov.tab[6][1, ])
+		totu.trans<-decostand(totu, "pa")
+		results.pa<-adonis(totu.trans ~ as.factor(si[, i]), strata=si$id)
+		df2<-data.frame(i, results.pa$aov.tab[5][1, ], results.pa$aov.tab[6][1, ])
+		df.temp<-cbind(df1,df2)
+		df<-rbind(df, df.temp)
+        }, error=function(e){cat("ERROR :", conditionMessage(e), "\n")})
+}
+names(df)<-c("factor", "rela.adonis_R2", "rela.Pr(>F)", "factor", "pa.adonis_R2", "pa.Pr(>F)")
+
+#### adonis mcra 41 samples ####
+totu<-t(data.frame(otu_table(mcra_ftype_shared_bac.phy)))
+si<-data.frame(sample_data(mcra_ftype_shared_bac.phy))
+cn<-names(si[, c(6, 8, 10:12, 22, 78:80, 88)])
+df<-data.frame()
+for (i in names(si[, cn])){
+        tryCatch({
+		results.rela<-adonis(totu ~ as.factor(si[, i]), strata=si$Barn..FK_Farm)
+		df1<-data.frame(i, results.rela$aov.tab[5][1, ], results.rela$aov.tab[6][1, ])
+		totu.trans<-decostand(totu, "pa")
+		results.pa<-adonis(totu.trans ~ as.factor(si[, i]), strata=si$Barn..FK_Farm)
+		df2<-data.frame(i, results.pa$aov.tab[5][1, ], results.pa$aov.tab[6][1, ])
+		df.temp<-cbind(df1,df2)
+		df<-rbind(df, df.temp)
+        }, error=function(e){cat("ERROR :", conditionMessage(e), "\n")})
+}
+names(df)<-c("factor", "rela.adonis_R2", "rela.Pr(>F)", "factor", "pa.adonis_R2", "pa.Pr(>F)")
+### adonis bac 41 samples (with shared information of mcra ###
+totu<-t(data.frame(otu_table(bac_mcra_subset.phy)))
+si<-data.frame(sample_data(bac_mcra_subset.phy))
+cn<-names(si[, c(2, 115, 13:14, 118, 122, 18:21)])
+df<-data.frame()
+for (i in names(si[, cn])){
+        tryCatch({
+		results.rela<-adonis(totu ~ as.factor(si[, i]), strata=si$id)
+		df1<-data.frame(i, results.rela$aov.tab[5][1, ], results.rela$aov.tab[6][1, ])
+		totu.trans<-decostand(totu, "pa")
+		results.pa<-adonis(totu.trans ~ as.factor(si[, i]), strata=si$id)
+		df2<-data.frame(i, results.pa$aov.tab[5][1, ], results.pa$aov.tab[6][1, ])
+		df.temp<-cbind(df1,df2)
+		df<-rbind(df, df.temp)
+        }, error=function(e){cat("ERROR :", conditionMessage(e), "\n")})
+}
+names(df)<-c("factor", "rela.adonis_R2", "rela.Pr(>F)", "factor", "pa.adonis_R2", "pa.Pr(>F)")
+
+##### mcra 43 samples, ggplot2 nmds ellipse, mpr envfit arrow ####
+si.ftype.enfit<-si.ftype[, c("ISU.Manure.Data..MPR_slurry", "Diet.Information..Lysine", "Diet.Information..General.Lysine", "SAMPLES")]
+mcra.envfit.df<-mds.envfit.arrows(data.mds, si.ftype.enfit, "SAMPLES")
+mcra.envfit.df
+mcra.envfit.df<-subset(mcra.envfit.df, pval <= 0.05)
+mcra.envfit.df
+
+source("~/Documents/repos/R_code/R_functions/ggplot_nmds_ellipse_and_arrow.R")
+pdf("../Manuscript/figures_and_tables/mcra_ellipse_mpr_arrow.pdf", height=10, width=10)
+ggplot.NMDS.ellipse.arrow(data.mds, mcra.envfit.df, si.ftype$foam.type, colors)
+dev.off()
+
+##### bacterial 16s, ggplot2 nmds ellipse, mpr envfit arrow ###
+si.envfit<-si[, c("MPR_slurry", "Lysine", "SAMPLES")]
+source("~/Documents/repos/R_code/R_functions/nmds_envfit_arrow_extraction.R")
+envfit.df<-mds.envfit.arrows(data.mds, si.envfit, "SAMPLES")
+source("~/Documents/repos/R_code/R_functions/ggplot_nmds_ellipse_and_arrow.R")
+pdf("../Manuscript/figures_and_tables/mcra_ellipse_mpr_arrow.pdf", height=10, width=10)
+ggplot.NMDS.ellipse.arrow(data.mds, envfit.df[1, ], si$foam.type, colors)
+dev.off()
+
+
+##### ggplot2 nmds elipse ###
+data.mds<-metaMDS(totu, k=3, autotransform=FALSE)
+source("/Users/fanyang/Documents/repos/R_code/R_functions/ggplot_nmds_eclipse.R")
+
+for (i in names(si[, c("id", "Foaming.Status", "category")])){
+	tryCatch({
+		print(c("Processing treatment: ", i, "!!!!!!!!!!!!"))
+		colorCount = length(unique(si[, i]))
+		getPalette = colorRampPalette(brewer.pal(8, "Dark2"))
+		colors = getPalette(colorCount)
+		pdf(paste("all_valid_1e5_by_",i,".pdf", sep=""))
+		p<-ggplot.NMDS.ellipse(data.mds, si[, i], colors)
+		print(p)
+		dev.off()
+	}, error=function(e){cat("ERROR :", conditionMessage(e), "\n")})
+}
+
+##### ggplot2 nmds ordisurf ###
+colorCount = length(unique(si2$Foaming.Status))
+getPalette = colorRampPalette(brewer.pal(8, "Dark2"))
+colors = getPalette(colorCount)
+
+for (i in names(si2[, 109:113])){
+        tryCatch({
+	        print(c("Processing treatment:", i, "!!!!!!!!!!!!!!!!"))
+        	sf<-ordi.sf(data.mds, si2[, i])
+    	    pdf(paste("ordi_16s_nmds_byFS_cfVcnf_",i,".pdf", sep=""))
+        	p<-ggplot.NMDS.ordisurf(data.mds, si2$Foaming.Status, colors, sf)
+ 	        print(p)
+     	    dev.off()
+	}, error=function(e){cat("ERROR :", conditionMessage(e), "\n")})
+}
+
+for (i in names(si1[, 109:113])){
+        print(c("Processing treatment:", i, "!!!!!!!!!!!!!!!!"))
+        ef<-envfit(data.mds, data.frame(si1[, i]), permu=999, na.rm=T)
+        print(ef)
+}
+
+for (i in names(si[, 5:20])){
+		sink("16s_nmds_perfactor_adonis.txt", append = TRUE)
+        tryCatch({
+	        print(c("Processing treatment:", i, "!!!!!!!!!!!!!!!!"))
+        	working.phy<-subset_samples(data1.phy, !is.na(i))
+        	working.phy<-prune_taxa(taxa_sums(working.phy)>0, working.phy)
+        	otu<-data.frame(otu_table(working.phy))
+			si1<-data.frame(sample_data(working.phy))
+			totu<-data.frame(t(otu))
+			data.trans<-decostand(totu, "total")
+			data.mds<-metaMDS(data.trans, k=3, autotransform=FALSE)
+        	colorCount = length(unique(si1[, i]))
+        	getPalette = colorRampPalette(brewer.pal(8, "Dark2"))
+        	colors = getPalette(colorCount)
+        	pdf(paste("16s_nmds_perfactor_",i,".pdf", sep=""))
+        	p<-ggplot.NMDS(data.mds, si1[, i], colors)
+        	print(p)
+        	dev.off()
+        	print(adonis(data.trans~si1[,i]))
+        }, error=function(e){cat("ERROR :", conditionMessage(e), "\n")})
+        sink()
+}
+
+for (i in names(si[, 20:108])){
+        tryCatch({
+	        print(c("Processing treatment:", i, "!!!!!!!!!!!!!!!!"))
+	        working.phy<-subset_samples(data1.phy, !is.na(i))
+        	working.phy<-prune_taxa(taxa_sums(working.phy)>0, working.phy)
+        	otu<-data.frame(otu_table(working.phy))
+			si1<-data.frame(sample_data(working.phy))
+			totu<-data.frame(t(otu))
+			data.trans<-decostand(totu, "total")
+			data.mds<-metaMDS(data.trans, k=3, autotransform=FALSE)
+        	sf<-ordi.sf(data.mds, si1[, i])
+    	    pdf(paste("ordi_16s_nmds_byFS_493Samples_perfactor_",i,".pdf", sep=""))
+        	p<-ggplot.NMDS.ordisurf(data.mds, si1$Foaming.Status, colors, sf)
+ 	        print(p)
+     	    dev.off()
+	}, error=function(e){cat("ERROR :", conditionMessage(e), "\n")})
+}
+
+colorCount = length(unique(si$Foaming.Status))
+getPalette = colorRampPalette(brewer.pal(8, "Dark2"))
+colors = getPalette(colorCount)
+for (i in names(si[, 20:113])){
+sink("ordi_16s_nmds_2f_byFS_cfVcnf_0trted_perfactor_envfit.txt", append = TRUE)
+        tryCatch({
+        print(c("Processing treatment:", i, "!!!!!!!!!!!!!!!!"))
+        working.phy<-subset_samples(data2.phy, !is.na(i))
+        working.phy<-prune_taxa(taxa_sums(working.phy)>0, working.phy)
+        otu<-data.frame(otu_table(working.phy))
+	si<-data.frame(sample_data(working.phy))
+	totu<-data.frame(t(otu))
+	data.trans<-decostand(totu, "total")
+	data.mds<-metaMDS(data.trans, k=3, autotransform=FALSE)
+        sf<-ordi.sf(data.mds, si[, i])
+        pdf(paste("ordi_16s_nmds_2f_byFS_cfVcnf_0trted_perfactor_",i,".pdf", sep=""))
+        p<-ggplot.NMDS.ordisurf.2f(data.mds, data.frame(si$Name, si$Foaming.Status), colors, sf, i)
+        print(p)
+        dev.off()
+}, error=function(e){cat("ERROR :", conditionMessage(e), "\n")})
+sink()
+}
+
+for (i in names(si[, 20:113])){
+sink("ordi_16s_nmds_ordisurf_summary.txt", append = TRUE)
+       tryCatch({
+        print(c("Processing treatment:", i, "!!!!!!!!!!!!!!!!"))
+        working.phy<-subset_samples(data2.phy, !is.na(i))
+        working.phy<-prune_taxa(taxa_sums(working.phy)>0, working.phy)
+        otu<-data.frame(otu_table(working.phy))
+        si<-data.frame(sample_data(working.phy))
+        totu<-data.frame(t(otu))
+        data.trans<-decostand(totu, "total")
+        data.mds<-metaMDS(data.trans, k=3, autotransform=FALSE)
+        env.sf<-ordisurf(data.mds ~ si[, i], plot=F, scaling=3)
+        print(summary(env.sf))
+}, error=function(e){cat("ERROR :", conditionMessage(e), "\n")})
+sink()
+}
+
+for (i in names(si[, 20:113])){
+sink("ordi_16s_cca_2f_byFSorName_cfVcnf_perfactor_envfit.txt", append = TRUE)
+        tryCatch({
+        print(c("Processing treatment:", i, "!!!!!!!!!!!!!!!!"))
+        working.phy<-subset_samples(data2.phy, !is.na(i))
+        working.phy<-prune_taxa(taxa_sums(working.phy)>0, working.phy)
+        otu<-data.frame(otu_table(working.phy))
+	si<-data.frame(sample_data(working.phy))
+	totu<-data.frame(t(otu))
+	data.trans<-decostand(totu, "total")
+	for (j in names(si[,c("Name", "Foaming.Status"), drop=F])){
+	        data.cca<-capscale(data.trans ~ si[, j], dist="bray")
+		sf<-ordi.sf(data.cca, si[, i])
+        	pdf(paste("ordi_16s_cca_2f_by",j,"_perfactor_",i,".pdf", sep=""))
+        	p<-ggplot.cca.ordisurf.2f(data.cca, si[,c("Name", "Foaming.Status"), drop=F], colors, sf, i)
+        	print(p)
+        	dev.off()
+	}
+}, error=function(e){cat("ERROR :", conditionMessage(e), "\n")})
+sink()
+}
+
+final_lc<-data.frame()
+for (i in rownames(totu)){
+	lcolc<-Lc(totu[i, ])
+	lcdf<-data.frame(SAMPLES=i, index=c(1:length(lcolc$L)), L=rev(1-lcolc$L), p=lcolc$p, Uprob=c(1:length(lcolc$L)/length(lcolc$L)))
+	lcdf.merge<-merge(lcdf, si[, c("SAMPLES", "Foaming.Status", "Name")], "SAMPLES")
+	final_lc<-rbind(final_lc, lcdf.merge)
+	print(paste("finished sample ", i, sep=""))
+}
+p <- ggplot(final_lc, aes(x = Uprob, y = L, color=Name))+geom_line(size=2, alpha=0.1)+
+			geom_line(aes(x = p, y = p), color="black") + 
+			theme(aspect.ratio=1)+theme_bw()+
+			theme(axis.text.x=element_text(size=20),axis.text.y=element_text(size=20),axis.title.x=element_text(size=20),axis.title.y=element_text(size=20))+
+			theme(legend.title=element_text(size=15),legend.text=element_text(size=15))+
+			xlab("Percentage of OTU") + ylab("Percentage of Sequence Abundance")
+			
+			
+### CCA with species ###
+X1<-ggplot() +
+geom_point(data = cca.df.w.species, aes_string(x="CAP1", y="MDS1", fill = colnames(cca.df.w.species)[4], shape = colnames(cca.df.w.species)[3]) ,size=3,alpha=0.75) + 
+scale_shape_manual(values=c(21:25)) +
+scale_fill_manual(values=c(colors), guide = guide_legend(override.aes = list(shape = 23)))+
+theme_bw() +
+theme(aspect.ratio=1) +
+theme(axis.text.x=element_text(size=20),axis.text.y=element_text(size=20),axis.title.x=element_text(size=20),axis.title.y=element_text(size=20)) +
+theme(legend.title=element_text(size=15),legend.text=element_text(size=15))
+
+
+##### ggnet2 stuff #####
+strong_results<-subset(res.m40.org, rho >= 0.4)
+temp.graph<-(graph.edgelist(as.matrix(subset(strong_results, Foaming.Status==1)[,c(1,2)]),directed=FALSE))
+E(temp.graph)$weight<-subset(strong_results, Foaming.Status==1)$rho
+temp.graph<-simplify(temp.graph)
+gnet<-asNetwork(temp.graph)
+df<-asDF(gnet)
+vs<-df$vertexes
+vs_phyla<-merge(vs, phyla, by.x="vertex.names",by.y="genus")
+vs_phyla<-arrange(vs_phyla,intergraph_id)
+vs_phyla<-subset(vs_phyla, !grepl("Archaea|Root", domain))
+vs_phyla$domain<-factor(vs_phyla$domain, levels=c("Bacteria", "measurements", "factors"))
+colorCount = length(unique(vs_phyla[, 9]))
+                getPalette = colorRampPalette(brewer.pal(8, "Dark2"))
+                colors = getPalette(colorCount)
+                names(colors)<-unique(vs_phyla[,9])
+               gnet %v% "x" <- lapply(vs_phyla[, 9], as.character)
+               gnet %v% "y" <- lapply(vs_phyla$domain, as.character)
+               p<-ggnet2(gnet, size=5, method="kamadakawaii", color="x", palette=colors, shape="y", shape.palette=c("Bacteria"=16, "measurements"=8))+theme_bw()+theme(aspect.ratio=1)
+               
+               
+               
+#### histogram with normalized lines ###
+h<-hist(log(test$sample_sums.data1.phy.), breaks=40)
+xfit<-seq(min(log(test$sample_sums.data1.phy.)), max(log(test$sample_sums.data1.phy.)), length=40)
+yfit<-dnorm(xfit, mean=mean(log(test$sample_sums.data1.phy.)), sd=sd(log(test$sample_sums.data1.phy.)))
+yfit<-yfit*diff(h$mids[1:2])*length(test$sample_sums.data1.phy.)
+lines(xfit, yfit, col="black")
+
+#### wilcox function for long format table ###
+wx <- function(d){
+ w <- wilcox.test(
+  # First vector (x)
+    subset(d, Foaming.Status == "0", select = Pielou  )[,1], 
+    subset(d, Foaming.Status == "1", select = Pielou  )[,1],
+    na.rm=T  )
+  # c(1,3) returns the Stat and the P-value (tweak that if you want something else)
+  return(w[c(1,3)])
+  }
+
+
+### community stability for samples with different time points ###
+#df<-si[, c("SAMPLES", "Foaming.Status", "time_index", "group")]
+library(betapart)
+bray.bal.df<-data.frame()
+for (i in barn_feed$group[barn_feed$freq>1]){
+	temp<-subset_samples(data_1e5, group==i)
+	temp<-prune_taxa(taxa_sums(temp)>0, temp)
+	temp_otu<-data.frame(t(data.frame(otu_table(temp))))
+	temp.bpart<-bray.part(temp_otu)
+	m<-as.matrix(temp.bpart$bray.bal)
+	test<-melt(m, id.vars="row.names")
+	test<-test[test$value>0, ]
+	test.sort<-t(apply(test, 1, sort))
+	test<-test[!duplicated(test.sort), ]
+	test<-merge(test, df, by.x="X1", by.y="SAMPLES")
+	test<-merge(test, df, by.x="X2", by.y="SAMPLES")
+	test$time_diff<-abs(test$time_index.x-test$time_index.y)
+	bray.bal.df<-rbind(bray.bal.df, test)
+}
+	
+##mantel test: test dissimilarity and time lapse correlation
+#data_nostatuschange<-subset_samples(data_1e5, SAMPLES %in% id.nostatuschange)
+mantel.results<-data.frame()
+for (i in unique(si$foam.type)){
+	temp<-subset_samples(data_nostatuschange, foam.type==i)
+	temp<-prune_taxa(taxa_sums(temp)>0, temp)
+	temp_otu<-data.frame(t(data.frame(otu_table(temp))))
+	temp_si<-data.frame(sample_data(temp))
+	temp.bpart<-bray.part(temp_otu)
+	temp.mantel<-mantel(temp.bpart$bray.bal, vegdist(temp_si$time_index, "euclid"), "spear")
+	temp.df<-data.frame(i, temp.mantel$statistic, temp.mantel$signif)
+	mantel.results<-rbind(mantel.results, temp.df)
+}
+> mantel.results
+        i temp.mantel.statistic temp.mantel.signif
+1    Foam            0.13310217              0.001
+2   Crust            0.05360826              0.049
+3 No Foam            0.22163880              0.001
+	
+##nls estimation: test dissimilarity and time lapse correlation: see below for ddply method
+nls.estimates<-data.frame()
+for (i in unique(bray.bal.df.nostatuschange$Foaming.Status.x)){	
+	temp<-subset(bray.bal.df.nostatuschange, Foaming.Status.x==i)
+	y<-temp$value
+	x<-temp$time_diff
+	s <- seq(from = 0, to = 12, length = 1000)
+	test<-nls(y~(a * exp(b*x)), start=list(a=0.01, b=0), trace=T)
+	nls.results<-summary(test)
+	temp.df<-data.frame(i, nls.results$coefficients)
+	nls.estimates<-rbind(nls.estimates, temp.df)
+}
+##ddply method:
+test<-data.frame(bray.bal.df.nostatuschange[, c("value", "Foaming.Status.x", "time_diff")])
+names(test)<-c("y", "fs", "x")
+myformula<-formula(y ~ a * exp(b * x))
+fitDF<-ddply(test, .(fs), function(x) coefficients(nls(myformula, x, start=list(a=0.01, b=0), trace=T)))
+# fitDF is the same as nls.estimates
+> fitDF
+       ft         a          b
+1 No Foam 0.3338491 0.04590077
+2   Crust 0.3952347 0.02390239
+3    Foam 0.3660310 0.02941529
+
+### can also plot them!
+xGrid<-0:12
+simFits<-dlply(fitDF, .(ft), function(x) data.frame(x=xGrid, y = x$a * exp(x$b * xGrid)))
+simFits<-ldply(simFits, identity)
+# separate plots
+ggplot()+geom_point(data=test, aes(x=x, y=y)) + geom_line(data=simFits, aes(x=x, y=y)) + facet_wrap(~fs, scales="free_y") + aes(ymin=0)
+# or together
+ggplot()+geom_point(data=test, aes(x=x, y=y, color=as.factor(fs))) + geom_line(data=simFits, aes(x=x, y=y, color=as.factor(fs))) + aes(ymin=0)
+
+## new foam.type plot
+comm_stab<-data.frame(bray.bal.df.nostatuschange[, c("value", "foam.type.x", "time_diff")])
+
+eq_labels <- data.frame(ft=c("No Foam", "Crust", "Foam"), V1=c(as.character(as.expression(italic(y) == "0.33" %.% exp("0.046" %.% italic(x)) * "," ~ ~italic(r)^2 ~ "=" ~ "0.22")), as.character(as.expression(italic(y) == "0.40" %.% exp("0.024" %.% italic(x)) * "," ~ ~italic(r)^2 ~ "=" ~ "0.05")), as.character(as.expression(italic(y) == "0.37" %.% exp("0.029" %.% italic(x)) * "," ~ ~italic(r)^2 ~ "=" ~ "0.13"))))
+
+eqs<-data.frame(x=c(6, 6, 6), y=c(0.02, 0.02, 0.02), ft=c("No Foam", "Crust", "Foam"), label=c(as.character(as.expression(italic(y) == "0.33" %.% exp("0.046" %.% italic(x)) * "," ~ ~italic(r)^2 ~ "=" ~ "0.22")), as.character(as.expression(italic(y) == "0.40" %.% exp("0.024" %.% italic(x)) * "," ~ ~italic(r)^2 ~ "=" ~ "0.05")), as.character(as.expression(italic(y) == "0.37" %.% exp("0.029" %.% italic(x)) * "," ~ ~italic(r)^2 ~ "=" ~ "0.13"))))
+
+ggplot()+geom_point(data=comm_stab, aes(x=x, y=y, color=as.factor(ft))) + geom_line(data=simFits, aes(x=x, y=y)) + facet_wrap(~ft, scales="free_y") + aes(ymin=0)+ scale_color_brewer(palette="Dark2")+ theme_classic() +theme(axis.line.x = element_line(colour = 'black', size=0.5, linetype='solid'),axis.line.y = element_line(colour = 'black', size=0.5, linetype='solid')) + theme(axis.text.x=element_text(size=12, face="bold"), axis.text.y=element_text(size=12, face="bold")) + labs(x="Time Elapsed (month)", y="Bray-Curtis Distance")+ theme(legend.position="none")+theme(aspect.ratio=1) + theme(strip.background=element_rect(color = "white", fill="white"), strip.text.x=element_text(size = 14, face="bold")) +geom_text(data=eqs,aes(x = x, y = y,label=label), parse = TRUE, inherit.aes=FALSE)
+
+ggplot()+ geom_tufteboxplot(data=comm_stab, aes(x=as.factor(x), y=y, color=as.factor(ft)), lwd =2) + geom_line(data=simFits, aes(x=as.numeric(ordered(x)), y=y), lwd =1.5) + facet_wrap(~ft, scales="free_y") + aes(ymin=0)+ scale_color_brewer(palette="Dark2") + theme_classic() +theme(axis.line.x = element_line(colour = 'black', size=1.5, linetype='solid'),axis.line.y = element_line(colour = 'black', size=1.5, linetype='solid')) + theme(axis.ticks.x = element_line(size = 1.5), axis.ticks.y = element_line(size = 1.5), axis.ticks.length = unit(0.3, "cm")) + theme(axis.text.x=element_text(size=24, face="bold"), axis.text.y=element_text(size=24, face="bold")) + labs(x="Time Elapsed (month)", y="Bray-Curtis Distance")+ theme(axis.title.x = element_text(size = 30, face = "bold"), axis.title.y = element_text(size =30, face = "bold")) + theme(legend.position="none") + theme(strip.background=element_rect(color = "white", fill="white"), strip.text.x=element_text(size = 30, face="bold")) +geom_text(data=eqs,aes(x = x, y = y,label=label), parse = TRUE, inherit.aes=FALSE, size = 7) + theme(aspect.ratio = 1.18)
+
+## new foam.type plot: no crust
+simFits.nocrust<-subset(simFits, ft != "Crust")
+simFits.nocrust$ft<-gsub("\\bNo Foam\\b", "No-foam", simFits.nocrust$ft)
+
+comm_stab.nocrust<-subset(comm_stab, ft != "Crust")
+comm_stab.nocrust$ft<-gsub("\\bNo Foam\\b", "No-foam",comm_stab.nocrust$ft) 
+comm_stab.nocrust$ft<-factor(comm_stab.nocrust$ft, levels=c("No-foam", "Foam"))
+
+getPalette = colorRampPalette(brewer.pal(8, "Dark2"))
+ft.color<-getPalette(8)[1:3]
+ft.nocrust.color<-ft.color[c(1, 3)]
+
+eqs.nocrust<-data.frame(x=c(6, 6), y=c(0.02, 0.02), ft=c("No-foam", "Foam"), label=c(as.character(as.expression(italic(y) == "0.33" %.% exp("0.046" %.% italic(x)) * "," ~ ~italic(r)^2 ~ "=" ~ "0.22")), as.character(as.expression(italic(y) == "0.37" %.% exp("0.029" %.% italic(x)) * "," ~ ~italic(r)^2 ~ "=" ~ "0.13"))))
+
+#ggplot()+geom_point(data=comm_stab.nocrust, aes(x=x, y=y, color=as.factor(ft))) + geom_line(data=simFits.nocrust, aes(x=x, y=y)) + facet_wrap(~ft, scales="free_y") + aes(ymin=0)+ scale_color_manual(values=ft.nocrust.color)+ theme_classic() +theme(axis.line.x = element_line(colour = 'black', size=0.5, linetype='solid'),axis.line.y = element_line(colour = 'black', size=0.5, linetype='solid')) + theme(axis.text.x=element_text(size=12, face="bold"), axis.text.y=element_text(size=12, face="bold")) + labs(x="Time Elapsed (month)", y="Bray-Curtis Distance")+ theme(legend.position="none")+theme(aspect.ratio=1) + theme(strip.background=element_rect(color = "white", fill="white"), strip.text.x=element_text(size = 14, face="bold")) +geom_text(data=eqs.nocrust,aes(x = x, y = y,label=label), parse = TRUE, inherit.aes=FALSE)
+
+pdf("../Manuscript/figures_and_tables/fig_community_stability_no_crust.pdf", width=15, height=10)
+ggplot()+ geom_tufteboxplot(data=comm_stab.nocrust, aes(x=as.factor(x), y=y, color=as.factor(ft)), lwd =2) + geom_line(data=simFits.nocrust, aes(x=as.numeric(ordered(x)), y=y), lwd =1.5) + facet_wrap(~ft, scales="free_y") + aes(ymin=0)+ scale_color_manual(values=ft.nocrust.color) + theme_classic() +theme(axis.line.x = element_line(colour = 'black', size=1.5, linetype='solid'),axis.line.y = element_line(colour = 'black', size=1.5, linetype='solid')) + theme(axis.ticks.x = element_line(size = 1.5), axis.ticks.y = element_line(size = 1.5), axis.ticks.length = unit(0.3, "cm")) + theme(axis.text.x=element_text(size=24, face="bold"), axis.text.y=element_text(size=24, face="bold")) + labs(x="Time Elapsed (month)", y="Bray-Curtis Distance")+ theme(axis.title.x = element_text(size = 30, face = "bold"), axis.title.y = element_text(size =30, face = "bold")) + theme(legend.position="none") + theme(strip.background=element_rect(color = "white", fill="white"), strip.text.x=element_text(size = 30, face="bold")) +geom_text(data=eqs.nocrust,aes(x = x, y = y,label=label), parse = TRUE, inherit.aes=FALSE, size = 7) + theme(aspect.ratio = 1.18)
+dev.off()
+
+### bootstrap function:
+myformula<-formula(y ~ a * exp(b * x))
+nlsCoef <- function(df, i) {
+  aGuess <- median(df$x)
+  bGuess <- max(df$y)
+  dfSamp <- df[i,]
+  nlsCoef <- coefficients(nls(myformula, dfSamp, start=list(a=0.01, b=0)))
+}
+ft_nf_boot<-boot(subset(test, ft=="No Foam"), nlsCoef, R=999)
+ft_c_boot<-boot(subset(test, ft=="Crust"), nlsCoef, R=999)
+ft_f_boot<-boot(subset(test, ft=="Foam"), nlsCoef, R=999)
+# to visualize
+# we estimated 2 parameters, a and b
+# a:
+plot(fs0_boot, index=1)
+plot(fs1_boot, index=1)
+# b:
+plot(fs0_boot, index=2)
+plot(fs1_boot, index=2)
+
+### to extract the distributions and plot in ggplot
+ft_nf_b<-data.frame(ft_nf_boot$t[,2])
+ft_c_b<-data.frame(ft_c_boot$t[,2])
+ft_f_b<-data.frame(ft_f_boot$t[,2])
+ft_nf_b$ft<-"No Foam"
+ft_c_b$ft<-"Crust"
+ft_f_b$ft<-"Foam"
+names(ft_nf_b)<-c("t", "ft")
+names(ft_c_b)<-c("t", "ft")
+names(ft_f_b)<-c("t", "ft")
+ft_b<-rbind(ft_nf_b, ft_c_b, ft_f_b)
+ft_avg<-ddply(ft_b, .(ft), summarise, avg=mean(t))
+ggplot(ft_b, aes(t, fill=ft)) + geom_histogram(bins=100, position="dodge") + geom_vline(data=ft_avg, aes(xintercept=avg, color=ft), linetype="dashed", size=2)+theme_bw()+scale_fill_brewer(palette="Dark2")+scale_color_brewer(palette="Dark2")
+
+# p value within each bootstrap:
+> sum(fs0_boot$t>=fs0_boot$t0)/fs0_boot$R
+[1] 0.990991
+> sum(fs1_boot$t>=fs0_boot$t0)/fs1_boot$R
+[1] 0.973974
+# comparison between non-foaming and foaming estimated slope (b)
+# wilcox 
+> wilcox.test(fs0_boot$t[, 2], fs1_boot$t[, 2])
+
+	Wilcoxon rank sum test with continuity correction
+
+data:  fs0_boot$t[, 2] and fs1_boot$t[, 2]
+W = 942070, p-value < 2.2e-16
+alternative hypothesis: true location shift is not equal to 0
+# or Kolmogorov-Smirnov test
+> ks.test(fs0_boot$t[, 2], fs1_boot$t[, 2])
+
+	Two-sample Kolmogorov-Smirnov test
+
+data:  fs0_boot$t[, 2] and fs1_boot$t[, 2]
+D = 0.74074, p-value < 2.2e-16
+alternative hypothesis: two-sided
+
+> anova(lm(ft_b$t ~ ft_b$ft))
+Analysis of Variance Table
+
+Response: ft_b$t
+            Df   Sum Sq  Mean Sq F value    Pr(>F)    
+ft_b$ft      2 0.265907 0.132954  7174.4 < 2.2e-16 ***
+Residuals 2994 0.055484 0.000019                      
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+> TukeyHSD(aov(ft_b$t ~ ft_b$ft))
+  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = ft_b$t ~ ft_b$ft)
+
+$`ft_b$ft`
+                      diff          lwr          upr p adj
+Crust-No Foam -0.022115740 -0.022567396 -0.021664085     0
+Foam-No Foam  -0.016752641 -0.017204297 -0.016300985     0
+Foam-Crust     0.005363099  0.004911443  0.005814755     0
+
+
+
+### diverseity and evenness significance test
+> wilcox.test(si$Observed[si$Foaming.Status=="0"], si$Observed[si$Foaming.Status=="1"]
++ )
+
+	Wilcoxon rank sum test with continuity correction
+
+data:  si$Observed[si$Foaming.Status == "0"] and si$Observed[si$Foaming.Status == "1"]
+W = 42412, p-value = 1.388e-14
+alternative hypothesis: true location shift is not equal to 0
+
+
+> wilcox.test(si$Pielou[si$Foaming.Status=="0"], si$Pielou[si$Foaming.Status=="1"]
++ )
+
+	Wilcoxon rank sum test with continuity correction
+
+data:  si$Pielou[si$Foaming.Status == "0"] and si$Pielou[si$Foaming.Status == "1"]
+W = 20489, p-value = 5.994e-10
+alternative hypothesis: true location shift is not equal to 0
+
+
+#### calculate network clustering coefficients for each barn ####
+netword_clustering<-data.frame()
+for(i in unique(final_results.0.65$id)){
+        temp<-subset(final_results.0.65, id==i)
+        temp.graph<-(graph.edgelist(as.matrix(temp[,c(1,2)]),directed=FALSE))
+        E(temp.graph)$weight<-abs(temp$rho)
+        temp.graph<-simplify(temp.graph)
+        id <- i
+        clustering_coeff<-transitivity(temp.graph)
+        
+        rand<-replicate(1000, {
+        	clustering_coeff_rand<-transitivity(erdos.renyi.game(length(V(temp.graph)),length(E(temp.graph)),type="gnm"))
+        	})
+        rand_avg<-mean(rand)
+        rand_ci.975<-qt(.975, df=length(rand)-1)*(sd(rand)/sqrt(length(rand)))
+                
+        cluster_ratio<-clustering_coeff/rand_avg
+        test<-cbind(id, clustering_coeff, rand_avg, rand_ci.975, cluster_ratio)
+        netword_clustering<-rbind(netword_clustering, test)
+        print(paste("finished ", i ,sep=": "))
+}
+
+################################
+### network stat tests against foaming categories ####
+#############################
+### normality test ####
+shapiro_tb<-data.frame()
+for (i in names(fs[, c(7:18, 21)])){
+ tryCatch({
+ a1<-lm(log(fs[, i]+1) ~ fs$category)
+ a1.stdres<-rstandard(a1)
+ shapiro_test<-shapiro.test(a1.stdres)
+ stat_param<-i
+ if (shapiro_test$p.value > 0.05){
+ 	test<-data.frame(stat_param, shapiro_test$p.value)
+ 	shapiro_tb<-rbind(shapiro_tb, test)
+ 	}
+  }, error=function(e){cat("ERROR :", conditionMessage(e), "\n")})
+}	
+### anova table ###
+anova_tb<-data.frame()
+for (i in names(fs[, colnames(fs) %in% shapiro_tb$stat_param])){
+ a1<-anova(lm(log(fs[, i]+1) ~ fs$category))
+ id <- i
+ p <- a1$"Pr(>F)"[1]
+ if (p <= "0.05"){
+ 	test<-data.frame(id, p)
+	anova_tb<-rbind(anova_tb, test)
+	}
+}
+### box plot for all significant lm's ####
+temp.df<-data.frame(fs[, c("category")], fs[, colnames(fs) %in% anova_tb$id])
+colnames(temp.df)[1]<-"category"
+temp.df<-melt(temp.df, id.vars="category")
+ggplot(temp.df, aes(category, value)) + geom_boxplot()+ facet_grid(variable ~., scales="free")+theme_bw()
+### post-hoc analysis ###
+posthoc_tb<-data.frame()
+for (i in names(fs[, colnames(fs) %in% anova_tb$id])){
+	tryCatch({
+	m1<-aov(log(fs[, i]+1) ~ fs$category)
+	posthoc<-TukeyHSD(m1)
+	test<-data.frame(posthoc$fs)
+	sig<-test[test[,4]<=0.05,]
+	sig$category<-i
+	posthoc_tb<-rbind(posthoc_tb, sig)
+	}, error=function(e){cat("ERROR :", conditionMessage(e), "\n")})
+}
+### Mantel test ###
+mantel_tb <- data.frame()
+for (i in names(fs[, c(7:18, 21)])){
+ tryCatch({
+ mantel_test<-mantel(vegdist(fs[, i], "euclid"), vegdist(fs$foaming.rate, "euclid"), method = "spear")
+ fs_measurements<-i
+ r <- mantel_test$statistic
+ p<-mantel_test$signif
+ test<-data.frame(fs_measurements, r, p)
+ mantel_tb<-rbind(mantel_tb, test)
+  }, error=function(e){cat("ERROR :", conditionMessage(e), "\n")})
+}	
+
+############################
+### deseq2 to find significant otus between foam and all otheres
+#############################
+test<-subset_samples(data.ftype.core, foam.type != "F")
+diagdds = phyloseq_to_deseq2(test, ~ foam.type)
+diagdds = DESeq(diagdds, test="Wald", fitType="parametric")
+res = results(diagdds, cooksCutoff = FALSE)
+alpha = 0.01
+sigtab = res[which(res$padj < alpha), ]
+sigtab = cbind(as(sigtab, "data.frame"), as(tax_table(data.ftype.core)[rownames(sigtab), ], "matrix"))
+sigtab$foam.type<-ifelse(sigtab$log2FoldChange > 0, "No_Foam", "Crust")
+x = tapply(sigtab$log2FoldChange, sigtab$phylum, function(x) max(x))
+x = sort(x, TRUE)
+sigtab$phylum = factor(as.character(sigtab$phylum), levels=names(x))
+x = tapply(sigtab$log2FoldChange, sigtab$genus, function(x) max(x))
+x = sort(x, TRUE)
+sigtab$genus = factor(as.character(sigtab$genus), levels=names(x))
+ggplot(sigtab, aes(y=genus, x=log2FoldChange, color=phylum)) + 
+  geom_point(size=3) + 
+  facet_grid(~foam.type, scale="free") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5))
+
+############################
+### evaluate baseline threshold for D
+#############################
+library(Hmisc)
+library(plyr)
+library(reshape2)
+library(igraph)
+library(fdrtool)
+library(MASS)
+
+d_eva<-data.frame()
+for (i in seq(1:1000)){
+x<-rnorm(98, mean=330.9046, sd=907.7887)
+y<-0+rnorm(98, mean=330.9046, sd=907.7887)
+random<-data.frame(x, y)
+results_hd<-hoeffd(as.matrix(random))
+ds<-results_hd$D
+ds_ps<-results_hd$P
+p_melt<-na.omit(melt(ds_ps))
+p_melt$hoeffding_qval<-p.adjust(p_melt$value, "fdr")
+#p_melt$hoeffding_qval<-fdrtool(p_melt$value, statistic="pvalue", plot=F,verbose=F)$qval
+names(p_melt)[3]<-"hoeffding_pval"
+d_melt<-na.omit(melt(ds))
+names(d_melt)[3]<-"D"
+ds_merged<-merge(p_melt, d_melt,by=c("Var1","Var2"))
+ds_merged$id<-i
+d_eva<-rbind(d_eva, ds_merged)
+}
+
+d_eva<-data.frame()
+for (i in seq(1:1000)){
+x<-rnorm(228, mean=341.367, sd=784.2861)
+y<-0+rnorm(228, mean=341.367, sd=784.2861)
+random<-data.frame(x, y)
+results_hd<-hoeffd(as.matrix(random))
+ds<-results_hd$D
+ds_ps<-results_hd$P
+p_melt<-na.omit(melt(ds_ps))
+p_melt$hoeffding_qval<-p.adjust(p_melt$value, "fdr")
+#p_melt$hoeffding_qval<-fdrtool(p_melt$value, statistic="pvalue", plot=F,verbose=F)$qval
+names(p_melt)[3]<-"hoeffding_pval"
+d_melt<-na.omit(melt(ds))
+names(d_melt)[3]<-"D"
+ds_merged<-merge(p_melt, d_melt,by=c("Var1","Var2"))
+ds_merged$id<-i
+d_eva<-rbind(d_eva, ds_merged)
+}
+
+d_eva<-data.frame()
+for (i in seq(1:1000)){
+x<-rnorm(162, mean=521.1969, sd=1483.071)
+y<-0+rnorm(162, mean=0.8722861, sd=0.3337828)
+random<-data.frame(x, y)
+results_hd<-hoeffd(as.matrix(random))
+ds<-results_hd$D
+ds_ps<-results_hd$P
+p_melt<-na.omit(melt(ds_ps))
+p_melt$hoeffding_qval<-p.adjust(p_melt$value, "fdr")
+#p_melt$hoeffding_qval<-fdrtool(p_melt$value, statistic="pvalue", plot=F,verbose=F)$qval
+names(p_melt)[3]<-"hoeffding_pval"
+d_melt<-na.omit(melt(ds))
+names(d_melt)[3]<-"D"
+ds_merged<-merge(p_melt, d_melt,by=c("Var1","Var2"))
+ds_merged$id<-i
+d_eva<-rbind(d_eva, ds_merged)
+}
+
+####### fig_alpha #########
+> anova(lm(log(si$Observed) ~ si$foam.type))
+Analysis of Variance Table
+
+Response: log(si$Observed)
+              Df  Sum Sq Mean Sq F value    Pr(>F)    
+si$foam.type   2  5.9888 2.99438  46.984 < 2.2e-16 ***
+Residuals    485 30.9099 0.06373                      
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+> TukeyHSD(aov(log(si$Observed) ~ si$foam.type))
+  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = log(si$Observed) ~ si$foam.type)
+
+$`si$foam.type`
+            diff        lwr         upr     p adj
+C-NF -0.16573582 -0.2416868 -0.08978479 0.0000013
+F-NF -0.25086491 -0.3118502 -0.18987964 0.0000000
+F-C  -0.08512908 -0.1568170 -0.01344118 0.0150338
+
+> anova(lm((si$Pielou) ~ si$foam.type))
+Analysis of Variance Table
+
+Response: (si$Pielou)
+              Df  Sum Sq  Mean Sq F value    Pr(>F)    
+si$foam.type   2 0.09188 0.045942  20.055 4.282e-09 ***
+Residuals    485 1.11102 0.002291                      
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+> TukeyHSD(aov((si$Pielou) ~ si$foam.type))
+  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = (si$Pielou) ~ si$foam.type)
+
+$`si$foam.type`
+           diff           lwr        upr     p adj
+C-NF 0.01384081 -0.0005586287 0.02824025 0.0625874
+F-NF 0.03090929  0.0193471844 0.04247139 0.0000000
+F-C  0.01706848  0.0034772746 0.03065968 0.0092533
+
+
+ggplot(alpha.melt, aes(x=foam.type, y=value)) + geom_boxplot()+geom_jitter(aes(color=foam.type),width=0.5)+ theme_classic() +theme(axis.line.x = element_line(colour = 'black', size=0.5, linetype='solid'),axis.line.y = element_line(colour = 'black', size=0.5, linetype='solid')) + facet_wrap(~variable, ncol=1,  scale="free")+ scale_color_brewer(palette="Dark2") + theme(axis.title.x=element_blank(), axis.title.y=element_blank()) + theme(axis.text.x=element_text(size=12, face="bold"), axis.text.y=element_text(size=12, face="bold")) + theme(strip.background=element_rect(color = "white", fill="white"), strip.text.x=element_text(size = 14, face="bold"))+theme(legend.position="none") +theme(aspect.ratio=1)
+
+########## SCFA accumulation ##########
+> anova(lm((si$SCFA) ~ si$foam.type))
+Analysis of Variance Table
+
+Response: (si$SCFA)
+             Df     Sum Sq   Mean Sq F value   Pr(>F)   
+si$foam.type  2  313990207 156995103  5.5999 0.006115 **
+Residuals    55 1541945657  28035376                    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+> TukeyHSD(aov(((si$SCFA) ~ si$foam.type)))
+  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = ((si$SCFA) ~ si$foam.type))
+
+$`si$foam.type`
+                   diff       lwr       upr     p adj
+Crust-No Foam -1636.426 -7115.047  3842.196 0.7530616
+Foam-No Foam  -4924.989 -8503.009 -1346.970 0.0045579
+Foam-Crust    -3288.564 -8698.021  2120.893 0.3158291
+
+########## MPR_slurry productivity ##########
+> anova(lm(log10(test$MPR_slurry) ~ test$foam.type))
+Analysis of Variance Table
+
+Response: log10(test$MPR_slurry)
+                Df Sum Sq Mean Sq F value    Pr(>F)    
+test$foam.type   2 31.813 15.9065  97.702 < 2.2e-16 ***
+Residuals      392 63.820  0.1628                      
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+> TukeyHSD(aov(log10(test$MPR_slurry) ~ test$foam.type))
+  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = log10(test$MPR_slurry) ~ test$foam.type)
+
+$`test$foam.type`
+                    diff        lwr       upr     p adj
+Crust-No Foam 0.02958006 -0.1051738 0.1643340 0.8633771
+Foam-No Foam  0.58085790  0.4739856 0.6877302 0.0000000
+Foam-Crust    0.55127784  0.4209818 0.6815739 0.0000000
+
+
+############ phosphorus ###################
+> anova(lm(log(si$Phophorus) ~ si$foam.type))
+Analysis of Variance Table
+
+Response: log(si$Phophorus)
+              Df  Sum Sq Mean Sq F value    Pr(>F)    
+si$foam.type   2  15.671  7.8357  14.002 1.345e-06 ***
+Residuals    387 216.567  0.5596                      
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+> TukeyHSD(aov(log(si$Phophorus) ~ si$foam.type))
+  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = log(si$Phophorus) ~ si$foam.type)
+
+$`si$foam.type`
+                   diff         lwr       upr     p adj
+Crust-No Foam 0.3115419  0.06214402 0.5609397 0.0097500
+Foam-No Foam  0.4457831  0.24583473 0.6457314 0.0000008
+Foam-Crust    0.1342412 -0.10708778 0.3755702 0.3911368
+
+############### DDGS #####################
+> anova(lm((test$DDGS) ~ test$foam.type))
+Analysis of Variance Table
+
+Response: (test$DDGS)
+                Df Sum Sq Mean Sq F value    Pr(>F)    
+test$foam.type   2   7672  3836.2  20.233 4.232e-09 ***
+Residuals      403  76409   189.6                      
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+> TukeyHSD(aov((test$DDGS) ~ test$foam.type))
+  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = (test$DDGS) ~ test$foam.type)
+
+$`test$foam.type`
+                  diff       lwr       upr     p adj
+Crust-No Foam 7.807740  3.189673 12.425807 0.0002434
+Foam-No Foam  9.490164  5.896002 13.084326 0.0000000
+Foam-Crust    1.682424 -2.741412  6.106259 0.6440031
+
+
+#########################
+p1<-ggplot(si, aes(x=MPR_slurry, y=SCFA, color=foam.type)) + geom_point(size=2)+ theme_classic() +theme(axis.line.x = element_line(colour = 'black', size=0.5, linetype='solid'),axis.line.y = element_line(colour = 'black', size=0.5, linetype='solid')) + scale_color_brewer(palette="Dark2") + theme(axis.text.x=element_text(size=12, face="bold"), axis.text.y=element_text(size=12, face="bold")) + theme(legend.title=element_blank()) + theme(legend.justification=c(1,0), legend.position=c(1,0.7)) + theme(legend.text = element_text(size = 12)) + xlab("MPR (Slurry) L/L-day") + ylab("SCFA (mg/L)")
+
+p2_df<-data.frame(a=c(1,1:3,3),b=c(21200,21400,21400,21400,21200))
+p2<-ggplot(si, aes(x=foam.type, y=SCFA)) + geom_boxplot()+geom_jitter(aes(color=foam.type),width=0.5)+ theme_classic() +theme(axis.line.x = element_line(colour = 'black', size=0.5, linetype='solid'),axis.line.y = element_line(colour = 'black', size=0.5, linetype='solid')) + scale_color_brewer(palette="Dark2") + theme(axis.title.x=element_blank()) + theme(axis.text.x=element_text(size=12, face="bold"), axis.text.y=element_text(size=12, face="bold")) + theme(strip.background=element_rect(color = "white", fill="white"), strip.text.x=element_text(size = 14, face="bold"))+theme(legend.position="none") +theme(aspect.ratio=1)+geom_line(data=p2_df, aes(x=a, y=b))+annotate("text",x=2,y=22000,label="p=0.0046") +ylab("SCFA (mg/L)")
+
+p3_df1<-data.frame(a=c(2,2, 3,3),b=c(0.38, 0.39, 0.39, 0.38))
+p3_df2<-data.frame(a=c(1,1:3,3),b=c(0.45, 0.46, 0.46, 0.46, 0.45))
+p3<-ggplot(si, aes(x=foam.type, y=MPR_slurry)) + geom_boxplot()+geom_jitter(aes(color=foam.type),width=0.5)+ theme_classic() +theme(axis.line.x = element_line(colour = 'black', size=0.5, linetype='solid'),axis.line.y = element_line(colour = 'black', size=0.5, linetype='solid')) + scale_color_brewer(palette="Dark2") + theme(axis.title.x=element_blank()) + theme(axis.text.x=element_text(size=12, face="bold"), axis.text.y=element_text(size=12, face="bold")) + theme(strip.background=element_rect(color = "white", fill="white"), strip.text.x=element_text(size = 14, face="bold"))+theme(legend.position="none") +theme(aspect.ratio=1)+geom_line(data=p3_df1, aes(x=a, y=b))+annotate("text",x=2.5,y=0.40,label="p<0.0001") + geom_line(data=p3_df2, aes(x=a, y=b))+annotate("text",x=2,y=0.47,label="p<0.0001") + ylab("MPR (Slurry) L/L-day") 
+
+grid.arrange(p1, p2, p3, ncol=2, layout_matrix = cbind(c(1,1), c(2,3)))
+
+##################################
+p1_df1<-data.frame(a=c(1, 1, 2, 2), b=c(60, 62, 62, 60))
+p1_df2<-data.frame(a=c(1, 1:3, 3), b=c(65, 67, 67, 67, 65))
+p1<-ggplot(si, aes(x=foam.type, y=DDGS)) + geom_boxplot()+geom_jitter(aes(color=foam.type),width=0.5)+ theme_classic() +theme(axis.line.x = element_line(colour = 'black', size=0.5, linetype='solid'),axis.line.y = element_line(colour = 'black', size=0.5, linetype='solid')) + scale_color_brewer(palette="Dark2") + theme(axis.title.x=element_blank()) + theme(axis.text.x=element_text(size=12, face="bold"), axis.text.y=element_text(size=12, face="bold")) + theme(strip.background=element_rect(color = "white", fill="white"), strip.text.x=element_text(size = 14, face="bold"))+theme(legend.position="none") +theme(aspect.ratio=1.2)+geom_line(data=p1_df1, aes(x=a, y=b)) + annotate("text", x=1.5, y=64, label="p=0.0002") + geom_line(data=p1_df2, aes(x=a, y=b)) + annotate("text", x=2, y=69, label="p<0.0001")
+
+p2_df1<-data.frame(a=c(1, 1, 2, 2), b=c(0.82, 0.84, 0.84, 0.82))
+p2_df2<-data.frame(a=c(1, 1:3, 3), b=c(0.87, 0.89,0.89, 0.89, 0.87))
+p2<-ggplot(si, aes(x=foam.type, y=Phosphorus)) + geom_boxplot()+geom_jitter(aes(color=foam.type),width=0.5)+ theme_classic() +theme(axis.line.x = element_line(colour = 'black', size=0.5, linetype='solid'),axis.line.y = element_line(colour = 'black', size=0.5, linetype='solid')) + scale_color_brewer(palette="Dark2") + theme(axis.title.x=element_blank()) + theme(axis.text.x=element_text(size=12, face="bold"), axis.text.y=element_text(size=12, face="bold")) + theme(strip.background=element_rect(color = "white", fill="white"), strip.text.x=element_text(size = 14, face="bold"))+theme(legend.position="none") +theme(aspect.ratio=1.2)+geom_line(data=p2_df1, aes(x=a, y=b))+annotate("text",x=1.5,y=0.86,label="p=0.0098") +geom_line(data=p2_df2, aes(x=a, y=b))+annotate("text",x=2,y=0.91,label="p<0.0001")
+
+plot_grid(p1, p2, labels=c("A", "B"), ncol=2, nrow=1)
+
+####### DDGS no p value #########
+ddgs.si<-data.frame(si[, c("foam.type","DDGS")]) 
+ddgs.si<-ddgs.si[!is.na(ddgs.si$DDGS), ]
+
+p1<-ggplot(ddgs.si, aes(x=foam.type, y=DDGS)) + geom_boxplot(aes(fill = foam.type), outlier.size = 3, lwd = 1.5) + geom_rangeframe(lwd =2) + theme_tufte() + theme(axis.ticks.x = element_line(size = 1.5), axis.ticks.y = element_line(size = 1.5), axis.ticks.length = unit(0.3, "cm")) + scale_fill_brewer(palette="Dark2") + scale_y_continuous(breaks = extended_range_breaks()(round(ddgs.si$DDGS, 0))) + theme(axis.title.x=element_blank(), axis.title.y=element_text(size=30, face="bold")) + theme(axis.text.x=element_text(size=30, face="bold", angle = 45, hjust = 1, vjust =1), axis.text.y=element_text(size=26, face="bold")) + labs(y="DDGS (%)") + theme(legend.position="none") +theme(aspect.ratio=1.2) + annotate("text", x=0.75, y=61, label="H1: No Foam < Crust < Foam", size = 7.5, hjust=0) + annotate("text", x=0.75, y=58, label="B01: 40", size = 7.5, hjust=0)
+
+
+axis.title.y=element_text(size=14, face = "bold")) + labs(y="Observed Richness")+ theme(strip.background=element_rect(color = "white", fill="white"), strip.text.x=element_text(size = 14, face="bold"))+theme(legend.position="none") +theme(aspect.ratio=1.2) + annotate("text", x=1.5, y=2500, label="Hypothesis: No Foam > Crust > Foam", size = 5, hjust=0) + annotate("text", x=1.5, y=2400, label="Bayes Factor: 7071", size = 5, hjust=0)
+
+#####################################
+### general fat #######
+> anova(lm(si$General.Fat ~ si$foam.type))
+Analysis of Variance Table
+
+Response: si$General.Fat
+              Df Sum Sq Mean Sq F value    Pr(>F)    
+si$foam.type   2  43.71 21.8532  12.951 3.334e-06 ***
+Residuals    477 804.89  1.6874                      
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+> TukeyHSD(aov(si$General.Fat ~ si$foam.type))
+  Tukey multiple comparisons of means
+    95% family-wise confidence level
+
+Fit: aov(formula = si$General.Fat ~ si$foam.type)
+
+$`si$foam.type`
+                    diff         lwr         upr     p adj
+Crust-No Foam -0.8542211 -1.25119368 -0.45724849 0.0000018
+Foam-No Foam  -0.3878417 -0.70456863 -0.07111477 0.0115960
+Foam-Crust     0.4663794  0.09343514  0.83932364 0.0096202
+
+
+p1_df1<-data.frame(a=c(1, 1, 2, 2), b=c(6.7, 6.8, 6.8, 6.7))
+p1_df2<-data.frame(a=c(2, 2, 3, 3), b=c(6.4, 6.5, 6.5, 6.4))
+p1_df3<-data.frame(a=c(1, 1:3, 3), b=c(7.0, 7.1, 7.1, 7.1, 7.0))
+p1<-ggplot(si, aes(x=foam.type, y=General.Fat)) + geom_boxplot()+geom_jitter(aes(color=foam.type),width=0.5)+ theme_classic() +theme(axis.line.x = element_line(colour = 'black', size=0.5, linetype='solid'),axis.line.y = element_line(colour = 'black', size=0.5, linetype='solid')) + scale_color_brewer(palette="Dark2") + theme(axis.title.x=element_blank()) + theme(axis.text.x=element_text(size=12, face="bold"), axis.text.y=element_text(size=12, face="bold")) + labs(y="Fat") + theme(strip.background=element_rect(color = "white", fill="white"), strip.text.x=element_text(size = 14, face="bold"))+theme(legend.position="none") +theme(aspect.ratio=1.2)+geom_line(data=p1_df1, aes(x=a, y=b)) + annotate("text", x=1.5, y=6.95, label="p<0.0001") + geom_line(data=p1_df2, aes(x=a, y=b)) + annotate("text", x=2.5, y=6.65, label="p=0.0096") + geom_line(data=p1_df3, aes(x=a, y=b)) + annotate("text", x=2, y=7.25, label="p=0.0116") 
+
+
+##################################
+### observed and pielou with p values ##
+##################################
+p1_df1<-data.frame(a=c(1, 1, 2, 2), b=c(2100, 2200, 2200, 2100))
+p1_df2<-data.frame(a=c(2, 2, 3, 3), b=c(2300, 2400, 2400, 2300))
+p1_df3<-data.frame(a=c(1, 1:3, 3), b=c(2600, 2700, 2700, 2700, 2600))
+p1<-ggplot(si, aes(x=foam.type, y=Observed)) + geom_boxplot()+geom_jitter(aes(color=foam.type),width=0.5)+ theme_classic() +theme(axis.line.x = element_line(colour = 'black', size=0.5, linetype='solid'),axis.line.y = element_line(colour = 'black', size=0.5, linetype='solid')) + scale_color_brewer(palette="Dark2") + theme(axis.title.x=element_blank()) + theme(axis.text.x=element_text(size=12, face="bold"), axis.text.y=element_text(size=12, face="bold")) + labs(y="Observed Richness")+ theme(strip.background=element_rect(color = "white", fill="white"), strip.text.x=element_text(size = 14, face="bold"))+theme(legend.position="none") +theme(aspect.ratio=1.2)+geom_line(data=p1_df1, aes(x=a, y=b)) + annotate("text", x=1.5, y=2300, label="p<0.0001") + geom_line(data=p1_df2, aes(x=a, y=b)) + annotate("text", x=2.5, y=2500, label="p=0.0150") + geom_line(data=p1_df3, aes(x=a, y=b)) + annotate("text", x=2, y=2800, label="p<0.0001")
+
+p2_df1<-data.frame(a=c(2, 2, 3, 3), b=c(0.76, 0.77, 0.77, 0.76))
+p2_df2<-data.frame(a=c(1, 1:3, 3), b=c(0.79, 0.80,0.80, 0.80, 0.79))
+p2<-ggplot(si, aes(x=foam.type, y=Pielou)) + geom_boxplot()+geom_jitter(aes(color=foam.type),width=0.5)+ theme_classic() +theme(axis.line.x = element_line(colour = 'black', size=0.5, linetype='solid'),axis.line.y = element_line(colour = 'black', size=0.5, linetype='solid')) + scale_color_brewer(palette="Dark2") + theme(axis.title.x=element_blank()) + theme(axis.text.x=element_text(size=12, face="bold"), axis.text.y=element_text(size=12, face="bold")) +labs(y="Pielou Evenness") + theme(strip.background=element_rect(color = "white", fill="white"), strip.text.x=element_text(size = 14, face="bold"))+theme(legend.position="none") +theme(aspect.ratio=1.2)+geom_line(data=p2_df1, aes(x=a, y=b))+annotate("text",x=2.5,y=0.78,label="p=0.0093") +geom_line(data=p2_df2, aes(x=a, y=b))+annotate("text",x=2,y=0.81,label="p<0.0001")
+
+plot_grid(p1, p2, labels=c("A", "B"), ncol=2, nrow=1)
+
+########### no p values #######################
+library(ggplot2)
+library(RColorBrewer)
+library(cowplot)
+library(ggthemes)
+
+
+p1<-ggplot(si, aes(x=foam.type, y=Observed)) + geom_boxplot(aes(fill=foam.type), outlier.size = 3, lwd = 1.5) + geom_rangeframe(lwd =2) + theme_tufte() + theme(axis.ticks.x = element_line(size = 1.5), axis.ticks.y = element_line(size = 1.5), axis.ticks.length = unit(0.3, "cm")) + scale_fill_brewer(palette="Dark2") + scale_y_continuous(breaks = extended_range_breaks()(si$Observed)) + theme(axis.title.x=element_blank()) + theme(axis.text.x=element_text(size=30, face="bold", angle = 45, hjust = 1, vjust = 1)) + theme(axis.text.y=element_text(size=26, face = "bold"), axis.title.y=element_text(size=30, face = "bold")) + labs(y="Observed Richness")+ theme(legend.position="none") +theme(aspect.ratio=1.2) + annotate("text", x=1.25, y=2500, label="H[1] : No-foam*' > '*Crust*' > '*Foam", parse =T, size = 7.5, hjust=0) + annotate("text", x=1.25, y=2400, label="B[10]: 7071", parse =T, size = 7.5, hjust=0) 
+
+p2<-ggplot(si, aes(x=foam.type, y=Pielou)) + geom_boxplot(aes(fill = foam.type), outlier.size =3, lwd =1.5)+ geom_rangeframe(lwd =2) + theme_tufte() + theme(axis.ticks.x = element_line(size = 1.5), axis.ticks.y = element_line(size = 1.5), axis.ticks.length = unit(0.3, "cm")) + scale_fill_brewer(palette="Dark2") + scale_y_continuous(breaks = extended_range_breaks()(round(si$Pielou, 2))) + theme(axis.title.x=element_blank()) + theme(axis.text.x=element_text(size=30, face="bold", angle = 45, hjust =1, vjust =1)) + theme(axis.text.y=element_text(size=26, face="bold"), axis.title.y=element_text(size=30, face = "bold")) +labs(y="Pielou Evenness") +theme(legend.position="none") +theme(aspect.ratio=1.2) + annotate("text", x=0.7, y=0.51, label="H[1]: No-foam*' < '*Crust*' < '*Foam", parse =T, size=7.5, hjust=0) + annotate("text", x=0.7, y=0.5, label="B[10]: 153", parse =T, size = 7.5, hjust=0)
+
+
+plot_grid(p1, p2, labels=c("A", "B"), ncol=2, nrow=1, label_size = 25)
+
+## or
+## pdf("../Manuscript/figures_and_tables/fig_alpha2.pdf", width=10, height=10)
+
+#################################
+### percent of different foam type samples collected over time
+#################################
+ggplot(ft_collections, aes(x=time_index, y=percent, color=foam.type)) + geom_point(size=3)+stat_smooth(method="lm", formula="y~poly(x,2)", se=FALSE)+theme_classic() +theme(axis.line.x = element_line(colour = 'black', size=0.5, linetype='solid'),axis.line.y = element_line(colour = 'black', size=0.5, linetype='solid')) + theme(axis.title.x=element_blank(), axis.title.y=element_text(size=14, face="bold")) + scale_x_continuous(breaks=seq(1, 13), labels=levels(ft_collections$myear))+theme(legend.position=c(1,0), legend.justification=c(1,0))+ theme(legend.title=element_blank())+theme(axis.text.x=element_text(angle=45, hjust=1, vjust=1, size=12, face="bold"), axis.text.y=element_text(size=12, face="bold"), axis.title.x=element_blank()) + labs(y="Percent of Samples Collected (%)") + theme(legend.text=element_text(size=12, face="bold")) + scale_color_brewer(palette="Dark2", labels=c("No-foam", "Crust", "Foam"))
+
+pdf("../Manuscript/figures_and_tables/sample_collections_foamtype.pdf", width=6)
+ggplot(ft_collections, aes(x=time_index, y=percent)) + geom_rangeframe(lwd=2) + theme_tufte() + theme(axis.ticks.x = element_line(size = 1.5), axis.ticks.y = element_line(size = 1.5), axis.ticks.length = unit(0.3, "cm"))+ scale_y_continuous(breaks = extended_range_breaks()(round(ft_collections$percent, 2))) + geom_point(aes(color=foam.type), size=3)+stat_smooth(data=crust, aes(x=time_index, y=percent), method="lm", formula = "y ~ x", se = FALSE, color = "#D95F02")+stat_smooth(data=nf, aes(x=time_index, y=percent), method="lm", formula = "y ~ x", se = FALSE, color = "#1B9E77") + stat_smooth(data=foam, aes(x=time_index, y=percent), method="lm", formula="y~poly(x,2)", se=FALSE, color = "#7570B3") + theme(axis.title.x=element_blank(), axis.title.y=element_text(size=14, face="bold")) + scale_x_continuous(breaks=seq(1, 13), labels=levels(ft_collections$myear))+theme(legend.position=c(1,0), legend.justification=c(1,0))+ theme(legend.title=element_blank())+theme(axis.text.x=element_text(angle=45, hjust=1, vjust=1, size=12, face="bold"), axis.text.y=element_text(size=12, face="bold"), axis.title.x=element_blank()) + labs(y="Percent of Samples Collected (%)") + theme(legend.text=element_text(size=12, face="bold"), legend.background=element_rect(color="black")) + scale_color_brewer(palette="Dark2", labels=c("No-foam", "Crust", "Foam")) + theme(aspect.ratio = 1)
+dev.off()
+
+####### lm prediction #########
+> lm.ft=function(y, x) lm(y~x)
+> summary(lm.ft(nf$percent, nf$time_index))
+
+Call:
+lm(formula = y ~ x)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-8.922 -4.365 -3.707  5.948 10.777 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  46.6499     3.9421  11.834 1.34e-07 ***
+x            -1.7904     0.4967  -3.605  0.00413 ** 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 6.7 on 11 degrees of freedom
+Multiple R-squared:  0.5416,	Adjusted R-squared:  0.4999 
+F-statistic:    13 on 1 and 11 DF,  p-value: 0.004134
+
+> crust<-subset(test1, foam.type=="Crust")
+> head(crust)
+       myear time_index foam.type count total   percent      date
+32 Oct, 2012          1     Crust     3    18 16.666667 Oct, 2012
+29 Nov, 2012          2     Crust     2    26  7.692308 Nov, 2012
+8  Dec, 2012          3     Crust     3    34  8.823529 Dec, 2012
+14 Jan, 2013          4     Crust     4    31 12.903226 Jan, 2013
+11 Feb, 2013          5     Crust     6    36 16.666667 Feb, 2013
+23 Mar, 2013          6     Crust     4    38 10.526316 Mar, 2013
+> summary(lm.ft(crust$percent, crust$time_index))
+
+Call:
+lm(formula = y ~ x)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-8.1620 -2.3638 -0.4784  1.9144  8.4306 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)   6.4161     2.8596   2.244 0.046399 *  
+x             1.8200     0.3603   5.052 0.000371 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 4.86 on 11 degrees of freedom
+Multiple R-squared:  0.6988,	Adjusted R-squared:  0.6714 
+F-statistic: 25.52 on 1 and 11 DF,  p-value: 0.0003711
+> foam<-subset(test1, foam.type=="Foam")
+> summary(lm.ft(foam$percent, foam$time_index))
+
+Call:
+lm(formula = y ~ x)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-8.413 -5.669 -1.272  4.367 11.869 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept) 46.93397    4.11270  11.412 1.95e-07 ***
+x           -0.02961    0.51815  -0.057    0.955    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 6.99 on 11 degrees of freedom
+Multiple R-squared:  0.0002968,	Adjusted R-squared:  -0.09059 
+F-statistic: 0.003266 on 1 and 11 DF,  p-value: 0.9555
+
+
+
+###############################
+### mcra uc_archaea VS mpr_slurry cowplot
+###############################
+p_ddgs<-ggplot(uc_archaea_species, aes(x=ISU.Manure.Data..MPR_slurry, y=abundance)) + geom_point(aes(color=Diet.Information..DDGS), size=3) + theme_classic() +theme(axis.line.x = element_line(colour = 'black', size=0.5, linetype='solid'),axis.line.y = element_line(colour = 'black', size=0.5, linetype='solid')) + theme(axis.title.x=element_text(size=14, face="bold"), axis.text.y=element_text(size=12, face="bold"), axis.title.y=element_text(size=14, face="bold")) + labs(x = "MPR (slurry)", y=bquote("Relative Abundance of Unclassified Achaea ("*1 %.% 10^-5*")")) + theme(aspect.ratio=1)+scale_color_continuous(name="DDG Content") + theme(legend.text=element_text(size=14), legend.title=element_text(size=14)) + theme(legend.justification=c(1,0), legend.position=c(1,0))
+
+p_ftype<-ggplot(uc_archaea_species, aes(x=ISU.Manure.Data..MPR_slurry, y=abundance)) + geom_point(aes(color=foam.type), size=3) + theme_classic() +theme(axis.line.x = element_line(colour = 'black', size=0.5, linetype='solid'),axis.line.y = element_line(colour = 'black', size=0.5, linetype='solid')) + theme(axis.title.x=element_text(size=14, face="bold"), axis.text.y=element_text(size=12, face="bold"), axis.title.y=element_text(size=14, face="bold")) + labs(x = "MPR (slurry)", y=bquote("Relative Abundance of Unclassified Achaea ("*1 %.% 10^-5*")")) + theme(aspect.ratio=1)+theme(legend.title=element_blank()) + scale_color_brewer(palette="Dark2")+ theme(legend.text=element_text(size=14))+theme(legend.justification=c(1,0), legend.position=c(1,0))
+
+plot_grid(p_ddgs, p_ftype, labels=c("A", "B"), ncol=2, nrow=1)
+
+###############################
+### mcra all species group VS mpr_slurry cowplot
+###############################
+for (i in unique(species_data$species)){
+	tryCatch ({
+		test<-subset(species_data, species == i)
+		pdf(paste("mcra_", i, "_vs_mpr.pdf", sep=""))
+		p_ftype<-ggplot(test, aes(x=ISU.Manure.Data..MPR_slurry, y=abundance)) + geom_point(aes(color=foam.type), size=3) + theme_classic() +theme(axis.line.x = element_line(colour = 'black', size=0.5, linetype='solid'),axis.line.y = element_line(colour = 'black', size=0.5, linetype='solid')) + theme(axis.title.x=element_text(size=14, face="bold"), axis.text.y=element_text(size=12, face="bold"), axis.title.y=element_text(size=14, face="bold")) + labs(x = "MPR (slurry)") + theme(aspect.ratio=1)+theme(legend.title=element_blank()) + scale_color_brewer(palette="Dark2")+ theme(legend.text=element_text(size=14))+theme(legend.justification=c(1,0), legend.position=c(1,0))
+		print(p_ftype)
+		dev.off()
+	}, error=function(e){cat("ERROR :", conditionMessage(e), "\n")})
+}	
+
+###############################
+### plot all diet to foam.type relationship
+###############################
+for (i in diets){
+tryCatch({
+	pdf(paste("foam_type_vs_", i, ".pdf", sep=""))
+	test<-si[, c("foam.type", i)]
+	test<-test[test[, i]!=0, ]
+	p<-plot(test[, i] ~ test$foam.type, ylab=i)
+	print(p)
+	dev.off()
+}, error=function(e){cat("ERROR :", conditionMessage(e), "\n")})
+}
+
+############################
+#### significant firmicutes vs P content
+ggplot(test1, aes(x=Phophorus, y=sum)) + geom_point(aes(color=foam.type), size=3)+ theme_classic() +theme(axis.line.x = element_line(colour = 'black', size=0.5, linetype='solid'),axis.line.y = element_line(colour = 'black', size=0.5, linetype='solid')) + theme(axis.title.x=element_text(size=14, face="bold"), axis.text.y=element_text(size=12, face="bold"), axis.title.y=element_text(size=14, face="bold")) + labs(x = "Manure Phosphorus Content", y=bquote("Relative Abundance of Firmicutes ("*1 %.% 10^-5*")")) + theme(aspect.ratio=1)+theme(legend.title=element_blank()) + scale_color_brewer(palette="Dark2")+ theme(legend.text=element_text(size=14))+theme(legend.justification=c(1,0), legend.position=c(1,0.8))
+
+
+combined_barn_cc<-data.frame()
+for (i in unique(test$OTU)){
+tryCatch({
+	temp <- subset(test, OTU == i)
+	results_sp<-rcorr(as.matrix(temp[, 4:5]),type="spearman")
+    results_hd<-hoeffd(as.matrix(temp[, 4:5]))
+        
+    #make two seperate objects for p-value and correlation coefficients
+    rhos<-results_sp$r
+    sp_ps<-results_sp$P
+    ds<-results_hd$D
+    ds_ps<-results_hd$P
+        
+        # going to melt these objects to 'long form' where the first two columns make up the pairs of OTUs, I am also removing NA's as they are self-comparisons, not enough data, other bad stuff
+        sp_melt<-na.omit(melt(sp_ps))
+        ds_melt<-na.omit(melt(ds_ps))
+        
+        #creating a qvalue (adjusted pvalue) based on FDR
+        sp_melt$spearman_qval<-p.adjust(sp_melt$value, "fdr")
+        ds_melt$hoeffding_qval<-p.adjust(ds_melt$value, "fdr")
+        #       sp_melt$spearman_qval<-fdrtool(sp_melt$value, statistic="pvalue", plot=F,verbose=F)$qval
+        #       ds_melt$hoeffding_qval<-fdrtool(ds_melt$value, statistic="pvalue", plot=F,verbose=F)$qval
+        
+        #making column names more relevant
+        names(sp_melt)[3]<-"spearman_pval"
+        names(ds_melt)[3]<-"hoeffding_pval"
+        
+        # if you are of the opinion that it is a good idea to subset your network based on adjusted P-values (qval in this case), you can then subset here
+        sp_sub<-subset(sp_melt, spearman_qval < 0.05)
+        ds_sub<-subset(ds_melt, hoeffding_qval < 0.05)
+        
+        # now melting the rhos, note the similarity between ps_melt and rhos_melt
+        rhos_melt<-na.omit(melt(rhos))
+        ds_melt<-na.omit(melt(ds))
+        names(rhos_melt)[3]<-"rho"
+        names(ds_melt)[3]<-"D"
+        
+        #merging together 
+        sp_merged<-merge(sp_sub,rhos_melt,by=c("Var1","Var2"))
+        ds_merged<-merge(ds_sub, ds_melt,by=c("Var1","Var2"))
+        merged<-merge(sp_merged, ds_merged, by=c("Var1", "Var2"))
+        
+        merged$id<-i
+        combined_barn_cc<-rbind(combined_barn_cc, merged)
+        print(paste("finished ",i,sep=""))
+        }, error=function(e){cat("ERROR :", conditionMessage(e), "\n")})
+}
+		
+################################
+###### sample information bayes factors####
+####################################
+### testing hypothesis: all means are different ####
+temp<-si[, -c(1, 3:21, 110, 114, 116:120, 123)]
+for (i in colnames(temp)){
+	sink("sample_information_bayes_factors.txt", append = TRUE)
+	tryCatch({
+	print(c("Processing treatment: ", i, "!!!!!!!!!!!!"))
+	test<-temp[, c(i, "myear", "foam.type", "id")]
+	colnames(test)[1]<-"to_test"
+	test<-test[! is.na(test$to_test), ]
+	test1<-anovaBF(to_test ~ foam.type + myear + id, data=test, whichRandom=c("myear", "id"))
+	print(test1[1])
+	}, error=function(e){cat("ERROR :", conditionMessage(e), "\n")})
+	sink()
+}
+
+### testing equality constraints ###
+temp<-si[, -c(1, 3:21, 110, 114, 116:120, 123)]
+for (i in colnames(temp)){
+	sink("sample_information_bayes_factors_order_restricted_H.txt", append = TRUE)
+	tryCatch({
+	print(c("Processing treatment: ", i, "!!!!!!!!!!!!"))
+	test<-temp[, c(i, "myear", "foam.type", "id")]
+	colnames(test)[1]<-"to_test"
+	test<-test[! is.na(test$to_test), ]
+	bf1<-anovaBF(to_test ~ foam.type + myear + id, data=test, whichRandom=c("myear", "id"))
+	avg<-ddply(test, .(foam.type), summarize, avg=mean(to_test))
+	avg<-avg[order(avg$avg), ]
+	samples = posterior(bf1, iterations = 10000)
+	print(paste(avg[3, 1], avg[2,1], avg[1,1], sep=">"))
+	consistent = (samples[, paste("foam.type", avg[3,1], sep="-")] > samples[, paste("foam.type", avg[2,1], sep="-")]) & (samples[, paste("foam.type", avg[2,1], sep="-")] > samples[, paste("foam.type", avg[1,1], sep="-")])
+	N_consistent = sum(consistent)
+	bf_restriction_against_full = (N_consistent / 10000) / (1 / 6)
+	bf_restriction_against_full
+	bf_full_against_null = as.vector(bf1)
+	bf_restriction_against_null = bf_restriction_against_full * bf_full_against_null
+	print(bf_restriction_against_null)
+	}, error=function(e){cat("ERROR :", conditionMessage(e), "\n")})
+	sink()
+}
+
+### testing equality constraints: richness and evenness ###
+temp<-si[, c("myear", "foam.type", "id", "Observed", "Chao1", "Shannon", "InvSimpson", "Pielou")]
+for (i in colnames(temp)){
+	sink("diversity_bayes_factors_order_restricted_H.txt", append = TRUE)
+	tryCatch({
+	print(c("Processing treatment: ", i, "!!!!!!!!!!!!"))
+	test<-temp[, c(i, "myear", "foam.type", "id")]
+	colnames(test)[1]<-"to_test"
+	test<-test[! is.na(test$to_test), ]
+	bf1<-anovaBF(to_test ~ foam.type + myear + id, data=test, whichRandom=c("myear", "id"))
+	avg<-ddply(test, .(foam.type), summarize, avg=mean(to_test))
+	avg<-avg[order(avg$avg), ]
+	samples = posterior(bf1, iterations = 10000)
+	print(paste(avg[3, 1], avg[2,1], avg[1,1], sep=">"))
+	consistent = (samples[, paste("foam.type", avg[3,1], sep="-")] > samples[, paste("foam.type", avg[2,1], sep="-")]) & (samples[, paste("foam.type", avg[2,1], sep="-")] > samples[, paste("foam.type", avg[1,1], sep="-")])
+	N_consistent = sum(consistent)
+	bf_restriction_against_full = (N_consistent / 10000) / (1 / 6)
+	bf_restriction_against_full
+	bf_full_against_null = as.vector(bf1)
+	bf_restriction_against_null = bf_restriction_against_full * bf_full_against_null
+	print(bf_restriction_against_null)
+	}, error=function(e){cat("ERROR :", conditionMessage(e), "\n")})
+	sink()
+}
+
+#### plot bfs ####
+bfs_toplot.bf20<-subset(bfs_toplot, bf > 20)
+bfs_toplot.bf20<-bfs_toplot.bf20[ bfs_toplot.bf20$value != "surface.depth", ]
+bfs_toplot.bf20$value<-reorder(bfs_toplot.bf20$value, bfs_toplot.bf20$bf)
+bfs_toplot.bf20$hypo <- factor(bfs_toplot.bf20$hypo, levels=c("No Foam>Crust>Foam", "Crust>Foam>No Foam", "Foam>Crust>No Foam", "Foam>No Foam>Crust"))
+
+ggplot(bfs_toplot.bf20, aes(x=value, y = bf)) + geom_point(aes(color=genres), size = 4) + facet_grid(~hypo, scales="free") + theme_classic() + theme(axis.line.x = element_line(colour = 'black', size=0.5, linetype='solid'),axis.line.y = element_line(colour = 'black', size=0.5, linetype='solid')) + theme(axis.text.x=element_text(angle =45, hjust =1, vjust =1, face="bold")) + scale_y_log10() + theme_hc() + scale_colour_hc() + theme(strip.text.x = element_text(size=12, face="bold"), strip.background = element_rect(fill=c("#1B9E77", "#D95F02", "#7570B3", "#7570B3")) 
+
+
+ggplot(bfs_toplot.bf20, aes(x=value, y = bf)) + geom_bar(aes(fill=type), stat="identity") + facet_grid(genres ~hypo, scales="free") + theme_classic() + theme(axis.line.x = element_line(colour = 'black', size=0.5, linetype='solid'),axis.line.y = element_line(colour = 'black', size=0.5, linetype='solid')) + theme(axis.text.x=element_text(angle =90, hjust =1, vjust =1, face="bold")) + scale_y_log10()
+
+
+### cmdscale goodnees of fit ###
+totu.bray.gof <- data.frame()
+for (i in c(1:10)){
+	totu_pcoa<-cmdscale(totu.bray, k = i, eig =T)
+	temp<-cbind(i, totu_pcoa$GOF[1], totu_pcoa$GOF[2])
+	totu.bray.gof<-rbind(totu.bray.gof, temp)
+}
+
+
+
+##########################
+## plot core genus ######
+
+p1<-data_1e5.ftype.core.genus.ft %>% ungroup() %>% arrange(as.integer(genus)) %>% ggplot(aes(x=genus, y=total, fill = foam.type))
+
+p1 + stat_summary(fun.y = mean, geom="bar", position="dodge") + stat_summary(fun.data = mean_cl_normal, geom="errorbar", position = position_dodge(width = 0.90), width = 0.2)+ theme_classic() +theme(axis.line.x = element_line(colour = 'black', size=0.5, linetype='solid'),axis.line.y = element_line(colour = 'black', size=0.5, linetype='solid')) + scale_fill_brewer(palette="Dark2") + theme(axis.title.x=element_blank(), axis.title.y=element_text(size=14, face="bold")) + theme(axis.text.x=element_text(size=14, face="bold", angle = 90, hjust = 1, vjust = 0.5), axis.text.y=element_text(size=12, face="bold")) + ylab("Relative Abundance (1e-5)") + theme(legend.title = element_blank(), legend.text=element_text(size=10, face="bold"), legend.position=c(1,0.5), legend.justification=c(1,0))
+
+
+data_1e5.ftype.core.genus.ft.bf100<-data_1e5.ftype.core.genus.ft %>% filter( genus %in% bac_genus_bf_min100$genus)
+data_1e5.ftype.core.genus.ft.bf100<-merge(data_1e5.ftype.core.genus.ft.bf100, bac_genus_bf_min100, "genus")
+
+p1<-data_1e5.ftype.core.genus.ft.bf100 %>% ungroup() %>% arrange(as.integer(genus)) %>% ggplot(aes(x=genus, y=total, fill = foam.type))
+
+p1 + stat_summary(fun.y = mean, geom="bar", position="dodge") + stat_summary(fun.data = mean_cl_normal, geom="errorbar", position = position_dodge(width = 0.90), width = 0.2)+ theme_classic() +theme(axis.line.x = element_line(colour = 'black', size=0.5, linetype='solid'),axis.line.y = element_line(colour = 'black', size=0.5, linetype='solid')) + scale_fill_brewer(palette="Dark2") + theme(axis.title.x=element_blank(), axis.title.y=element_text(size=14, face="bold")) + theme(axis.text.x=element_text(size=14, face="bold", angle = 90, hjust = 1, vjust = 0.5), axis.text.y=element_text(size=12, face="bold")) + ylab("Relative Abundance (1e-5)") + theme(legend.title = element_blank(), legend.text=element_text(size=10, face="bold"), legend.position=c(1,0.5), legend.justification=c(1,0)) + facet_grid(~H1, scales="free", space="free") + theme(strip.text.x=element_text(angle=90, face="bold", size=14))
+
+		## for a plot to be rotated ##
+p1 + stat_summary(fun.y = mean, geom="bar", position="dodge") + stat_summary(fun.data = mean_cl_normal, geom="errorbar", position = position_dodge(width = 0.90), width = 0.2)+ theme_classic() +theme(axis.line.x = element_line(colour = 'black', size=0.5, linetype='solid'),axis.line.y = element_line(colour = 'black', size=0.5, linetype='solid')) + scale_fill_brewer(palette="Dark2") + theme(axis.title.x=element_blank(), axis.title.y=element_text(size=14, face="bold")) + theme(axis.text.x=element_text(size=14, face="bold", angle = 90, hjust = 1, vjust = 0.5), axis.text.y=element_text(angle = 90, hjust =0.5, vjust =0.5, size=12, face="bold")) + ylab("Bacteria Relative Abundance (1e-5)") + facet_grid(~H1, scales="free", space="free") + theme(legend.position = "none")+ theme(strip.text.x=element_text(angle=90, face="bold", size=14))
+
+		## plot top 10 most abundant significantly different genera
+bf100.top10.genus<-ddply(data_1e5.ftype.core.genus.ft.bf100, .(genus), summarise, all_total = sum(total))
+
+p1<-data_1e5.ftype.core.genus.ft.bf100[ data_1e5.ftype.core.genus.ft.bf100$genus %in% bf100.top10.genus$genus[1:10], ] %>% ungroup() %>% arrange(as.integer(genus)) %>% ggplot(aes(x=genus, y=total, fill = foam.type))
+
+pdf("../Manuscript/figures_and_tables/bacteria_top10_abundant_most_significant_genera.pdf", height=8, width=10)
+
+p1 + stat_summary(fun.y = mean, geom="bar", position="dodge") + stat_summary(fun.data = mean_cl_boot, geom="errorbar", position = position_dodge(width = 0.90), width = 0.2)+ theme_classic() +theme(axis.line.x = element_line(colour = 'black', size=0.5, linetype='solid'),axis.line.y = element_line(colour = 'black', size=0.5, linetype='solid')) + scale_fill_brewer(palette="Dark2") + theme(axis.title.x=element_blank(), axis.title.y=element_text(size=14, face="bold")) + theme(axis.text.x=element_text(size=14, face="bold", angle = 90, hjust = 1, vjust = 0.5), axis.text.y=element_text(angle = 90, hjust =0.5, vjust =0.5, size=12, face="bold")) + ylab("Bacteria Relative Abundance (1e-5)") + facet_grid(~most_abundant, scales="free", space="free") + theme(legend.position = "none")+ theme(strip.text.x=element_text(angle=90, face="bold", size=14))
+
+dev.off()
+
+		## for a plot to be rotated,error bars represent 95% CI ##
+p1 + stat_summary(fun.y = mean, geom="bar", position="dodge") + stat_summary(fun.data = mean_sdl, geom="errorbar", position = position_dodge(width = 0.90), width = 0.2)+ theme_classic() +theme(axis.line.x = element_line(colour = 'black', size=0.5, linetype='solid'),axis.line.y = element_line(colour = 'black', size=0.5, linetype='solid')) + scale_fill_brewer(palette="Dark2") + theme(axis.title.x=element_blank(), axis.title.y=element_text(size=14, face="bold")) + theme(axis.text.x=element_text(size=14, face="bold", angle = 90, hjust = 1, vjust = 0.5), axis.text.y=element_text(angle = 90, hjust =0.5, vjust =0.5, size=12, face="bold")) + ylab("Bacteria Relative Abundance (1e-5)") + facet_grid(~H1, scales="free", space="free") + theme(legend.position = "none")+ theme(strip.text.x=element_text(angle=90, face="bold", size=14))
+
+### testing core genus equality constraints ###
+library(BayesFactor)
+library(dplyr)
+for (i in unique(data_1e5.ftype.core.genus.ft$genus)){
+	sink("bacteria_core_genus_bayes_factors_order_restricted_H.txt", append = TRUE)
+	tryCatch({
+	print(c("Processing treatment: ", i, "!!!!!!!!!!!!"))
+	test<-subset(data_1e5.ftype.core.genus.ft, genus == i)
+	bf1<-anovaBF(total ~ foam.type, data=data.frame(test))
+	avg<-test %>% group_by(foam.type) %>% summarise(ft_avg=mean(total))
+	avg<-data.frame(avg[order(avg$ft_avg), ])
+	samples = posterior(bf1, iterations = 10000)
+	print(paste(avg[3, 1], avg[2,1], avg[1,1], sep=">"))
+	consistent = (samples[, paste("foam.type", avg[3,1], sep="-")] > samples[, paste("foam.type", avg[2,1], sep="-")]) & (samples[, paste("foam.type", avg[2,1], sep="-")] > samples[, paste("foam.type", avg[1,1], sep="-")])
+	N_consistent = sum(consistent)
+	bf_restriction_against_full = (N_consistent / 10000) / (1 / 6)
+	bf_restriction_against_full
+	bf_full_against_null = as.vector(bf1)
+	bf_restriction_against_null = bf_restriction_against_full * bf_full_against_null
+	print(bf_restriction_against_null)
+	}, error=function(e){cat("ERROR :", conditionMessage(e), "\n")})
+	sink()
+}
+
+
+#### mcra core species ####
+mcra_1e5_ftype.core.species<-mcra_1e5_ftype.core.psmelt %>% select(OTU, Sample, Abundance, foam.type, species) %>% group_by(Sample, species, foam.type) %>% summarise(total=sum(Abundance))
+mcra_1e5_ftype.core.species.ft <- mcra_1e5_ftype.core.species %>% group_by(species, foam.type) %>% summarise(ft_avg = mean(total))
+mcra_1e5_ftype.core.species.order<-mcra_1e5_ftype.core.species.ft %>% group_by(species) %>% summarise(total = sum(ft_avg))
+mcra_1e5_ftype.core.species.order$species <- reorder(mcra_1e5_ftype.core.species.order$species, -mcra_1e5_ftype.core.species.order$total)
+mcra_1e5_ftype.core.species$species <- factor(mcra_1e5_ftype.core.species$species, levels=levels(mcra_1e5_ftype.core.species.order$species))
+mcra_1e5_ftype.core.species$foam.type<-factor(mcra_1e5_ftype.core.species$foam.type, levels=c("No Foam", "Crust", "Foam"))
+
+
+p1<-mcra_1e5_ftype.core.species %>% ungroup() %>% arrange(as.integer(species)) %>% ggplot(aes(x=species, y=total, fill = foam.type))
+
+p1 + stat_summary(fun.y = mean, geom="bar", position="dodge") + stat_summary(fun.data = mean_cl_normal, geom="errorbar", position = position_dodge(width = 0.90), width = 0.2)+ theme_classic() +theme(axis.line.x = element_line(colour = 'black', size=0.5, linetype='solid'),axis.line.y = element_line(colour = 'black', size=0.5, linetype='solid')) + scale_fill_brewer(palette="Dark2") + theme(axis.title.x=element_blank(), axis.title.y=element_text(size=14, face="bold")) + theme(axis.text.x=element_text(size=14, face="bold", angle = 90, hjust = 1, vjust = 0.5), axis.text.y=element_text(size=12, face="bold")) + ylab("Relative Abundance (1e-5)") + theme(legend.title = element_blank(), legend.text=element_text(size=10, face="bold"), legend.position=c(1,0.5), legend.justification=c(1,0))
+
+### testing core genus equality constraints ###
+library(BayesFactor)
+library(dplyr)
+for (i in unique(mcra_1e5_ftype.core.species$species)){
+	sink("mcra_core_genus_bayes_factors_order_restricted_H.txt", append = TRUE)
+	tryCatch({
+	print(c("Processing treatment: ", i, "!!!!!!!!!!!!"))
+	test<-subset(mcra_1e5_ftype.core.species, species == i)
+	bf1<-anovaBF(total ~ foam.type, data=data.frame(test))
+	avg<-test %>% group_by(foam.type) %>% summarise(ft_avg=mean(total))
+	avg<-data.frame(avg[order(avg$ft_avg), ])
+	samples = posterior(bf1, iterations = 10000)
+	print(paste(avg[3, 1], avg[2,1], avg[1,1], sep=">"))
+	consistent = (samples[, paste("foam.type", avg[3,1], sep="-")] > samples[, paste("foam.type", avg[2,1], sep="-")]) & (samples[, paste("foam.type", avg[2,1], sep="-")] > samples[, paste("foam.type", avg[1,1], sep="-")])
+	N_consistent = sum(consistent)
+	bf_restriction_against_full = (N_consistent / 10000) / (1 / 6)
+	bf_restriction_against_full
+	bf_full_against_null = as.vector(bf1)
+	bf_restriction_against_null = bf_restriction_against_full * bf_full_against_null
+	print(bf_restriction_against_null)
+	}, error=function(e){cat("ERROR :", conditionMessage(e), "\n")})
+	sink()
+}
+
+mcra_species_bf<-read.delim("mcra_core_genus_bayes_factors_order_restricted_H.table", header=F, sep="\t")
+mcra_1e5_ftype.core.species.bf20<-mcra_1e5_ftype.core.species %>% filter(species %in% mcra_species_bf_min20$species)
+mcra_1e5_ftype.core.species.bf20<-mcra_1e5_ftype.core.species %>% filter(species %in% mcra_species_bf_min20$species)
+mcra_1e5_ftype.core.species.bf20$H1<-factor(mcra_1e5_ftype.core.species.bf20$H1, levels=c("No Foam>Crust>Foam", "Foam>Crust>No Foam"))
+
+p1<-mcra_1e5_ftype.core.species.bf20 %>% ungroup() %>% arrange(as.integer(species)) %>% ggplot(aes(x=species, y=total, fill = foam.type))
+
+p1 + stat_summary(fun.y = mean, geom="bar", position="dodge") + stat_summary(fun.data = mean_cl_normal, geom="errorbar", position = position_dodge(width = 0.90), width = 0.2)+ theme_classic() +theme(axis.line.x = element_line(colour = 'black', size=0.5, linetype='solid'),axis.line.y = element_line(colour = 'black', size=0.5, linetype='solid')) + scale_fill_brewer(palette="Dark2") + theme(axis.title.x=element_blank(), axis.title.y=element_text(size=14, face="bold")) + theme(axis.text.x=element_text(size=14, face="bold", angle = 90, hjust = 1, vjust = 0.5), axis.text.y=element_text(size=12, face="bold")) + ylab("Relative Abundance (1e-5)") + theme(legend.title = element_blank(), legend.text=element_text(size=10, face="bold"), legend.position=c(0.45,0.8), legend.justification=c(1,0))+ facet_wrap(~H1, scales="free", ncol=2) + theme(strip.text.x=element_text(angle=90, face="bold", size=14))
+
+p1 + stat_summary(fun.y = mean, geom="bar", position="dodge") + stat_summary(fun.data = mean_cl_normal, geom="errorbar", position = position_dodge(width = 0.90), width = 0.2)+ theme_classic() +theme(axis.line.x = element_line(colour = 'black', size=0.5, linetype='solid'),axis.line.y = element_line(colour = 'black', size=0.5, linetype='solid')) + 
+scale_fill_manual(guide = guide_legend(label.theme = element_text(angle=90), direction="horizontal",label.position="top", label.hjust = 0.5 , label.vjust = 0.5), values=ft.colors) + 
+theme(axis.title.x=element_blank(), axis.title.y=element_text(size=14, face="bold")) + theme(axis.text.x=element_text(size=14, face="bold", angle = 90, hjust = 1, vjust = 0.5), axis.text.y=element_text(size=12, face="bold")) + ylab("Relative Abundance (1e-5)") + theme(legend.title = element_blank(), legend.text=element_text(size=10, face="bold"))+ facet_wrap(~most_abundant, scales="free", ncol=2) + theme(strip.text.x=element_text(angle=90, face="bold", size=14)) 
+
+		## for a plot to be rotated ##
+pdf("../Manuscript/figures_and_tables/mcra_abundant_most_significant_genera.pdf", height=8, width=6)
+
+p1 + stat_summary(fun.y = mean, geom="bar", position="dodge") + stat_summary(fun.data = mean_cl_boot, geom="errorbar", position = position_dodge(width = 0.90), width = 0.2)+ theme_classic() +theme(axis.line.x = element_line(colour = 'black', size=0.5, linetype='solid'),axis.line.y = element_line(colour = 'black', size=0.5, linetype='solid')) + scale_fill_brewer(palette="Dark2") + theme(axis.title.x=element_blank(), axis.title.y=element_text(size=14, face="bold")) + theme(axis.text.x=element_text(size=14, face="bold", angle = 90, hjust = 1, vjust = 0.5), axis.text.y=element_text(angle = 90, hjust =0.5, vjust =0.5, size=12, face="bold")) + ylab("Methanogen Relative Abundance (1e-5)") + facet_wrap(~most_abundant, scales="free", ncol=2) + guides(fill = guide_legend(direction="horizontal", label.position = "top", label.hjust = 0.45, label.vjust= 0.7, label.theme=element_text(angle=90, size = 14, face="bold")))+ theme(legend.title = element_blank())+ theme(strip.text.x=element_text(angle=90, face="bold", size=14))
+
+dev.off()
+
+#### unique spearman significant correlation heatmap ###
+test2<-fr.spsig.uniq.meta_subset[order(fr.spsig.uniq.meta_subset$phylum.Var1), ]
+test2$index<-seq(1, 616)
+test2$Var1<-reorder(test2$Var1, test2$index)
+test2$Var2<-factor(test2$Var2, levels=levels(test2$Var1))
+fr.spsig.uniq.meta_subset.ordered<-test2
+
+anno.df<-data.frame(fr.spsig.uniq.meta_subset.ordered %>% select(phylum.Var1, Var1) %>% group_by(phylum.Var1) %>% summarize(uniq=length(unique(Var1))))
+anno.df$end<-c(7.5, 14.5, 17.5, 43)
+anno.df$start<-c(0, 7.5, 14.5, 17.5)
+
+ggplot(fr.spsig.uniq.meta_subset.ordered, aes(Var1, Var2)) + theme_bw()+ geom_tile(aes(fill=rho), color='black') + scale_fill_gradient2(low = 'darkred', mid = "white", high = 'steelblue', midpoint=0, limits=c(-1, 1)) + theme_minimal()+theme(axis.text.x = element_text(angle = 90, vjust = 0.5, size = 11, face="bold", hjust =1), axis.text.y = element_text(size=11, face="bold")) + facet_grid(~foam.type)+theme(aspect.ratio=1) + geom_segment(data=anno.df, size=4, aes(x=start, xend=end, y=-1, yend=-1, color=phylum.Var1)) + geom_segment(data=anno.df, size=4, aes(y=start, yend=end, x=-1, xend=-1, color=phylum.Var1)) + scale_color_brewer(palette="Set1") + labs(x="", y="") +theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank()) + geom_vline(data=anno.df, aes(xintercept=start, color=phylum.Var1))+geom_hline(data=anno.df, aes(yintercept=start, color=phylum.Var1)) + theme(strip.text.x=element_text(size=26, face="bold"), strip.background=element_rect(color="black", size=2)) + theme(legend.position="top", legend.title=element_blank(), legend.direction = "horizontal", legend.box = "horizontal", legend.text=element_text(size=20))+ guides(shape=guide_legend(override.aes=list(size=20))) + guides(fill=guide_colorbar(barwidth=15))
+
+#### to the future self: in case you are wondering if you have done the mcra ftype core right again, look at this: #####
+mcra_core_otu <- data.frame()
+for (i in unique(sample_data(mcra_1e5_ftype.phy)$foam.type)){
+     temp<-subset_samples(mcra_1e5_ftype.phy, foam.type == i)
+    n = nsamples(temp)
+     temp.core<-filter_taxa(temp, function(x) sum(x >0 ) >= (1*length(x)), TRUE)
+    print(i)
+    temp.core.otu<-data.frame(taxa_names(temp.core))
+    mcra_core_otu<-rbind(mcra_core_otu, temp.core.otu)
+    print("DONE!")
+}
+
+
+#### triangle heatmap: meta data only ######
+#### sorting #########
+library(reshape2)
+fr.derep.meta.sig.reordered <- data.frame()
+for (i in unique(fr.meta.sig$foam.type)){
+	print(c("Processing treatment: ", i, "!!!!!!!!!!!!"))
+	test<-subset(fr.meta.sig, foam.type == i)
+	test<-dcast(test[, 1:3], Var1 ~ Var2, value.var="coefficient")
+	test<-merge(test, fr.derep.meta.sig.id[, c("Var1", "index")], "Var1", all =T)
+	test<-test[order(test$index), ]
+	row.names(test)<-test$Var1
+	test<-test[, -c(1, length(test[1, ]))]
+	test<-t(test)
+	test<-merge(test, fr.derep.meta.sig.id[, c("Var1", "index")], by.x="row.names", by.y="Var1", all=T)
+	test<-test[order(test$index), ]
+	row.names(test)<-test$Row.names
+	test<-test[, -c(1, length(test[1, ]))]
+	test[is.na(test)]<-0
+	test[upper.tri(test)] <- NA
+	print(dim(test))
+	test$Var1<-row.names(test)
+	test<-melt(test, id.vars="Var1", na.rm=T)
+	names(test)[2:3]<-c("Var2", "coefficient")
+	test$foam.type <- i
+	print(dim(test))
+	fr.derep.meta.sig.reordered <- rbind(fr.derep.meta.sig.reordered, test)
+	print(dim(fr.derep.meta.sig.reordered))
+}
+	
+fr.derep.meta.sig.reordered$Var1<-factor(fr.derep.meta.sig.reordered$Var1, levels=levels(fr.derep.meta.sig.id$Var1)
+fr.derep.meta.sig.reordered$Var2<-factor(fr.derep.meta.sig.reordered$Var2, levels=levels(fr.derep.meta.sig.id$Var1))
+fr.derep.meta.sig.reordered$foam.type <- factor(fr.derep.meta.sig.reordered$foam.type, levels=c("No Foam", "Crust", "Foam"))
+
+library(dplyr)
+anno.df<-data.frame(fr.derep.meta.sig.id %>% select(Var1, phylum, type) %>% group_by(phylum, type) %>% summarize(uniq=length(unique(Var1))))
+anno.df$end<-c(6.5, 12.5, 13.5, 39)
+anno.df$start<-c(0, 6.5, 12.5, 13.5)
+
+p<-ggplot(data=fr.derep.meta.sig, aes(x=Var2,y=Var1)) + geom_raster(aes(fill = coefficient)) +scale_fill_gradient2(midpoint=0,low='black',high='darkred') + geom_tile(aes(color=foam.type, width=abs(coefficient), height=abs(coefficient)), alpha = 0, size=1) +scale_color_brewer(palette="Dark2")+ theme_tufte(ticks=F) +  geom_text(data=fr.derep.meta.sig.id,aes(label=Var1), hjust = 1) + xlab(NULL) + ylab(NULL)+ theme(axis.text.x = element_text(angle = 330, hjust = 0, size = 12),axis.text.y=element_blank(), axis.ticks=element_blank()) + theme(plot.margin = unit(c(1, 1, 1, 5), "cm"))
+## get rid of clipping
+gt<-ggplot_gtable(ggplot_build(p))
+gt$layout$clip[gt$layout$name == "panel"] <- "off"
+grid.draw(gt)
+
+# no background fill
+library(grid)
+pdf("~/Box Sync/Manure Foaming/Manuscript/figures_and_tables/meta_cc_triangle_heatmap2.pdf", width=13, height=13)
+p<-ggplot(data=fr.derep.meta.sig.reordered, aes(x=Var1,y=Var2)) + geom_tile(aes(color=foam.type, width=abs(coefficient), height=abs(coefficient), show.legend=T), alpha = 0, size=1) +scale_color_brewer(palette="Dark2")+ theme_tufte(ticks=F) + ylab(NULL)+ theme(axis.text.x = element_text(angle = 330, hjust = 0, size = 14, face= "bold"),axis.text.y=element_blank(), axis.ticks=element_blank()) + theme(plot.margin = unit(c(1, 1, 1, 3), "cm")) + theme(aspect.ratio = 1)+ geom_rect(data=fr.derep.meta.sig.id, aes(xmin=index -0.5, xmax=index +0.5, ymin=-0.5, ymax=0, fill=type)) + scale_fill_brewer(palette="Set1") + geom_rect(data=fr.derep.meta.sig.id, aes(xmin=index -0.5, xmax=index +0.5, ymin=index-0.5, ymax=index + 0.5, fill=type)) +  geom_text(data=fr.derep.meta.sig.id,aes(label=Var1, family=c("serif")), hjust = 1, nudge_x = -1, size = 6) + xlab(NULL) + theme(legend.title=element_blank()) + theme(legend.position=c(0.1, 0.8)) + guides(fill = guide_legend(keywidth=3, keyheight =3), color=guide_legend(keywidth=3, keyheight =3, size = 3)) + theme(legend.text=element_text(size = 14, face = "bold"))
+#p+ geom_segment(data=anno.df, size=4, aes(x=start, xend=end, y=-1, yend=-1, color=type))
+## get rid of clipping
+gt<-ggplot_gtable(ggplot_build(p))
+gt$layout$clip[gt$layout$name == "panel"] <- "off"
+grid.draw(gt)
+dev.off()
+
+ ggplot(bac_mcra_cc.lower.mmdm, aes(x=Var2, y=Var1)) + 
+  geom_tile(aes(fill = offset, width=coefficient, height=coefficient), colour = "white") + 
+   scale_fill_gradientn(colours = colorends, values = rescale(gradientends.mmdm)) + 
+   scale_x_discrete("", expand = c(0, 0)) + 
+   scale_y_discrete("", expand = c(0, 0)) + 
+   geom_text(data=bac_mcra_cc.lower.mmdm.id,aes(label=Var2)) + xlab(NULL) + ylab(NULL) +
+   theme_bw() + 
+   theme(axis.text.y=element_blank(),
+         axis.ticks = element_blank(), 
+         axis.text.x = element_text(angle = 330, hjust = 0))
+         
+# physicochemical relationships revamp
+fr.derep.meta.sig.uniq.top5 <- fr.derep.meta.sig.uniq %>% group_by(foam.type) %>% top_n(n=5, wt=abs(coefficient)) %>% data.frame()
+
+ggplot(fr.derep.meta.sig.uniq.top5, aes(x=plot_label, y=coefficient, fill=foam.type)) + geom_bar(stat="identity", position="dodge") +  coord_flip() + labs(x = "", y= "Correlation Coefficient")+theme_bw() + geom_text(aesf(label=plot_label, hjust = ifelse(coefficient> 0, 1, 0), y=0)) + theme(axis.text.y=element_blank(), axis.ticks.y=element_blank()) + scale_fill_manual(values=colors.foamtype) +theme(legend.title=element_blank()) + theme(legend.position=c(0.1, 0.9)) 
+
+# mm and diet relationships
+fr.derep.meta.sig.uniq.mm_diet<-fr.derep.meta.sig.uniq[ fr.derep.meta.sig.uniq$Var2 %in% meta.diet$otu & fr.derep.meta.sig.uniq$Var1 %in% meta.meas$otu | fr.derep.meta.sig.uniq$Var1 %in% meta.diet$otu & fr.derep.meta.sig.uniq$Var2 %in% meta.meas$otu, ]
+fr.derep.meta.sig.uniq.mm_diet.top5 <- fr.derep.meta.sig.uniq.mm_diet %>% group_by(foam.type) %>% top_n(n=5, wt=abs(coefficient)) %>% data.frame()
+fr.derep.meta.sig.uniq.mm_diet.top5 <- fr.derep.meta.sig.uniq.mm_diet.top5[order(-abs(fr.derep.meta.sig.uniq.mm_diet.top5$coefficient)), ]
+fr.derep.meta.sig.uniq.mm_diet.top5$plot_label<-paste(fr.derep.meta.sig.uniq.mm_diet.top5$Var2, fr.derep.meta.sig.uniq.mm_diet.top5$Var1, sep="::")
+fr.derep.meta.sig.uniq.mm_diet.top5 <- fr.derep.meta.sig.uniq.mm_diet.top5 %>% group_by(foam.type) %>% arrange(-abs(coefficient)) %>% data.frame()
+fr.derep.meta.sig.uniq.mm_diet.top5$plot_index<-seq(1, 15)
+fr.derep.meta.sig.uniq.mm_diet.top5$plot_label<-reorder(fr.derep.meta.sig.uniq.mm_diet.top5$plot_label, fr.derep.meta.sig.uniq.mm_diet.top5$plot_index)
+ggplot(fr.derep.meta.sig.uniq.mm_diet.top5, aes(x=plot_label, y=coefficient, fill=foam.type)) + geom_bar(stat="identity", position="dodge") +  coord_flip() + labs(x = "", y= "Correlation Coefficient")+theme_bw() + geom_text(aes(label=plot_label, hjust = ifelse(coefficient> 0, 1, 0), y=0)) + theme(axis.text.y=element_blank(), axis.ticks.y=element_blank()) + scale_fill_manual(values=colors.foamtype) +theme(legend.title=element_blank()) + theme(legend.position=c(0.07, 0.8)) 
+         
