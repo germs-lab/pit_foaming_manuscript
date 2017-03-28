@@ -83,11 +83,12 @@ ggplot.NMDS.ellipse.arrow(data.mds, mcra.envfit.df, si.ftype$foam.type, colors)
 dev.off()
 
 ##### bacterial 16s, ggplot2 nmds ellipse, mpr envfit arrow ###
-si.envfit<-si[, c("MPR_slurry", "Lysine", "SAMPLES")]
+si.envfit<-si[, c("MPR_slurry", "Lysine", "SAMPLES", "Soybean.Meal", "Crude.Protein", "ADF", "Crude.Fiber", "Manure.Temperature", "Manure.Depth", "DDGS", "NDF", "Organic.N")]
 source("~/Documents/repos/R_code/R_functions/nmds_envfit_arrow_extraction.R")
 envfit.df<-mds.envfit.arrows(data.mds, si.envfit, "SAMPLES")
+envfit.df.0.05<-subset(envfit.df, pval <= 0.05)
 source("~/Documents/repos/R_code/R_functions/ggplot_nmds_ellipse_and_arrow.R")
-pdf("../Manuscript/figures_and_tables/mcra_ellipse_mpr_arrow.pdf", height=10, width=10)
+pdf("../Manuscript/figures_and_tables/mcra_ellipse_mpr_arrow2.pdf", height=10, width=10)
 ggplot.NMDS.ellipse.arrow(data.mds, envfit.df[1, ], si$foam.type, colors)
 dev.off()
 
@@ -113,6 +114,7 @@ for (i in names(si[, c("id", "Foaming.Status", "category")])){
 colorCount = length(unique(si2$Foaming.Status))
 getPalette = colorRampPalette(brewer.pal(8, "Dark2"))
 colors = getPalette(colorCount)
+source("/Users/fanyang/Documents/repos/R_code/R_functions/ordisurf_extraction.R")
 
 for (i in names(si2[, 109:113])){
         tryCatch({
@@ -1374,9 +1376,39 @@ dev.off()
          axis.text.x = element_text(angle = 330, hjust = 0))
          
 # physicochemical relationships revamp
+## location:  "/Users/fanyang/Box\ Sync/Manure\ Foaming/R_allsamples/foaming_status_cc/spearman_hoeffding_cc/raw_counts/core_by_foamtype_new"
+
 fr.derep.meta.sig.uniq.top5 <- fr.derep.meta.sig.uniq %>% group_by(foam.type) %>% top_n(n=5, wt=abs(coefficient)) %>% data.frame()
 
-ggplot(fr.derep.meta.sig.uniq.top5, aes(x=plot_label, y=coefficient, fill=foam.type)) + geom_bar(stat="identity", position="dodge") +  coord_flip() + labs(x = "", y= "Correlation Coefficient")+theme_bw() + geom_text(aesf(label=plot_label, hjust = ifelse(coefficient> 0, 1, 0), y=0)) + theme(axis.text.y=element_blank(), axis.ticks.y=element_blank()) + scale_fill_manual(values=colors.foamtype) +theme(legend.title=element_blank()) + theme(legend.position=c(0.1, 0.9)) 
+
+cate<-data.frame(unique(rbind(as.matrix(fr.derep.meta.sig.uniq.top5$Var1), as.matrix(fr.derep.meta.sig.uniq.top5$Var2))))
+names(cate)<-"var"
+cate$category<-c("Physical", "Physical", "Physical", "Chemical", "Physical", "Chemical","Chemical","Chemical","Chemical","Chemical","Chemical","Chemical","Chemical","Physical","Chemical","Chemical")
+test<-as.matrix(fr.derep.meta.sig.uniq.top5[, 1:2])
+test[c(4, 6:8, 11), ]<-test[c(4, 6:8, 11), c(2, 1)]
+fr.derep.meta.sig.uniq.top5$reorg.Var1<-test[, 2]
+fr.derep.meta.sig.uniq.top5$reorg.Var2<-test[, 1]
+fr.derep.meta.sig.uniq.top5<-merge(fr.derep.meta.sig.uniq.top5, cate, by.x="reorg.Var1", by.y="var")
+fr.derep.meta.sig.uniq.top5<-merge(fr.derep.meta.sig.uniq.top5, cate, by.x="reorg.Var2", by.y="var")
+names(fr.derep.meta.sig.uniq.top5)[17:18]<-c("reorg.Var1.cate", "reorg.Var2.cate")
+fr.derep.meta.sig.uniq.top5$plot_label<-paste(fr.derep.meta.sig.uniq.top5$reorg.Var1, fr.derep.meta.sig.uniq.top5$reorg.Var2, sep="::")
+fr.derep.meta.sig.uniq.top5$plot_cate<-paste(fr.derep.meta.sig.uniq.top5$reorg.Var1.cate, fr.derep.meta.sig.uniq.top5$reorg.Var2.cate, sep="::")
+fr.derep.meta.sig.uniq.top5$plot_cate<-gsub("Chemical::Physical", "Physical::Chemical", fr.derep.meta.sig.uniq.top5$plot_cate)
+fr.derep.meta.sig.uniq.top5$plot_label<-gsub("MPR_slurry", "MPR", fr.derep.meta.sig.uniq.top5$plot_label)
+
+fr.derep.meta.sig.uniq.top5$pos_neg<-ifelse(fr.derep.meta.sig.uniq.top5$coefficient < 0, "neg", "pos")
+fr.derep.meta.sig.uniq.top5$plot_cate<-factor(fr.derep.meta.sig.uniq.top5$plot_cate, levels=c("Chemical::Chemical", "Physical::Chemical", "Physical::Physical"))
+fr.derep.meta.sig.uniq.top5<-fr.derep.meta.sig.uniq.top5 %>% group_by(plot_cate) %>% group_by(pos_neg) %>% arrange(-abs(coefficient)) %>% data.frame()
+fr.derep.meta.sig.uniq.top5$plot_index<-seq(1, 15)
+fr.derep.meta.sig.uniq.top5$plot_label<-reorder(fr.derep.meta.sig.uniq.top5$plot_label, fr.derep.meta.sig.uniq.top5$plot_index)
+
+
+ggplot(fr.derep.meta.sig.uniq.top5, aes(y=plot_label, x=coefficient, fill=foam.type)) + geom_bar(stat="identity", position="dodge") +  coord_flip() + labs(y = "", x= "Correlation Coefficient")+theme_bw() + geom_text(aes(label=plot_label, hjust = ifelse(coefficient> 0, 1, 0), y=0)) + theme(axis.text.y=element_blank(), axis.ticks.y=element_blank()) + scale_fill_manual(values=colors.foamtype) +theme(legend.title=element_blank()) + theme(legend.position=c(0.1, 0.9)) 
+
+pdf("~/Box Sync/Manure Foaming/Manuscript/figures_and_tables/manure_meta_sig_cc_top5.pdf", width=8, height=8)
+ggplot(fr.derep.meta.sig.uniq.top5, aes(x=plot_label, y=coefficient, fill=foam.type)) + geom_bar(stat="identity", position="dodge") +  labs(x = "", y= "Correlation Coefficient")+theme_bw() + geom_text(aes(label=plot_label, angle = 90, hjust = ifelse(coefficient> 0, 1, 0), y=0), size = 5) + theme(axis.ticks.x=element_blank(), axis.text.x=element_blank(), axis.text.y=element_text(angle = 90, face = "bold", size =14), axis.title.y=element_text(face="bold", size = 14)) + scale_fill_manual(values=colors.foamtype) +theme(legend.title=element_blank()) + theme(legend.position=c(0.1, 0.1)) + facet_wrap(~plot_cate, nrow=1, scales="free_x") +guides(fill = guide_legend(direction="horizontal", label.position = "top", label.hjust = 0.45, label.vjust= 0.7, label.theme=element_text(angle=90, size = 14, face="bold")))+ theme(legend.title = element_blank())+ theme(strip.text.x=element_text(face="bold", size=14), panel.border = element_rect(color="black"), strip.background=element_blank())
+dev.off()
+
 
 # mm and diet relationships
 fr.derep.meta.sig.uniq.mm_diet<-fr.derep.meta.sig.uniq[ fr.derep.meta.sig.uniq$Var2 %in% meta.diet$otu & fr.derep.meta.sig.uniq$Var1 %in% meta.meas$otu | fr.derep.meta.sig.uniq$Var1 %in% meta.diet$otu & fr.derep.meta.sig.uniq$Var2 %in% meta.meas$otu, ]
@@ -1386,5 +1418,7 @@ fr.derep.meta.sig.uniq.mm_diet.top5$plot_label<-paste(fr.derep.meta.sig.uniq.mm_
 fr.derep.meta.sig.uniq.mm_diet.top5 <- fr.derep.meta.sig.uniq.mm_diet.top5 %>% group_by(foam.type) %>% arrange(-abs(coefficient)) %>% data.frame()
 fr.derep.meta.sig.uniq.mm_diet.top5$plot_index<-seq(1, 15)
 fr.derep.meta.sig.uniq.mm_diet.top5$plot_label<-reorder(fr.derep.meta.sig.uniq.mm_diet.top5$plot_label, fr.derep.meta.sig.uniq.mm_diet.top5$plot_index)
+
+
 ggplot(fr.derep.meta.sig.uniq.mm_diet.top5, aes(x=plot_label, y=coefficient, fill=foam.type)) + geom_bar(stat="identity", position="dodge") +  coord_flip() + labs(x = "", y= "Correlation Coefficient")+theme_bw() + geom_text(aes(label=plot_label, hjust = ifelse(coefficient> 0, 1, 0), y=0)) + theme(axis.text.y=element_blank(), axis.ticks.y=element_blank()) + scale_fill_manual(values=colors.foamtype) +theme(legend.title=element_blank()) + theme(legend.position=c(0.07, 0.8)) 
          
