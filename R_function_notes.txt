@@ -82,6 +82,41 @@ pdf("../Manuscript/figures_and_tables/mcra_ellipse_mpr_arrow.pdf", height=10, wi
 ggplot.NMDS.ellipse.arrow(data.mds, mcra.envfit.df, si.ftype$foam.type, colors)
 dev.off()
 
+##### mcra 43 samples, ggplot2 nmds ellipse, mpr ordisurf ####
+source("/Users/fanyang/Documents/repos/R_code/R_functions/ordisurf_extraction.R")
+mpr.env<-data.frame(si.ftype[, c("SAMPLES", "ISU.Manure.Data..MPR_slurry")])
+mcra.ordisf<-ordi.sf(data.mds, mpr.env, "SAMPLES")
+#####
+Loading required package: permute
+Loading required package: lattice
+This is vegan 2.3-0
+
+Family: gaussian 
+Link function: identity 
+
+Formula:
+y ~ s(x1, x2, k = 10, bs = "tp", fx = FALSE)
+
+Parametric coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept) 0.080380   0.009193   8.744 1.05e-10 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Approximate significance of smooth terms:
+           edf Ref.df    F  p-value    
+s(x1,x2) 3.241      9 3.99 1.75e-06 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+R-sq.(adj) =  0.461   Deviance explained = 50.3%
+-REML = -52.604  Scale est. = 0.003634  n = 43
+####
+source("/Users/fanyang/Documents/repos/R_code/R_functions/ggplot_nmds_ordisurf.R")
+pdf("../Manuscript/figures_and_tables/mcra_ellipse_mpr_ordisurf.pdf", height=8, width=8)
+ggplot.NMDS.ordisurf(data.mds, mcra.ordisf, si.ftype$foam.type, ft.colors)
+dev.off()
+
 ##### bacterial 16s, ggplot2 nmds ellipse, mpr envfit arrow ###
 si.envfit<-si[, c("MPR_slurry", "Lysine", "SAMPLES", "Soybean.Meal", "Crude.Protein", "ADF", "Crude.Fiber", "Manure.Temperature", "Manure.Depth", "DDGS", "NDF", "Organic.N")]
 source("~/Documents/repos/R_code/R_functions/nmds_envfit_arrow_extraction.R")
@@ -90,6 +125,40 @@ envfit.df.0.05<-subset(envfit.df, pval <= 0.05)
 source("~/Documents/repos/R_code/R_functions/ggplot_nmds_ellipse_and_arrow.R")
 pdf("../Manuscript/figures_and_tables/mcra_ellipse_mpr_arrow2.pdf", height=10, width=10)
 ggplot.NMDS.ellipse.arrow(data.mds, envfit.df[1, ], si$foam.type, colors)
+dev.off()
+##### bacterial 16s, ggplot2 nmds ellipse, mpr ordisurf arrow ####
+source("/Users/fanyang/Documents/repos/R_code/R_functions/ordisurf_extraction.R")
+mpr.env<-data.frame(si[, c("SAMPLES", "MPR_slurry")])
+mpr.ordisf<-ordi.sf(data.mds, mpr.env, "SAMPLES")
+##
+Loading required package: permute
+Loading required package: lattice
+This is vegan 2.3-0
+
+Family: gaussian 
+Link function: identity 
+
+Formula:
+y ~ s(x1, x2, k = 10, bs = "tp", fx = FALSE)
+
+Parametric coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept) 0.096969   0.004192   23.14   <2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Approximate significance of smooth terms:
+           edf Ref.df    F p-value    
+s(x1,x2) 1.782      9 1.81 0.00013 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+R-sq.(adj) =  0.0396   Deviance explained = 4.39%
+-REML = -415.49  Scale est. = 0.0069572  n = 396
+###
+source("/Users/fanyang/Documents/repos/R_code/R_functions/ggplot_nmds_ordisurf.R")
+pdf("../Manuscript/figures_and_tables/bac_ellipse_mpr_ordisurf.pdf", height=8, width=8)
+ggplot.NMDS.ordisurf(data.mds, mpr.ordisf, si$foam.type, ft.colors)
 dev.off()
 
 

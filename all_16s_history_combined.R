@@ -7746,3 +7746,18 @@ p1 + stat_summary(fun.y = mean, geom="bar", position="dodge") + stat_summary(fun
 dev.off()
 save.image("all_16s_physeq.RData")
 savehistory("temp.R")
+load("all_16s_physeq.RData")
+source("/Users/fanyang/Documents/repos/R_code/R_functions/ordisurf_extraction.R")
+mpr.env<-data.frame(si[, c("SAMPLES", "MPR_slurry")])
+mpr.ordisf<-ordi.sf(data.mds, mpr.env, "SAMPLES")
+source("/Users/fanyang/Documents/repos/R_code/R_functions/ggplot_nmds_ordisurf.R")
+ls()
+colors
+ggplot.NMDS.ordisurf(data.mds, mpr.ordisf, si$foam.type, ft.colors)
+ggplot.NMDS.ordisurf(data.mds, mpr.ordisf, si$foam.type, colors)
+ft.colors<-colors
+pdf("../Manuscript/figures_and_tables/bac_ellipse_mpr_ordisurf.pdf", height=8, width=8)
+ggplot.NMDS.ordisurf(data.mds, mpr.ordisf, si$foam.type, ft.colors)
+dev.off()
+save.image("all_16s_physeq.RData")
+savehistory("temp.R")
