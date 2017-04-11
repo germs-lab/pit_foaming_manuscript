@@ -8,7 +8,7 @@
 5. Generate a histogram to evaluate sample coverage from sequencing.   
 6. Save any output that could be used downstream directly.  
 
-###1. This step does all of the above and generates 3 different directories. In terminal, type:   
+### 1. This step does all of the above and generates 3 different directories. In terminal, type:   
 ```
 cd ~/pit_foaming_manuscript  
 Rscript codes/R_scripts/community_sample_processing_phyloseq.R raw_data/otu_table.txt raw_data/taxa_table.txt
