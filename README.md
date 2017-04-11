@@ -24,7 +24,7 @@ git clone https://github.com/germs-lab/pit_foaming_manuscript
 ```
 
 ## Procedures:   
-1. Preprocessing data and assess the overall community data   
+1. [Preprocessing data and assess the overall community data](./1_preprocessing.md)    
 2. Community analyses with incorporated manure measurements   
 3. Correlation analyses   
 
