@@ -86,6 +86,8 @@ data.min10k <- prune_taxa(taxa_sums(data.min10k) > 0, data.min10k)
 
 
 ### note to Fan ###
+```
 load("~/Box Sync/Manure Foaming/Manuscript/sorting_things_out.RData")
 save.image("~/Box Sync/Manure Foaming/Manuscript/sorting_things_out.R")
 ls()
+```
