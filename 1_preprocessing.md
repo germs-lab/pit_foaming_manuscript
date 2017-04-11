@@ -1,5 +1,4 @@
 # Preprocessing community data
----
  
 ## Objectives:  
 1. Create phyloseq objects using raw OTU table and taxonomy table.   
@@ -10,13 +9,13 @@
 6. Save any output that could be used downstream directly.  
 
 ### 1. This step does all of the above and generates 3 different directories. In terminal, type:   
-```
+```bash
 cd ~/pit_foaming_manuscript  
 Rscript codes/R_scripts/community_sample_processing_phyloseq.R raw_data/otu_table.txt raw_data/taxa_table.txt
 ```
 
 ### 2. Sample trimming in `R` (from outputs generated from step 1):  
-```
+```R
 library(ggplot2)
 
 # import the sample coverage data:
