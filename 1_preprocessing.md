@@ -1,5 +1,6 @@
 # Preprocessing community data
-
+---
+ 
 ## Objectives:  
 1. Create phyloseq objects using raw OTU table and taxonomy table.   
 2. Eliminate ambiguous rare OTUs that summed up to less than 5 across all samples.  
@@ -35,11 +36,16 @@ library(phyloseq)
 
 # import phyloseq object from step 1:  
 data.phy <- readRDS("RDS_objects/taxsum_min5_sequence_phyloseq.RDS")
-##> data.phy
-##phyloseq-class experiment-level object
-##otu_table()   OTU Table:         [ 8338 taxa and 547 samples ]
-##tax_table()   Taxonomy Table:    [ 8338 taxa by 6 taxonomic ranks ]
+```
 
+>>>
+> data.phy
+phyloseq-class experiment-level object
+otu_table()   OTU Table:         [ 8338 taxa and 547 samples ]
+tax_table()   Taxonomy Table:    [ 8338 taxa by 6 taxonomic ranks ]
+>>>
+
+``` 
 # removing sample with total sequences less than 10000. Also remove the taxa that are all 0 across samples:   
 data.min10k <- prune_samples(sample_sums(data.phy) >= 10000, data.phy)
 ##> data.min10k
