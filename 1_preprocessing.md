@@ -8,6 +8,8 @@
 5. Generate a histogram to evaluate sample coverage from sequencing.   
 6. Save any output that could be used downstream directly.  
 
+
+### 1. Bacterial: 
 ### 1. This step does all of the above and generates 3 different directories. In terminal, type:   
 ```bash
 cd ~/pit_foaming_manuscript  
@@ -37,28 +39,28 @@ library(phyloseq)
 data.phy <- readRDS("RDS_objects/taxsum_min5_sequence_phyloseq.RDS")
 ```
 
-    ##> data.phy
-    ##phyloseq-class experiment-level object
-    ##otu_table()   OTU Table:         [ 8338 taxa and 547 samples ]
-    ##tax_table()   Taxonomy Table:    [ 8338 taxa by 6 taxonomic ranks ]
+    ## > data.phy
+    ## phyloseq-class experiment-level object
+    ## otu_table()   OTU Table:         [ 8338 taxa and 547 samples ]
+    ## tax_table()   Taxonomy Table:    [ 8338 taxa by 6 taxonomic ranks ]
 
 ```R 
 # removing sample with total sequences less than 10000. Also remove the taxa that are all 0 across samples:   
 data.min10k <- prune_samples(sample_sums(data.phy) >= 10000, data.phy)
 ```  
 
-    ##> data.min10k
-    ##phyloseq-class experiment-level object
-    ##otu_table()   OTU Table:         [ 8338 taxa and 503 samples ]
-    ##tax_table()   Taxonomy Table:    [ 8338 taxa by 6 taxonomic ranks ]
+    ## > data.min10k
+    ## phyloseq-class experiment-level object
+    ## otu_table()   OTU Table:         [ 8338 taxa and 503 samples ]
+    ## tax_table()   Taxonomy Table:    [ 8338 taxa by 6 taxonomic ranks ]
 
 ```R  
 data.min10k <- prune_taxa(taxa_sums(data.min10k) > 0, data.min10k)
 ```     
-    ##> data.min10k
-    ##phyloseq-class experiment-level object
-    ##otu_table()   OTU Table:         [ 8336 taxa and 503 samples ]
-    ##tax_table()   Taxonomy Table:    [ 8336 taxa by 6 taxonomic ranks ]
+    ## > data.min10k
+    ## phyloseq-class experiment-level object
+    ## otu_table()   OTU Table:         [ 8336 taxa and 503 samples ]
+    ## tax_table()   Taxonomy Table:    [ 8336 taxa by 6 taxonomic ranks ]
 
 
 ### 3. Incorporating sample metadata (samples without any metadata will be removed):    
@@ -66,8 +68,8 @@ data.min10k <- prune_taxa(taxa_sums(data.min10k) > 0, data.min10k)
 si <- read.delim("raw_data/sample_meta_data.txt")
 ```    
 
-    ## > dim(si)
-    ##[1] 488 112
+    ##  > dim(si)
+    ## [1] 488 112
 
 ```R
 # add row names to sample metadata
@@ -78,16 +80,38 @@ sample_data(data.min10k) <- si
 data.min10k <- prune_taxa(taxa_sums(data.min10k) > 0, data.min10k)
 ```
 
-    ##> data.min10k
-    ##phyloseq-class experiment-level object
-    ##otu_table()   OTU Table:         [ 8328 taxa and 488 samples ]
-    ##sample_data() Sample Data:       [ 488 samples by 112 sample variables ]
-    ##tax_table()   Taxonomy Table:    [ 8328 taxa by 6 taxonomic ranks ]
+    ## > data.min10k
+    ## phyloseq-class experiment-level object
+    ## otu_table()   OTU Table:         [ 8328 taxa and 488 samples ]
+    ## sample_data() Sample Data:       [ 488 samples by 112 sample variables ]
+    ## tax_table()   Taxonomy Table:    [ 8328 taxa by 6 taxonomic ranks ]
+
+
+### 4. Creating relative abundance phyloseq object:   
+```R
+# standardizing by total sequence reads. Because the resulted fractions introduce many 0's and it's difficult to read.   
+# therefore, we times the final fraction by 1e5. 
+data.min10k.1e5 <- transform_sample_counts(data.min10k, function(x) 1e5 * x / sum(x))
+```
+    ## > data.min10k.1e5
+    ## phyloseq-class experiment-level object
+    ## otu_table()   OTU Table:         [ 8328 taxa and 488 samples ]
+    ## sample_data() Sample Data:       [ 488 samples by 112 sample variables ]
+    ## tax_table()   Taxonomy Table:    [ 8328 taxa by 6 taxonomic ranks ]
 
 
 ### note to Fan ###
 ```
 load("~/Box Sync/Manure Foaming/Manuscript/sorting_things_out.RData")
+library(phyloseq)
+library(ggplot2)
+
+
 save.image("~/Box Sync/Manure Foaming/Manuscript/sorting_things_out.R")
 ls()
+getwd()
+
+subset_taxa(data.min10k, domain!="Archaea" & domain!="unclassified_Root")
+data.min10k
+
 ```
