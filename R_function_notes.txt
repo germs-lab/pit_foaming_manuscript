@@ -1237,7 +1237,6 @@ for (i in c(1:10)){
 }
 
 
-
 ##########################
 ## plot core genus ######
 
@@ -1352,6 +1351,8 @@ p1 + stat_summary(fun.y = mean, geom="bar", position="dodge") + stat_summary(fun
 
 dev.off()
 
+
+########################################################
 #### unique spearman significant correlation heatmap ###
 test2<-fr.spsig.uniq.meta_subset[order(fr.spsig.uniq.meta_subset$phylum.Var1), ]
 test2$index<-seq(1, 616)
@@ -1491,3 +1492,71 @@ fr.derep.meta.sig.uniq.mm_diet.top5$plot_label<-reorder(fr.derep.meta.sig.uniq.m
 
 ggplot(fr.derep.meta.sig.uniq.mm_diet.top5, aes(x=plot_label, y=coefficient, fill=foam.type)) + geom_bar(stat="identity", position="dodge") +  coord_flip() + labs(x = "", y= "Correlation Coefficient")+theme_bw() + geom_text(aes(label=plot_label, hjust = ifelse(coefficient> 0, 1, 0), y=0)) + theme(axis.text.y=element_blank(), axis.ticks.y=element_blank()) + scale_fill_manual(values=colors.foamtype) +theme(legend.title=element_blank()) + theme(legend.position=c(0.07, 0.8)) 
          
+         
+##### core net work important otu's ####
+> subset(fr.derep.otu.sig, Var1 == "LCFA" | Var2== "LCFA")
+         Var2 Var1 coefficient foam.type dependence_type otu.1 genus.1 class.1
+46  OTU_10765 LCFA   0.5124040   No Foam        Spearman  LCFA    LCFA    LCFA
+71   OTU_1425 LCFA   0.5670745   No Foam        Spearman  LCFA    LCFA    LCFA
+96  OTU_15145 LCFA   0.4548479      Foam        Spearman  LCFA    LCFA    LCFA
+109  OTU_1610 LCFA   0.2678571     Crust       Hoeffding  LCFA    LCFA    LCFA
+332   OTU_379 LCFA   0.4539968      Foam        Spearman  LCFA    LCFA    LCFA
+464   OTU_507 LCFA   0.4674877      Foam        Spearman  LCFA    LCFA    LCFA
+703   OTU_663 LCFA   0.6472906      Foam        Spearman  LCFA    LCFA    LCFA
+        otu.2                      genus.2                 class.2
+46  OTU_10765                  Tissierella              Clostridia
+71   OTU_1425               Sporobacterium              Clostridia
+96  OTU_15145      unclassified_Firmicutes unclassified_Firmicutes
+109  OTU_1610                Streptococcus                 Bacilli
+332   OTU_379 unclassified_Ruminococcaceae              Clostridia
+464   OTU_507           Saccharofermentans              Clostridia
+703   OTU_663                  Sporobacter              Clostridia
+
+> subset(fr.derep.otu.sig, Var1 == "SCFA" | Var2== "SCFA")
+     Var2     Var1 coefficient foam.type dependence_type    otu.1
+1389 SCFA OTU_7989 -0.50185013   No Foam        Spearman OTU_7989
+1390 SCFA  OTU_432  0.67391306   No Foam        Spearman  OTU_432
+1391 SCFA OTU_7671 -0.51663405   No Foam        Spearman OTU_7671
+1392 SCFA OTU_6482 -0.57739133   No Foam        Spearman OTU_6482
+1393 SCFA OTU_1444 -0.66608697   No Foam        Spearman OTU_1444
+1394 SCFA OTU_4886 -0.49391305   No Foam        Spearman OTU_4886
+1395 SCFA OTU_6930  0.06941038      Foam       Hoeffding OTU_6930
+1396 SCFA OTU_1665 -0.53217393   No Foam        Spearman OTU_1665
+1397 SCFA  OTU_260 -0.58260870   No Foam        Spearman  OTU_260
+1398 SCFA OTU_9387 -0.63186812      Foam        Spearman OTU_9387
+1399 SCFA OTU_1425  0.09733202   No Foam       Hoeffding OTU_1425
+                       genus.1          class.1 otu.2 genus.2 class.2
+1389            Clostridium XI       Clostridia  SCFA    SCFA    SCFA
+1390             Lactobacillus          Bacilli  SCFA    SCFA    SCFA
+1391               Tissierella       Clostridia  SCFA    SCFA    SCFA
+1392            Clostridium XI       Clostridia  SCFA    SCFA    SCFA
+1393 Clostridium sensu stricto       Clostridia  SCFA    SCFA    SCFA
+1394            Clostridium XI       Clostridia  SCFA    SCFA    SCFA
+1395               Tissierella       Clostridia  SCFA    SCFA    SCFA
+1396              Turicibacter Erysipelotrichia  SCFA    SCFA    SCFA
+1397 Clostridium sensu stricto       Clostridia  SCFA    SCFA    SCFA
+1398               Tissierella       Clostridia  SCFA    SCFA    SCFA
+1399            Sporobacterium       Clostridia  SCFA    SCFA    SCFA
+
+> subset(fr.derep.otu.sig, Var1 == "SCFA" & class.2 == "Bacilli"|Var2 == "SCFA" & class.1 == "Bacilli")
+     Var2    Var1 coefficient foam.type dependence_type   otu.1       genus.1
+1390 SCFA OTU_432   0.6739131   No Foam        Spearman OTU_432 Lactobacillus
+     class.1 otu.2 genus.2 class.2
+1390 Bacilli  SCFA    SCFA    SCFA
+
+> subset(bac_mcra_cc.lower.otus.sig.strong, class1.x == "Bacteroidia" & class1.y == "unclassified_Archaea"|  class1.y == "Bacteroidia" & class1.x == "unclassified_Archaea")
+        Var2      Var1 coefficient foam.type dependenc_type     otu.x domain.x
+40   OTU_202 OTU_10061   0.8574392         F       Spearman OTU_10061 Bacteria
+51   OTU_217 OTU_10159   0.7198145         F       Spearman OTU_10159 Bacteria
+73   OTU_261 OTU_10061   0.8208116         F       Spearman OTU_10061 Bacteria
+419 OTU_9609   OTU_817   0.7474136         F       Spearman   OTU_817  Archaea
+                 class.x    otu.y domain.y              class.y
+40           Bacteroidia  OTU_202  Archaea unclassified_Archaea
+51           Bacteroidia  OTU_217  Archaea unclassified_Archaea
+73           Bacteroidia  OTU_261  Archaea unclassified_Archaea
+419 unclassified_Archaea OTU_9609 Bacteria          Bacteroidia
+                class1.x             class1.y          X1                   X2
+40           Bacteroidia unclassified_Archaea Bacteroidia unclassified_Archaea
+51           Bacteroidia unclassified_Archaea Bacteroidia unclassified_Archaea
+73           Bacteroidia unclassified_Archaea Bacteroidia unclassified_Archaea
+419 unclassified_Archaea          Bacteroidia Bacteroidia unclassified_Archaea
