@@ -126,7 +126,7 @@ source("~/Documents/repos/R_code/R_functions/ggplot_nmds_ellipse_and_arrow.R")
 pdf("../Manuscript/figures_and_tables/mcra_ellipse_mpr_arrow2.pdf", height=10, width=10)
 ggplot.NMDS.ellipse.arrow(data.mds, envfit.df[1, ], si$foam.type, colors)
 dev.off()
-##### bacterial 16s, ggplot2 nmds ellipse, mpr ordisurf arrow ####
+##### bacterial 16s, ggplot2 nmds ellipse, mpr ordisurf ####
 source("/Users/fanyang/Documents/repos/R_code/R_functions/ordisurf_extraction.R")
 mpr.env<-data.frame(si[, c("SAMPLES", "MPR_slurry")])
 mpr.ordisf<-ordi.sf(data.mds, mpr.env, "SAMPLES")
@@ -1236,6 +1236,14 @@ for (i in c(1:10)){
 	totu.bray.gof<-rbind(totu.bray.gof, temp)
 }
 
+###########################
+### ftype core otu Venn diagram ###
+library(VennDiagram)
+core.otu.venn <- list(nf.core.otu$core, c.core.otu$core, f.core.otu$core)
+names(core.otu.venn) <- c("No-foam", "Crust", "Foam")
+#> colors
+#[1] "#1B9E77" "#D95F02" "#7570B3"
+venn.diagram(core.otu.venn, filename= "~/Downloads/test.tiff", col=colors, cex=1.5, cat.cex=2, margin=0.1, lwd = 5, cat.dist = c(0.08, 0.06, 0.04))
 
 ##########################
 ## plot core genus ######
