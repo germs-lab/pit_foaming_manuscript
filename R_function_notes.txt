@@ -91,26 +91,29 @@ Loading required package: permute
 Loading required package: lattice
 This is vegan 2.3-0
 
-Family: gaussian 
-Link function: identity 
+> mcra.ordisf<-ordi.sf(data.mds, mpr.env, "SAMPLES")
+
+Family: quasipoisson 
+Link function: log 
 
 Formula:
 y ~ s(x1, x2, k = 10, bs = "tp", fx = FALSE)
 
 Parametric coefficients:
             Estimate Std. Error t value Pr(>|t|)    
-(Intercept) 0.080380   0.009193   8.744 1.05e-10 ***
+(Intercept)  -2.7802     0.1238  -22.45   <2e-16 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Approximate significance of smooth terms:
-           edf Ref.df    F  p-value    
-s(x1,x2) 3.241      9 3.99 1.75e-06 ***
+           edf Ref.df     F  p-value    
+s(x1,x2) 1.925      9 4.712 1.43e-07 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-R-sq.(adj) =  0.461   Deviance explained = 50.3%
--REML = -52.604  Scale est. = 0.003634  n = 43
+R-sq.(adj) =  0.543   Deviance explained =   55%
+-REML = -46.266  Scale est. = 0.033464  n = 43
+
 ####
 source("/Users/fanyang/Documents/repos/R_code/R_functions/ggplot_nmds_ordisurf.R")
 pdf("../Manuscript/figures_and_tables/mcra_ellipse_mpr_ordisurf.pdf", height=8, width=8)
@@ -131,30 +134,27 @@ source("/Users/fanyang/Documents/repos/R_code/R_functions/ordisurf_extraction.R"
 mpr.env<-data.frame(si[, c("SAMPLES", "MPR_slurry")])
 mpr.ordisf<-ordi.sf(data.mds, mpr.env, "SAMPLES")
 ##
-Loading required package: permute
-Loading required package: lattice
-This is vegan 2.3-0
-
-Family: gaussian 
-Link function: identity 
+Family: quasipoisson 
+Link function: log 
 
 Formula:
 y ~ s(x1, x2, k = 10, bs = "tp", fx = FALSE)
 
 Parametric coefficients:
             Estimate Std. Error t value Pr(>|t|)    
-(Intercept) 0.096969   0.004192   23.14   <2e-16 ***
+(Intercept) -2.34660    0.04398  -53.35   <2e-16 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 Approximate significance of smooth terms:
-           edf Ref.df    F p-value    
-s(x1,x2) 1.782      9 1.81 0.00013 ***
+          edf Ref.df     F p-value    
+s(x1,x2) 1.78      9 1.779 0.00015 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-R-sq.(adj) =  0.0396   Deviance explained = 4.39%
--REML = -415.49  Scale est. = 0.0069572  n = 396
+R-sq.(adj) =  0.0376   Deviance explained = 4.43%
+-REML = -324.21  Scale est. = 0.072587  n = 396
+
 ###
 source("/Users/fanyang/Documents/repos/R_code/R_functions/ggplot_nmds_ordisurf.R")
 pdf("../Manuscript/figures_and_tables/bac_ellipse_mpr_ordisurf.pdf", height=8, width=8)
