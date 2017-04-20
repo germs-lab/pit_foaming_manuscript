@@ -25,33 +25,36 @@ df<-data.frame()
 for (i in names(si[, cn])){
         tryCatch({
 		results.rela<-adonis(totu ~ as.factor(si[, i]), strata=si$id)
-		df1<-data.frame(i, results.rela$aov.tab[5][1, ], results.rela$aov.tab[6][1, ])
+		df1<-data.frame(i, results.rela$aov.tab[4][1, ], results.rela$aov.tab[5][1, ],  results.rela$aov.tab[6][1, ])
 		totu.trans<-decostand(totu, "pa")
 		results.pa<-adonis(totu.trans ~ as.factor(si[, i]), strata=si$id)
-		df2<-data.frame(i, results.pa$aov.tab[5][1, ], results.pa$aov.tab[6][1, ])
+		df2<-data.frame(i, results.pa$aov.tab[4][1, ],  results.pa$aov.tab[5][1, ], results.pa$aov.tab[6][1, ])
 		df.temp<-cbind(df1,df2)
 		df<-rbind(df, df.temp)
         }, error=function(e){cat("ERROR :", conditionMessage(e), "\n")})
 }
-names(df)<-c("factor", "rela.adonis_R2", "rela.Pr(>F)", "factor", "pa.adonis_R2", "pa.Pr(>F)")
+names(df)<-c("factor", "rela.F.model", "rela.adonis_R2", "rela.Pr(>F)", "factor", "pa.F.model", "pa.adonis_R2", "pa.Pr(>F)")
 
-#### adonis mcra 41 samples ####
+
+
+#### adonis mcra 43 samples ####
 totu<-t(data.frame(otu_table(mcra_ftype_shared_bac.phy)))
-si<-data.frame(sample_data(mcra_ftype_shared_bac.phy))
-cn<-names(si[, c(6, 8, 10:12, 22, 78:80, 88)])
+si.ftype<-data.frame(sample_data(mcra_ftype_shared_bac.phy))
+cn<-names(si.ftype[, c(6, 8, 10:12, 22, 78:80, 88)])
 df<-data.frame()
-for (i in names(si[, cn])){
+for (i in names(si.ftype[, cn])){
         tryCatch({
-		results.rela<-adonis(totu ~ as.factor(si[, i]), strata=si$Barn..FK_Farm)
-		df1<-data.frame(i, results.rela$aov.tab[5][1, ], results.rela$aov.tab[6][1, ])
+		results.rela<-adonis(totu ~ as.factor(si.ftype[, i]))
+		df1<-data.frame(i, results.rela$aov.tab[4][1, ], results.rela$aov.tab[5][1, ], results.rela$aov.tab[6][1, ])
 		totu.trans<-decostand(totu, "pa")
-		results.pa<-adonis(totu.trans ~ as.factor(si[, i]), strata=si$Barn..FK_Farm)
-		df2<-data.frame(i, results.pa$aov.tab[5][1, ], results.pa$aov.tab[6][1, ])
+		results.pa<-adonis(totu.trans ~ as.factor(si.ftype[, i]))
+		df2<-data.frame(i, results.pa$aov.tab[4][1, ], results.pa$aov.tab[5][1, ], results.pa$aov.tab[6][1, ])
 		df.temp<-cbind(df1,df2)
 		df<-rbind(df, df.temp)
         }, error=function(e){cat("ERROR :", conditionMessage(e), "\n")})
 }
-names(df)<-c("factor", "rela.adonis_R2", "rela.Pr(>F)", "factor", "pa.adonis_R2", "pa.Pr(>F)")
+names(df)<-c("factor", "rela.F.model", "rela.adonis_R2", "rela.Pr(>F)", "factor", "pa.F.model", "pa.adonis_R2", "pa.Pr(>F)")
+
 ### adonis bac 41 samples (with shared information of mcra ###
 totu<-t(data.frame(otu_table(bac_mcra_subset.phy)))
 si<-data.frame(sample_data(bac_mcra_subset.phy))
@@ -1270,7 +1273,7 @@ p1<-data_1e5.ftype.core.genus.ft.bf100[ data_1e5.ftype.core.genus.ft.bf100$genus
 
 pdf("../Manuscript/figures_and_tables/bacteria_top10_abundant_most_significant_genera.pdf", height=8, width=10)
 
-p1 + stat_summary(fun.y = mean, geom="bar", position="dodge") + stat_summary(fun.data = mean_cl_boot, geom="errorbar", position = position_dodge(width = 0.90), width = 0.2)+ theme_classic() +theme(axis.line.x = element_line(colour = 'black', size=0.5, linetype='solid'),axis.line.y = element_line(colour = 'black', size=0.5, linetype='solid')) + scale_fill_brewer(palette="Dark2") + theme(axis.title.x=element_blank(), axis.title.y=element_text(size=14, face="bold")) + theme(axis.text.x=element_text(size=14, face="bold", angle = 90, hjust = 1, vjust = 0.5), axis.text.y=element_text(angle = 90, hjust =0.5, vjust =0.5, size=12, face="bold")) + ylab("Bacteria Relative Abundance (1e-5)") + facet_grid(~most_abundant, scales="free", space="free") + theme(legend.position = "none")+ theme(strip.text.x=element_text(angle=90, face="bold", size=14))
+p1 + stat_summary(fun.y = mean, geom="bar", position="dodge") + stat_summary(fun.data = mean_cl_boot, geom="errorbar", position = position_dodge(width = 0.90), width = 0.2)+ theme_classic() +theme(axis.line.x = element_line(colour = 'black', size=0.5, linetype='solid'),axis.line.y = element_line(colour = 'black', size=0.5, linetype='solid')) + scale_fill_brewer(palette="Dark2") + theme(axis.title.x=element_blank(), axis.title.y=element_text(size=14, face="bold")) + theme(axis.text.x=element_text(size=14, face="bold", color="black", angle = 90, hjust = 1, vjust = 0.5), axis.text.y=element_text(angle = 90, hjust =0.5, vjust =0.5, size=12, face="bold", color="black")) + ylab("Bacteria Relative Abundance (1e-5)") + facet_grid(~most_abundant, scales="free", space="free") + theme(legend.position = "none")+ theme(strip.text.x=element_text(angle=90, face="bold", size=14))
 
 dev.off()
 
@@ -1353,9 +1356,9 @@ scale_fill_manual(guide = guide_legend(label.theme = element_text(angle=90), dir
 theme(axis.title.x=element_blank(), axis.title.y=element_text(size=14, face="bold")) + theme(axis.text.x=element_text(size=14, face="bold", angle = 90, hjust = 1, vjust = 0.5), axis.text.y=element_text(size=12, face="bold")) + ylab("Relative Abundance (1e-5)") + theme(legend.title = element_blank(), legend.text=element_text(size=10, face="bold"))+ facet_wrap(~most_abundant, scales="free", ncol=2) + theme(strip.text.x=element_text(angle=90, face="bold", size=14)) 
 
 		## for a plot to be rotated ##
-pdf("../Manuscript/figures_and_tables/mcra_abundant_most_significant_genera.pdf", height=8, width=6)
+pdf("../Manuscript/figures_and_tables/mcra_abundant_most_significant_genera.pdf", height=8, width=4)
 
-p1 + stat_summary(fun.y = mean, geom="bar", position="dodge") + stat_summary(fun.data = mean_cl_boot, geom="errorbar", position = position_dodge(width = 0.90), width = 0.2)+ theme_classic() +theme(axis.line.x = element_line(colour = 'black', size=0.5, linetype='solid'),axis.line.y = element_line(colour = 'black', size=0.5, linetype='solid')) + scale_fill_brewer(palette="Dark2") + theme(axis.title.x=element_blank(), axis.title.y=element_text(size=14, face="bold")) + theme(axis.text.x=element_text(size=14, face="bold", angle = 90, hjust = 1, vjust = 0.5), axis.text.y=element_text(angle = 90, hjust =0.5, vjust =0.5, size=12, face="bold")) + ylab("Methanogen Relative Abundance (1e-5)") + facet_wrap(~most_abundant, scales="free", ncol=2) + guides(fill = guide_legend(direction="horizontal", label.position = "top", label.hjust = 0.45, label.vjust= 0.7, label.theme=element_text(angle=90, size = 14, face="bold")))+ theme(legend.title = element_blank())+ theme(strip.text.x=element_text(angle=90, face="bold", size=14))
+p1 + stat_summary(fun.y = mean, geom="bar", position="dodge") + stat_summary(fun.data = mean_cl_boot, geom="errorbar", position = position_dodge(width = 0.90), width = 0.2)+ theme_classic() +theme(axis.line.x = element_line(colour = 'black', size=0.5, linetype='solid'),axis.line.y = element_line(colour = 'black', size=0.5, linetype='solid')) + scale_fill_brewer(palette="Dark2") + theme(axis.title.x=element_blank(), axis.title.y=element_text(size=14, face="bold", color="black")) + theme(axis.text.x=element_text(size=14, face="bold", color="black", angle = 90, hjust = 1, vjust = 0.5), axis.text.y=element_text(angle = 90, hjust =0.5, vjust =0.5, size=12, face="bold", color = "black")) + ylab("Methanogen Relative Abundance (1e-5)") + facet_wrap(~most_abundant, scales="free", ncol=2) + guides(fill = guide_legend(direction="horizontal", label.position = "top", label.hjust = 0.45, label.vjust= 0.7, label.theme=element_text(angle=90, size = 14, face="bold")))+ theme(legend.title = element_blank())+ theme(strip.text.x=element_text(angle=90, face="bold", size=14))
 
 dev.off()
 
@@ -1386,6 +1389,17 @@ for (i in unique(sample_data(mcra_1e5_ftype.phy)$foam.type)){
     print("DONE!")
 }
 
+mcra_core_otu.venn <- list()
+for (i in unique(sample_data(mcra_1e5_ftype.phy)$foam.type)){
+     temp<-subset_samples(mcra_1e5_ftype.phy, foam.type == i)
+    n = nsamples(temp)
+     temp.core<-filter_taxa(temp, function(x) sum(x >0 ) >= (1*length(x)), TRUE)
+    print(i)
+    temp.core.otu<-data.frame(taxa_names(temp.core))
+    mcra_core_otu.venn<-c(mcra_core_otu.venn, temp.core.otu)
+    print("DONE!")
+}
+names(mcra_core_otu.venn)<-c("Foam", "No-foam", "Crust")
 
 #### triangle heatmap: meta data only ######
 #### sorting #########
