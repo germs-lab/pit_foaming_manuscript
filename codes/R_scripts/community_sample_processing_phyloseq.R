@@ -30,7 +30,8 @@ otu <- read.delim(args[1], row.names = 1) #read in otu table
 print("the dimension of the OTU table is: ")
 dim(otu)
 
-tax <- read.delim(args[2], row.names=1) #read in taxa table
+tax <- read.delim(args[2]) #read in taxa table
+row.names(tax) <- tax$OTUS
 # check taxa table dimension
 print("the dimension of the taxa table is: ")
 dim(tax)

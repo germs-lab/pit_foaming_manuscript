@@ -1273,7 +1273,7 @@ p1<-data_1e5.ftype.core.genus.ft.bf100[ data_1e5.ftype.core.genus.ft.bf100$genus
 
 pdf("../Manuscript/figures_and_tables/bacteria_top10_abundant_most_significant_genera.pdf", height=8, width=10)
 
-p1 + stat_summary(fun.y = mean, geom="bar", position="dodge") + stat_summary(fun.data = mean_cl_boot, geom="errorbar", position = position_dodge(width = 0.90), width = 0.2)+ theme_classic() +theme(axis.line.x = element_line(colour = 'black', size=0.5, linetype='solid'),axis.line.y = element_line(colour = 'black', size=0.5, linetype='solid')) + scale_fill_brewer(palette="Dark2") + theme(axis.title.x=element_blank(), axis.title.y=element_text(size=14, face="bold")) + theme(axis.text.x=element_text(size=14, face="bold", color="black", angle = 90, hjust = 1, vjust = 0.5), axis.text.y=element_text(angle = 90, hjust =0.5, vjust =0.5, size=12, face="bold", color="black")) + ylab("Bacteria Relative Abundance (1e-5)") + facet_grid(~most_abundant, scales="free", space="free") + theme(legend.position = "none")+ theme(strip.text.x=element_text(angle=90, face="bold", size=14))
+p1 + stat_summary(fun.y = mean, geom="bar", position="dodge") + stat_summary(fun.data = mean_cl_boot, geom="errorbar", position = position_dodge(width = 0.90), width = 0.2)+ theme_classic() +theme(axis.line.x = element_line(colour = 'black', size=0.5, linetype='solid'),axis.line.y = element_line(colour = 'black', size=0.5, linetype='solid')) + scale_fill_brewer(palette="Dark2") + theme(axis.title.x=element_blank(), axis.title.y=element_text(size=14, face="bold")) + theme(axis.text.x=element_text(size=14, face="bold", color="black", angle = 90, hjust = 1, vjust = 0.5), axis.text.y=element_text(angle = 90, hjust =0.5, vjust =0.5, size=12, face="bold", color="black")) + ylab("Bacteria Relative Abundance (1e-5)") + facet_grid(~most_abundant, scales="free", space="free") + guides(fill = guide_legend(direction="horizontal", label.position = "top", label.hjust = 0.45, label.vjust= 0.7, label.theme=element_text(angle=90, size = 14, face="bold")))+ theme(legend.title = element_blank()) + theme(legend.position = c(0.85, 0.7)) + theme(strip.text.x=element_text(angle=90, face="bold", size=14))
 
 dev.off()
 
@@ -1356,9 +1356,9 @@ scale_fill_manual(guide = guide_legend(label.theme = element_text(angle=90), dir
 theme(axis.title.x=element_blank(), axis.title.y=element_text(size=14, face="bold")) + theme(axis.text.x=element_text(size=14, face="bold", angle = 90, hjust = 1, vjust = 0.5), axis.text.y=element_text(size=12, face="bold")) + ylab("Relative Abundance (1e-5)") + theme(legend.title = element_blank(), legend.text=element_text(size=10, face="bold"))+ facet_wrap(~most_abundant, scales="free", ncol=2) + theme(strip.text.x=element_text(angle=90, face="bold", size=14)) 
 
 		## for a plot to be rotated ##
-pdf("../Manuscript/figures_and_tables/mcra_abundant_most_significant_genera.pdf", height=8, width=4)
+pdf("../Manuscript/figures_and_tables/mcra_abundant_most_significant_genera.pdf", height=8, width=3)
 
-p1 + stat_summary(fun.y = mean, geom="bar", position="dodge") + stat_summary(fun.data = mean_cl_boot, geom="errorbar", position = position_dodge(width = 0.90), width = 0.2)+ theme_classic() +theme(axis.line.x = element_line(colour = 'black', size=0.5, linetype='solid'),axis.line.y = element_line(colour = 'black', size=0.5, linetype='solid')) + scale_fill_brewer(palette="Dark2") + theme(axis.title.x=element_blank(), axis.title.y=element_text(size=14, face="bold", color="black")) + theme(axis.text.x=element_text(size=14, face="bold", color="black", angle = 90, hjust = 1, vjust = 0.5), axis.text.y=element_text(angle = 90, hjust =0.5, vjust =0.5, size=12, face="bold", color = "black")) + ylab("Methanogen Relative Abundance (1e-5)") + facet_wrap(~most_abundant, scales="free", ncol=2) + guides(fill = guide_legend(direction="horizontal", label.position = "top", label.hjust = 0.45, label.vjust= 0.7, label.theme=element_text(angle=90, size = 14, face="bold")))+ theme(legend.title = element_blank())+ theme(strip.text.x=element_text(angle=90, face="bold", size=14))
+p1 + stat_summary(fun.y = mean, geom="bar", position="dodge") + stat_summary(fun.data = mean_cl_boot, geom="errorbar", position = position_dodge(width = 0.90), width = 0.2)+ theme_classic() +theme(axis.line.x = element_line(colour = 'black', size=0.5, linetype='solid'),axis.line.y = element_line(colour = 'black', size=0.5, linetype='solid')) + scale_fill_brewer(palette="Dark2") + theme(axis.title.x=element_blank(), axis.title.y=element_text(size=14, face="bold", color="black")) + theme(axis.text.x=element_text(size=14, face="bold", color="black", angle = 90, hjust = 1, vjust = 0.5), axis.text.y=element_text(angle = 90, hjust =0.5, vjust =0.5, size=12, face="bold", color = "black")) + ylab("Methanogen Relative Abundance (1e-5)") + facet_wrap(~most_abundant, scales="free", ncol=2) + theme(legend.position="none")+ theme(strip.text.x=element_text(angle=90, face="bold", size=14))
 
 dev.off()
 
@@ -1582,3 +1582,124 @@ ggplot(fr.derep.meta.sig.uniq.mm_diet.top5, aes(x=plot_label, y=coefficient, fil
 51           Bacteroidia unclassified_Archaea Bacteroidia unclassified_Archaea
 73           Bacteroidia unclassified_Archaea Bacteroidia unclassified_Archaea
 419 unclassified_Archaea          Bacteroidia Bacteroidia unclassified_Archaea
+
+######################################
+### important otus correlation scatter plots
+data_1e5.ftype.core.psmelt$foam.type<-gsub("No Foam", "No-foam", data_1e5.ftype.core.psmelt$foam.type)
+data_1e5.ftype.core.psmelt$foam.type<-factor(data_1e5.ftype.core.psmelt$foam.type, levels=c("No-foam", "Crust", "Foam"))
+
+otu_432<-subset(data_1e5.ftype.core.psmelt, OTU == "OTU_432")
+otu_1665<-subset(data_1e5.ftype.core.psmelt, OTU == "OTU_1665")
+otu_15145<-subset(data_1e5.ftype.core.psmelt, OTU == "OTU_15145")
+otu_379<-subset(data_1e5.ftype.core.psmelt, OTU == "OTU_379")
+
+### SCFA vs lacto, turicibacter ###
+otu_432_1665<-rbind(otu_432, otu_1665)
+
+ggplot(otu_432_1665, aes(y=Abundance, x=SCFA, shape = genus, linetype=genus)) + 
+ geom_point(size = 3) +
+ scale_shape_manual(values=c(2, 15)) +
+ facet_grid(~foam.type) + 
+ geom_smooth(method="lm", formula=y ~ poly(x,2), se=F, color = "black") + 
+ theme_bw() + 
+theme(axis.text.x=element_text(size=15),axis.text.y=element_text(size=15),axis.title.x=element_text(size=18),axis.title.y=element_text(size=18))+
+theme(legend.title=element_blank(),legend.text=element_text(size=15), legend.position=c(0.1, 0.9))+
+ylab("Relative Abundance (1e-5)") + xlab("SCFA (µg/g)")+
+theme(strip.text.x = element_text(size=15, face="bold"))
+
+### uc firmicutes vs lcfa ###
+ggplot(otu_15145, aes(y=Abundance, x=LCFA, shape = genus, linetype=genus)) + 
+ geom_point(size = 3) +
+ scale_shape_manual(values=c(2, 15)) +
+ facet_grid(~foam.type, scale="free_x") + 
+ geom_smooth(method="lm", formula=y ~ poly(x, 2), se=F, color = "black") + 
+ theme_bw() + 
+theme(axis.text.x=element_text(size=15),axis.text.y=element_text(size=15),axis.title.x=element_text(size=18),axis.title.y=element_text(size=18))+
+theme(legend.title=element_blank(),legend.text=element_text(size=15), legend.position=c(0.13, 0.9))+
+ylab("Relative Abundance (1e-5)") + xlab("LCFA (µg/g)")+
+theme(strip.text.x = element_text(size=15, face="bold"))
+
+
+### uc firmicutes vs turicibacter ###
+otu_15145_1665 <- merge(otu_15145[, c("SAMPLES", "Abundance", "foam.type")], otu_1665[, c("SAMPLES", "Abundance")], "SAMPLES")
+
+ggplot(otu_15145_1665, aes(y=unclassified_Firmicutes, x=Turicibacter, fill=foam.type, shape = foam.type, color=foam.type)) + 
+ geom_point(size = 3) +
+ scale_shape_manual(values=c(16:18)) +
+ scale_color_manual(values=colors) +
+  scale_fill_manual(values=colors) +
+ geom_smooth(method="lm", formula=y ~ poly(x, 2), se=F) + 
+ theme_bw() + 
+theme(axis.text.x=element_text(size=15),axis.text.y=element_text(size=15),axis.title.x=element_text(size=18),axis.title.y=element_text(size=18))+
+theme(legend.title=element_blank(),legend.text=element_text(size=15), legend.position=c(0.13, 0.9))+
+xlab("Turicibacter Relative Abundance (1e-5)") + ylab("Unclassified_Firmicutes Relative abundance (1e-5)")+
+theme(aspect.ratio=1)+
+theme(strip.text.x = element_text(size=15, face="bold"))
+
+### for bacteria and methanogen correlations #####
+otu_663<-subset(data_1e5.ftype.core.psmelt, OTU == "OTU_663")
+otu_10061<-subset(data_1e5.ftype.core.psmelt, OTU == "OTU_10061")
+> write.table(otu_663, "../mcra/sporobacter_1e5_psmelt.txt", sep="\t", quote=F, row.names=F)
+> write.table(otu_10061, "../mcra/lascolabacillus_1e5_psmelt.txt", sep="\t", quote=F, row.names=F)
+
+## in mcra workspace ##
+
+## Methanomethylophilus vs sporobacter ###
+otu_197 <- subset(mcra_1e5_ftype.core.psmelt, OTU == "OTU_197" & SAMPLES %in% mcra_si_41samp_w_bac_si_info$SAMPLES.mcra) #methanogen
+otu_197 <- merge(otu_197, mcra_si_41samp_w_bac_si_info[, c("new_id2", "SAMPLES.mcra")], by.x="SAMPLES", by.y="SAMPLES.mcra")
+
+otu_663 <- read.delim("sporobacter_1e5_psmelt.txt") #bacteria
+otu_663 <- merge(otu_663, mcra_si_41samp_w_bac_si_info[, c("new_id2", "SAMPLES.bac")], by.x="SAMPLES", by.y="SAMPLES.bac")
+
+otu_197_663 <- merge(otu_197, otu_663, "new_id2")
+otu_197_663$facet<-ifelse(otu_197_663$Abundance.x > 20000, "two", "one")
+otu_197_663$foam.type.y<-factor(otu_197_663$foam.type.y, levels=c("No-foam", "Crust", "Foam"))
+otu_197_663.one$foam.type.y<-factor(otu_197_663.one$foam.type.y, levels=c("No-foam", "Crust", "Foam"))
+
+ggplot(otu_197_663, aes(x=Abundance.x, y=Abundance.y, fill=foam.type.y, shape = foam.type.y, color=foam.type.y)) + 
+geom_smooth(data = otu_197_663.one, method="lm", formula=y ~ poly(x, 2), se=F, aes(x=Abundance.x, y=Abundance.y, color=foam.type.y)) + 
+ geom_point(size = 3) +
+facet_grid(~facet, scale="free_x") + 
+ scale_shape_manual(values=c(16:18)) +
+ scale_color_manual(values=colors) +
+  scale_fill_manual(values=colors) +
+ theme_classic() + 
+theme(axis.text.x=element_text(size=15),axis.text.y=element_text(size=15),axis.title.x=element_text(size=18),axis.title.y=element_text(size=18))+
+theme(legend.title=element_blank(),legend.text=element_text(size=15), legend.position=c(0.13, 0.9))+
+xlab("Methanomethylophilus Relative Abundance (1e-5)") + ylab("Sporobacter Relative abundance (1e-5)")+
+#theme(aspect.ratio=1)+
+theme(strip.text.x = element_blank())
+
+## uc archaea vs MPR ###
+uc_archaea_species$foam.type<-gsub("No Foam", "No-foam", uc_archaea_species$foam.type)
+uc_archaea_species$foam.type <- factor(uc_archaea_species$foam.type, levels=c("No-foam", "Crust", "Foam"))
+
+ggplot(uc_archaea_species, aes(y=abundance, x=ISU.Manure.Data..MPR_slurry, shape = foam.type, color = foam.type, linetype=species)) + 
+ geom_point(size = 3) +
+ scale_shape_manual(values=c(16:18)) +
+ scale_color_manual(values=ft.colors) +
+ #facet_grid(~foam.type, scale="free_x") + 
+ geom_smooth(method="lm", formula=y ~ poly(x, 2), se=F) + 
+ theme_bw() + 
+theme(axis.text.x=element_text(size=15),axis.text.y=element_text(size=15),axis.title.x=element_text(size=18),axis.title.y=element_text(size=18))+
+theme(legend.title=element_blank(),legend.text=element_text(size=15), legend.position=c(0.13, 0.9))+
+ylab("Relative Abundance (1e-5)") + xlab("MPR (L/L•day)")+
+theme(strip.text.x = element_text(size=15, face="bold"))
+
+
+
+otu_202_261<-subset(mcra_1e5_ftype.core.psmelt, OTU == "OTU_202" | OTU=="OTU_261")
+
+ggplot(otu_202_261, aes(y=Abundance, x=ISU.Manure.Data..MPR_slurry, shape = OTU, linetype=species)) + 
+ geom_point(size = 3) +
+ scale_shape_manual(values=c(2, 15)) +
+ facet_grid(~foam.type, scale="free_x") + 
+ geom_smooth(method="lm", formula=y ~ poly(x, 2), se=F, color = "black") + 
+ theme_bw() + 
+theme(axis.text.x=element_text(size=15),axis.text.y=element_text(size=15),axis.title.x=element_text(size=18),axis.title.y=element_text(size=18))+
+theme(legend.title=element_blank(),legend.text=element_text(size=15), legend.position=c(0.13, 0.9))+
+ylab("Relative Abundance (1e-5)") + xlab("MPR (L/L•day)")+
+theme(strip.text.x = element_text(size=15, face="bold"))
+
+otu_10061<-read.delim("lascolabacillus_1e5_psmelt.txt")
+

@@ -24,10 +24,12 @@ library(ggplot2)
 C <- read.delim("Text_outputs/data.taxmin5.sample_goods_coverage.txt")
 
 # quick plot to visual the sequencing depth and coverage:
+pdf("Figures/bacteria_seqdepth_vs_C.pdf")
 ggplot(C, aes(x=sample_sums, y=C)) +
 	ylim(0, 1) +
 	geom_point() +
 	geom_vline(xintercept=10000)
+dev.off()
 ```
 
 We can see that a sequencing depth greater and equal to 10000 good quality reads yielded a minimal coverage of 97% and the community coverages plateued. Therefore, we will remove samples that had less than 10000 sequences.    
