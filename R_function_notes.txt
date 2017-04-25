@@ -1566,22 +1566,25 @@ ggplot(fr.derep.meta.sig.uniq.mm_diet.top5, aes(x=plot_label, y=coefficient, fil
      class.1 otu.2 genus.2 class.2
 1390 Bacilli  SCFA    SCFA    SCFA
 
-> subset(bac_mcra_cc.lower.otus.sig.strong, class1.x == "Bacteroidia" & class1.y == "unclassified_Archaea"|  class1.y == "Bacteroidia" & class1.x == "unclassified_Archaea")
-        Var2      Var1 coefficient foam.type dependenc_type     otu.x domain.x
-40   OTU_202 OTU_10061   0.8574392         F       Spearman OTU_10061 Bacteria
-51   OTU_217 OTU_10159   0.7198145         F       Spearman OTU_10159 Bacteria
-73   OTU_261 OTU_10061   0.8208116         F       Spearman OTU_10061 Bacteria
-419 OTU_9609   OTU_817   0.7474136         F       Spearman   OTU_817  Archaea
-                 class.x    otu.y domain.y              class.y
-40           Bacteroidia  OTU_202  Archaea unclassified_Archaea
-51           Bacteroidia  OTU_217  Archaea unclassified_Archaea
-73           Bacteroidia  OTU_261  Archaea unclassified_Archaea
-419 unclassified_Archaea OTU_9609 Bacteria          Bacteroidia
-                class1.x             class1.y          X1                   X2
-40           Bacteroidia unclassified_Archaea Bacteroidia unclassified_Archaea
-51           Bacteroidia unclassified_Archaea Bacteroidia unclassified_Archaea
-73           Bacteroidia unclassified_Archaea Bacteroidia unclassified_Archaea
-419 unclassified_Archaea          Bacteroidia Bacteroidia unclassified_Archaea
+> subset(bac_mcra_cc.lower.otus.sig.strong.0.75, class.x == "Bacteroidia" & class.y == "unclassified_Archaea"|  class.y == "Bacteroidia" & class.x == "unclassified_Archaea")
+     Var2      Var1 coefficient foam.type dependenc_type     otu.x domain.x
+40 OTU_202 OTU_10061   0.8574392         F       Spearman OTU_10061 Bacteria
+73 OTU_261 OTU_10061   0.8208116         F       Spearman OTU_10061 Bacteria
+       class.x   otu.y domain.y              class.y    class1.x
+40 Bacteroidia OTU_202  Archaea unclassified_Archaea Bacteroidia
+73 Bacteroidia OTU_261  Archaea unclassified_Archaea Bacteroidia
+               class1.y          X1                   X2
+40 unclassified_Archaea Bacteroidia unclassified_Archaea
+73 unclassified_Archaea Bacteroidia unclassified_Archaea
+
+> subset(bac_mcra_cc.lower.otus.sig.strong.0.75, class.x=="Clostridia" & class.y=="Methanomicrobia" |class.y=="Clostridia" & class.x=="Methanomicrobia" )
+       Var2    Var1 coefficient foam.type dependenc_type   otu.x domain.x
+186 OTU_663 OTU_197   0.8909091        NF       Spearman OTU_197  Archaea
+            class.x   otu.y domain.y    class.y        class1.x   class1.y
+186 Methanomicrobia OTU_663 Bacteria Clostridia Methanomicrobia Clostridia
+            X1              X2
+186 Clostridia Methanomicrobia
+
 
 ######################################
 ### important otus correlation scatter plots
@@ -1652,42 +1655,143 @@ otu_663 <- read.delim("sporobacter_1e5_psmelt.txt") #bacteria
 otu_663 <- merge(otu_663, mcra_si_41samp_w_bac_si_info[, c("new_id2", "SAMPLES.bac")], by.x="SAMPLES", by.y="SAMPLES.bac")
 
 otu_197_663 <- merge(otu_197, otu_663, "new_id2")
-otu_197_663$facet<-ifelse(otu_197_663$Abundance.x > 20000, "two", "one")
 otu_197_663$foam.type.y<-factor(otu_197_663$foam.type.y, levels=c("No-foam", "Crust", "Foam"))
 otu_197_663.one$foam.type.y<-factor(otu_197_663.one$foam.type.y, levels=c("No-foam", "Crust", "Foam"))
 
-ggplot(otu_197_663, aes(x=Abundance.x, y=Abundance.y, fill=foam.type.y, shape = foam.type.y, color=foam.type.y)) + 
+### outliers ###
+> boxplot.stats(otu_197_663[otu_197_663$foam.type.y== "Crust", ]$Abundance.x)$out
+numeric(0)
+> boxplot.stats(otu_197_663[otu_197_663$foam.type.y== "Foam", ]$Abundance.x)$out
+[1] 588.6508
+> boxplot.stats(otu_197_663[otu_197_663$foam.type.y== "No-foam", ]$Abundance.x)$out
+[1]  2114.412 21609.952
+> boxplot.stats(otu_197_663[otu_197_663$foam.type.y== "No-foam", ]$Abundance.y)$out
+numeric(0)
+> boxplot.stats(otu_197_663[otu_197_663$foam.type.y== "Crust", ]$Abundance.y)$out
+numeric(0)
+> boxplot.stats(otu_197_663[otu_197_663$foam.type.y== "Foam", ]$Abundance.y)$out
+numeric(0)
+>
+# removing outliers #
+otu_197_663.one<-subset(otu_197_663, !grepl("\\b588|2114|21609", Abundance.x))
+otu_197_663$outliers<-ifelse(grepl("\\b588|2114|21609",otu_197_663$Abundance.x), "Outliers", "Non-outliers")
+otu_197_663$facet<-ifelse(otu_197_663$Abundance.x < 20000, "one", "two")
+
+pdf("../Manuscript/figures_and_tables/clostridia_vs_methanomicrobia_poly2.pdf", width=10,height=6)
+ggplot(otu_197_663, aes(x=Abundance.x, y=Abundance.y, fill=foam.type.y, color=foam.type.y)) + 
+geom_point(size = 3, aes(shape=outliers)) +
 geom_smooth(data = otu_197_663.one, method="lm", formula=y ~ poly(x, 2), se=F, aes(x=Abundance.x, y=Abundance.y, color=foam.type.y)) + 
- geom_point(size = 3) +
 facet_grid(~facet, scale="free_x") + 
  scale_shape_manual(values=c(16:18)) +
  scale_color_manual(values=colors) +
   scale_fill_manual(values=colors) +
  theme_classic() + 
 theme(axis.text.x=element_text(size=15),axis.text.y=element_text(size=15),axis.title.x=element_text(size=18),axis.title.y=element_text(size=18))+
-theme(legend.title=element_blank(),legend.text=element_text(size=15), legend.position=c(0.13, 0.9))+
+theme(legend.title=element_blank(),legend.text=element_text(size=15), legend.position=c(0.8, 0.2))+
 xlab("Methanomethylophilus Relative Abundance (1e-5)") + ylab("Sporobacter Relative abundance (1e-5)")+
 #theme(aspect.ratio=1)+
 theme(strip.text.x = element_blank())
+dev.off()
+
+## testing regression model ###
+myformula <- formula(Abundance.y~poly(Abundance.x, 2))
+models<-dlply(otu_197_663.one, .(foam.type.y), function(x) lm(myformula, x))
+ldply(models, coef)
+l_ply(models, summary, .print=T)
+
+> ldply(models, coef)
+  foam.type.y (Intercept) poly(Abundance.x, 2)1 poly(Abundance.x, 2)2
+1     No-foam    1064.405              1583.866              341.1066
+2       Crust    1521.837              2406.909             1203.5228
+3        Foam    1376.192              1324.452              288.9495
+> l_ply(models, summary, .print=T)
+
+Call:
+lm(formula = myformula, data = x)
+
+Residuals:
+     1      2      3      4      5      6      7      8 
+-253.6  258.9 -265.0  113.1 -271.8  370.8  302.7 -255.1 
+
+Coefficients:
+                      Estimate Std. Error t value Pr(>|t|)    
+(Intercept)             1064.4      120.7   8.821 0.000311 ***
+poly(Abundance.x, 2)1   1583.9      341.3   4.641 0.005629 ** 
+poly(Abundance.x, 2)2    341.1      341.3   0.999 0.363464    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 341.3 on 5 degrees of freedom
+Multiple R-squared:  0.8184,	Adjusted R-squared:  0.7458 
+F-statistic: 11.27 on 2 and 5 DF,  p-value: 0.01405
+
+
+Call:
+lm(formula = myformula, data = x)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-856.08 -409.12  -34.71  329.01 1160.13 
+
+Coefficients:
+                      Estimate Std. Error t value Pr(>|t|)    
+(Intercept)             1521.8      183.1   8.313  8.4e-06 ***
+poly(Abundance.x, 2)1   2406.9      660.1   3.646  0.00449 ** 
+poly(Abundance.x, 2)2   1203.5      660.1   1.823  0.09825 .  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 660.1 on 10 degrees of freedom
+Multiple R-squared:  0.6243,	Adjusted R-squared:  0.5492 
+F-statistic:  8.31 on 2 and 10 DF,  p-value: 0.00748
+
+
+Call:
+lm(formula = myformula, data = x)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-976.70 -308.38  -34.71  446.72 1332.81 
+
+Coefficients:
+                      Estimate Std. Error t value Pr(>|t|)    
+(Intercept)             1376.2      141.4   9.736  1.3e-07 ***
+poly(Abundance.x, 2)1   1324.5      582.8   2.273   0.0393 *  
+poly(Abundance.x, 2)2    288.9      582.8   0.496   0.6277    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 582.8 on 14 degrees of freedom
+Multiple R-squared:  0.2787,	Adjusted R-squared:  0.1757 
+F-statistic: 2.705 on 2 and 14 DF,  p-value: 0.1016
+
 
 ## uc archaea vs MPR ###
 uc_archaea_species$foam.type<-gsub("No Foam", "No-foam", uc_archaea_species$foam.type)
 uc_archaea_species$foam.type <- factor(uc_archaea_species$foam.type, levels=c("No-foam", "Crust", "Foam"))
 
-ggplot(uc_archaea_species, aes(y=abundance, x=ISU.Manure.Data..MPR_slurry, shape = foam.type, color = foam.type, linetype=species)) + 
+pdf("../Manuscript/figures_and_tables/total_uc_archaea_vs_mpr.pdf", width=7, height=7)
+ggplot(uc_archaea_species, aes(y=abundance, x=ISU.Manure.Data..MPR_slurry, shape = foam.type, color = foam.type)) + 
  geom_point(size = 3) +
  scale_shape_manual(values=c(16:18)) +
  scale_color_manual(values=ft.colors) +
- #facet_grid(~foam.type, scale="free_x") + 
- geom_smooth(method="lm", formula=y ~ poly(x, 2), se=F) + 
+ facet_grid(~foam.type, scale="free_x") + 
+ geom_smooth(method="lm", formula=y ~ x, se=F) + 
  theme_bw() + 
 theme(axis.text.x=element_text(size=15),axis.text.y=element_text(size=15),axis.title.x=element_text(size=18),axis.title.y=element_text(size=18))+
-theme(legend.title=element_blank(),legend.text=element_text(size=15), legend.position=c(0.13, 0.9))+
-ylab("Relative Abundance (1e-5)") + xlab("MPR (L/L•day)")+
+theme(legend.title=element_blank(),legend.text=element_text(size=15), legend.position=c(0.8, 0.2))+
+theme(aspect.ratio=1)+
+ylab("Unclassified Archaea Relative Abundance (1e-5)") + xlab("MPR (L/L*day)")+
 theme(strip.text.x = element_text(size=15, face="bold"))
+dev.off()
 
+## testing regression model ###
+myformula <- formula(abundance~ISU.Manure.Data..MPR_slurry)
+models<-dlply(uc_archaea_species, .(foam.type.y), function(x) lm(myformula, x))
+ldply(models, coef)
+l_ply(models, summary, .print=T)
 
-
+## uc archaea vs bacteroides ###
 otu_202_261<-subset(mcra_1e5_ftype.core.psmelt, OTU == "OTU_202" | OTU=="OTU_261")
 
 ggplot(otu_202_261, aes(y=Abundance, x=ISU.Manure.Data..MPR_slurry, shape = OTU, linetype=species)) + 
@@ -1702,4 +1806,203 @@ ylab("Relative Abundance (1e-5)") + xlab("MPR (L/L•day)")+
 theme(strip.text.x = element_text(size=15, face="bold"))
 
 otu_10061<-read.delim("lascolabacillus_1e5_psmelt.txt")
+otu_202_261 <- merge(otu_202_261, mcra_si_41samp_w_bac_si_info[, c("new_id2", "SAMPLES.mcra")], by.x="SAMPLES", by.y="SAMPLES.mcra")
+otu_202_261.wide<-otu_202_261[, c("new_id2", "OTU", "Abundance", "foam.type", "species")]
+otu_202_261.wide<-dcast(otu_202_261.wide, new_id2 + foam.type ~ OTU + species, value.var="Abundance")
 
+otu_10061 <- merge(otu_10061, mcra_si_41samp_w_bac_si_info[, c("new_id2", "SAMPLES.bac")], by.x="SAMPLES", by.y="SAMPLES.bac")
+otu_202_261_10061 <- merge(otu_202_261.wide, otu_10061[, c("new_id2", "Abundance", "foam.type")], "new_id2")
+names(otu_202_261_10061)[5] <- "OTU_10061_Lascolabacillus"
+otu_202_261_10061$foam.type.y<-factor(otu_202_261_10061$foam.type.y, levels=c("No-foam", "Crust", "Foam"))
+
+> boxplot.stats(otu_202_261_10061$OTU_10061_Lascolabacillus)$out
+numeric(0)
+outlier_202<-boxplot.stats(otu_202_261_10061$OTU_202_unclassified_Archaea)$out
+[1] 40039.56
+outlier_261<-boxplot.stats(otu_202_261_10061$OTU_261_unclassified_Archaea)$out
+[1] 2633.578 3347.681 1959.955 2898.121 3858.121 2335.640
+> 
+
+otu_202_261_10061$outlier_202 <- ifelse(otu_202_261_10061$OTU_202_unclassified_Archaea %in% outlier_202, "Outliers", "Non-outliers")
+otu_202_261_10061$outlier_261 <- ifelse(otu_202_261_10061$OTU_261_unclassified_Archaea %in% outlier_261, "Outliers", "Non-outliers")
+
+myformula <- formula(OTU_10061_Lascolabacillus~poly(OTU_202_unclassified_Archaea, 2))
+models<-dlply(otu_202_261_10061[otu_202_261_10061$outlier_202 == "Non-outliers", ], .(foam.type.y), function(x) lm(myformula, x))
+ldply(models, coef)
+l_ply(models, summary, .print=T)
+
+> ldply(models, coef)
+  foam.type.y (Intercept) poly(OTU_202_unclassified_Archaea, 2)1
+1     No-foam   119.46928                               38.76889
+2       Crust    85.44652                              -27.93824
+3        Foam   100.38470                              199.38172
+  poly(OTU_202_unclassified_Archaea, 2)2
+1                              -97.36788
+2                              -51.40558
+3                              -53.70263
+> l_ply(models, summary, .print=T)
+
+Call:
+lm(formula = myformula, data = x)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-119.427  -15.293    5.611   38.259   80.700 
+
+Coefficients:
+                                       Estimate Std. Error t value Pr(>|t|)    
+(Intercept)                              119.47      20.31   5.883  0.00061 ***
+poly(OTU_202_unclassified_Archaea, 2)1    38.77      64.22   0.604  0.56511    
+poly(OTU_202_unclassified_Archaea, 2)2   -97.37      64.22  -1.516  0.17327    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 64.22 on 7 degrees of freedom
+Multiple R-squared:  0.2756,	Adjusted R-squared:  0.06861 
+F-statistic: 1.331 on 2 and 7 DF,  p-value: 0.3236
+
+
+Call:
+lm(formula = myformula, data = x)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-78.59 -36.73 -14.00  23.22 174.88 
+
+Coefficients:
+                                       Estimate Std. Error t value Pr(>|t|)   
+(Intercept)                               85.45      21.48   3.978  0.00322 **
+poly(OTU_202_unclassified_Archaea, 2)1   -27.94      74.41  -0.375  0.71602   
+poly(OTU_202_unclassified_Archaea, 2)2   -51.41      74.41  -0.691  0.50710   
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 74.41 on 9 degrees of freedom
+Multiple R-squared:  0.06427,	Adjusted R-squared:  -0.1437 
+F-statistic: 0.3091 on 2 and 9 DF,  p-value: 0.7416
+
+
+Call:
+lm(formula = myformula, data = x)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-66.33 -25.96 -15.77  14.68 145.26 
+
+Coefficients:
+                                       Estimate Std. Error t value Pr(>|t|)    
+(Intercept)                              100.38      12.11   8.293 5.52e-07 ***
+poly(OTU_202_unclassified_Archaea, 2)1   199.38      51.36   3.882  0.00147 ** 
+poly(OTU_202_unclassified_Archaea, 2)2   -53.70      51.36  -1.046  0.31228    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 51.36 on 15 degrees of freedom
+Multiple R-squared:  0.5187,	Adjusted R-squared:  0.4545 
+F-statistic: 8.082 on 2 and 15 DF,  p-value: 0.004151
+
+pdf("../Manuscript/figures_and_tables/uc_archaea_otu_202_vs_bacteroidia.pdf", width=8, height=8)
+ggplot(otu_202_261_10061, aes(y=OTU_10061_Lascolabacillus, x=OTU_202_unclassified_Archaea, fill=foam.type.y, color=foam.type.y)) + 
+geom_point(size = 3, aes(shape=outlier_202)) +
+geom_smooth(data = otu_202_261_10061[otu_202_261_10061$outlier_202 == "Non-outliers", ],method="lm", formula=y ~ poly(x, 2), se=F, aes(color=foam.type.y)) + 
+ scale_shape_manual(values=c(16:18)) +
+ scale_color_manual(values=colors) +
+  scale_fill_manual(values=colors) +
+ theme_classic() + 
+theme(axis.text.x=element_text(size=15),axis.text.y=element_text(size=15),axis.title.x=element_text(size=18),axis.title.y=element_text(size=18))+
+theme(legend.title=element_blank(),legend.text=element_text(size=15), legend.position=c(0.8, 0.8))+
+xlab("Lascolabacillus Relative Abundance (1e-5)") + ylab("Unclassified Archaea (OTU_202) Relative abundance (1e-5)")+
+theme(aspect.ratio=1)+
+theme(strip.text.x = element_blank())
+dev.off()
+
+myformula <- formula(OTU_10061_Lascolabacillus~poly(OTU_261_unclassified_Archaea, 2))
+models<-dlply(otu_202_261_10061[otu_202_261_10061$outlier_261 == "Non-outliers", ], .(foam.type.y), function(x) lm(myformula, x))
+ldply(models, coef)
+l_ply(models, summary, .print=T)
+
+> ldply(models, coef)
+  foam.type.y (Intercept) poly(OTU_261_unclassified_Archaea, 2)1
+1     No-foam   119.46928                              -48.87820
+2       Crust    97.34577                              -12.46114
+3        Foam   100.38470                              185.27052
+  poly(OTU_261_unclassified_Archaea, 2)2
+1                              -45.45952
+2                               27.33254
+3                              -90.74190
+> l_ply(models, summary, .print=T)
+
+Call:
+lm(formula = myformula, data = x)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-117.740  -32.178    4.896   43.300   96.772 
+
+Coefficients:
+                                       Estimate Std. Error t value Pr(>|t|)   
+(Intercept)                              119.47      22.49   5.313  0.00111 **
+poly(OTU_261_unclassified_Archaea, 2)1   -48.88      71.11  -0.687  0.51399   
+poly(OTU_261_unclassified_Archaea, 2)2   -45.46      71.11  -0.639  0.54300   
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 71.11 on 7 degrees of freedom
+Multiple R-squared:  0.1118,	Adjusted R-squared:  -0.142 
+F-statistic: 0.4405 on 2 and 7 DF,  p-value: 0.6604
+
+
+Call:
+lm(formula = myformula, data = x)
+
+Residuals:
+     1      2      3      4      5      6      7 
+-91.01 -36.51 -61.11 -51.12 173.09  37.52  29.13 
+
+Coefficients:
+                                       Estimate Std. Error t value Pr(>|t|)  
+(Intercept)                               97.35      41.48   2.347   0.0788 .
+poly(OTU_261_unclassified_Archaea, 2)1   -12.46     109.75  -0.114   0.9151  
+poly(OTU_261_unclassified_Archaea, 2)2    27.33     109.75   0.249   0.8156  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 109.7 on 4 degrees of freedom
+Multiple R-squared:  0.01838,	Adjusted R-squared:  -0.4724 
+F-statistic: 0.03746 on 2 and 4 DF,  p-value: 0.9636
+
+
+Call:
+lm(formula = myformula, data = x)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-51.64 -27.95 -17.24  11.40 149.01 
+
+Coefficients:
+                                       Estimate Std. Error t value Pr(>|t|)    
+(Intercept)                              100.38      12.12   8.285 5.58e-07 ***
+poly(OTU_261_unclassified_Archaea, 2)1   185.27      51.41   3.604   0.0026 ** 
+poly(OTU_261_unclassified_Archaea, 2)2   -90.74      51.41  -1.765   0.0979 .  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 51.41 on 15 degrees of freedom
+Multiple R-squared:  0.5177,	Adjusted R-squared:  0.4534 
+F-statistic: 8.052 on 2 and 15 DF,  p-value: 0.004213
+
+pdf("../Manuscript/figures_and_tables/uc_archaea_otu_261_vs_bacteroidia.pdf", width=12, height=8)
+ggplot(otu_202_261_10061, aes(y=OTU_10061_Lascolabacillus, x=OTU_261_unclassified_Archaea, fill=foam.type.y, color=foam.type.y)) + 
+geom_point(size = 3, aes(shape=outlier_261)) +
+geom_smooth(data = otu_202_261_10061[otu_202_261_10061$outlier_261 == "Non-outliers", ], method="lm", formula=y ~ poly(x, 2), se=F, aes(color=foam.type.y)) + 
+ scale_shape_manual(values=c(16:18)) +
+ scale_color_manual(values=colors) +
+  scale_fill_manual(values=colors) +
+ theme_classic() + 
+theme(axis.text.x=element_text(size=15),axis.text.y=element_text(size=15),axis.title.x=element_text(size=18),axis.title.y=element_text(size=18))+
+theme(legend.title=element_blank(),legend.text=element_text(size=15), legend.position=c(0.8, 0.8))+
+xlab("Lascolabacillus Relative Abundance (1e-5)") + ylab("Unclassified Archaea (OTU_261) Relative abundance (1e-5)")+
+#theme(aspect.ratio=1)+
+facet_grid(~outlier_261, scale = "free_x")+
+theme(strip.text.x = element_blank())
+dev.off()
