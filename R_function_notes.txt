@@ -1516,55 +1516,35 @@ ggplot(fr.derep.meta.sig.uniq.mm_diet.top5, aes(x=plot_label, y=coefficient, fil
          
          
 ##### core net work important otu's ####
-> subset(fr.derep.otu.sig, Var1 == "LCFA" | Var2== "LCFA")
-         Var2 Var1 coefficient foam.type dependence_type otu.1 genus.1 class.1
-46  OTU_10765 LCFA   0.5124040   No Foam        Spearman  LCFA    LCFA    LCFA
-71   OTU_1425 LCFA   0.5670745   No Foam        Spearman  LCFA    LCFA    LCFA
-96  OTU_15145 LCFA   0.4548479      Foam        Spearman  LCFA    LCFA    LCFA
-109  OTU_1610 LCFA   0.2678571     Crust       Hoeffding  LCFA    LCFA    LCFA
-332   OTU_379 LCFA   0.4539968      Foam        Spearman  LCFA    LCFA    LCFA
-464   OTU_507 LCFA   0.4674877      Foam        Spearman  LCFA    LCFA    LCFA
-703   OTU_663 LCFA   0.6472906      Foam        Spearman  LCFA    LCFA    LCFA
-        otu.2                      genus.2                 class.2
-46  OTU_10765                  Tissierella              Clostridia
-71   OTU_1425               Sporobacterium              Clostridia
-96  OTU_15145      unclassified_Firmicutes unclassified_Firmicutes
-109  OTU_1610                Streptococcus                 Bacilli
-332   OTU_379 unclassified_Ruminococcaceae              Clostridia
-464   OTU_507           Saccharofermentans              Clostridia
-703   OTU_663                  Sporobacter              Clostridia
+> subset(fr.derep.otu.sig, Var1 == "LCFA" & class.2 == "unclassified_Firmicutes" | Var2 == "LCFA" & class.1 == "unclassified_Firmicutes")
+        Var2 Var1 coefficient foam.type dependence_type otu.1 genus.1 class.1
+96 OTU_15145 LCFA   0.4548479      Foam        Spearman  LCFA    LCFA    LCFA
+       otu.2                 genus.2                 class.2
+96 OTU_15145 unclassified_Firmicutes unclassified_Firmicutes
 
-> subset(fr.derep.otu.sig, Var1 == "SCFA" | Var2== "SCFA")
-     Var2     Var1 coefficient foam.type dependence_type    otu.1
-1389 SCFA OTU_7989 -0.50185013   No Foam        Spearman OTU_7989
-1390 SCFA  OTU_432  0.67391306   No Foam        Spearman  OTU_432
-1391 SCFA OTU_7671 -0.51663405   No Foam        Spearman OTU_7671
-1392 SCFA OTU_6482 -0.57739133   No Foam        Spearman OTU_6482
-1393 SCFA OTU_1444 -0.66608697   No Foam        Spearman OTU_1444
-1394 SCFA OTU_4886 -0.49391305   No Foam        Spearman OTU_4886
-1395 SCFA OTU_6930  0.06941038      Foam       Hoeffding OTU_6930
-1396 SCFA OTU_1665 -0.53217393   No Foam        Spearman OTU_1665
-1397 SCFA  OTU_260 -0.58260870   No Foam        Spearman  OTU_260
-1398 SCFA OTU_9387 -0.63186812      Foam        Spearman OTU_9387
-1399 SCFA OTU_1425  0.09733202   No Foam       Hoeffding OTU_1425
-                       genus.1          class.1 otu.2 genus.2 class.2
-1389            Clostridium XI       Clostridia  SCFA    SCFA    SCFA
-1390             Lactobacillus          Bacilli  SCFA    SCFA    SCFA
-1391               Tissierella       Clostridia  SCFA    SCFA    SCFA
-1392            Clostridium XI       Clostridia  SCFA    SCFA    SCFA
-1393 Clostridium sensu stricto       Clostridia  SCFA    SCFA    SCFA
-1394            Clostridium XI       Clostridia  SCFA    SCFA    SCFA
-1395               Tissierella       Clostridia  SCFA    SCFA    SCFA
-1396              Turicibacter Erysipelotrichia  SCFA    SCFA    SCFA
-1397 Clostridium sensu stricto       Clostridia  SCFA    SCFA    SCFA
-1398               Tissierella       Clostridia  SCFA    SCFA    SCFA
-1399            Sporobacterium       Clostridia  SCFA    SCFA    SCFA
+> subset(fr.derep.otu.sig, class.1 == "Erysipelotrichia" & class.2 == "unclassified_Firmicutes" | class.2 == "Erysipelotrichia" & class.1 == "unclassified_Firmicutes")
+        Var2      Var1 coefficient foam.type dependence_type     otu.1
+114 OTU_1665 OTU_15145   0.5355663     Crust        Spearman OTU_15145
+115 OTU_1665 OTU_15145   0.3978363   No Foam        Spearman OTU_15145
+136 OTU_1665 OTU_15145   0.7128017      Foam        Spearman OTU_15145
+                    genus.1                 class.1    otu.2      genus.2
+114 unclassified_Firmicutes unclassified_Firmicutes OTU_1665 Turicibacter
+115 unclassified_Firmicutes unclassified_Firmicutes OTU_1665 Turicibacter
+136 unclassified_Firmicutes unclassified_Firmicutes OTU_1665 Turicibacter
+             class.2
+114 Erysipelotrichia
+115 Erysipelotrichia
+136 Erysipelotrichia
 
-> subset(fr.derep.otu.sig, Var1 == "SCFA" & class.2 == "Bacilli"|Var2 == "SCFA" & class.1 == "Bacilli")
-     Var2    Var1 coefficient foam.type dependence_type   otu.1       genus.1
-1390 SCFA OTU_432   0.6739131   No Foam        Spearman OTU_432 Lactobacillus
-     class.1 otu.2 genus.2 class.2
-1390 Bacilli  SCFA    SCFA    SCFA
+
+> subset(fr.derep.otu.sig, Var1 == "SCFA" & grepl("Bacilli|Erysipelotrichia", class.2) |Var2 == "SCFA" & grepl("Bacilli|Erysipelotrichia", class.1))
+     Var2     Var1 coefficient foam.type dependence_type    otu.1       genus.1
+1390 SCFA  OTU_432   0.6739131   No Foam        Spearman  OTU_432 Lactobacillus
+1396 SCFA OTU_1665  -0.5321739   No Foam        Spearman OTU_1665  Turicibacter
+              class.1 otu.2 genus.2 class.2
+1390          Bacilli  SCFA    SCFA    SCFA
+1396 Erysipelotrichia  SCFA    SCFA    SCFA
+
 
 > subset(bac_mcra_cc.lower.otus.sig.strong.0.75, class.x == "Bacteroidia" & class.y == "unclassified_Archaea"|  class.y == "Bacteroidia" & class.x == "unclassified_Archaea")
      Var2      Var1 coefficient foam.type dependenc_type     otu.x domain.x
@@ -1599,24 +1579,202 @@ otu_379<-subset(data_1e5.ftype.core.psmelt, OTU == "OTU_379")
 ### SCFA vs lacto, turicibacter ###
 otu_432_1665<-rbind(otu_432, otu_1665)
 
-ggplot(otu_432_1665, aes(y=Abundance, x=SCFA, shape = genus, linetype=genus)) + 
+# outliers #
+scfa.outliers <- ddply(otu_432_1665, .(foam.type, genus), summarize, outliers = boxplot.stats(SCFA)$out)
+
+otu_432_1665.outliers <- ddply(otu_432_1665, .(foam.type, genus), summarize, outliers = boxplot.stats(Abundance)$out)
+
+otu_432_1665_toplot<-otu_432_1665[, c("OTU", "SAMPLES", "foam.type", "genus", "SCFA","Abundance")]
+
+otu_432_1665_toplot$outlier<-ifelse(otu_432_1665_toplot$SCFA %in% scfa.outliers$outliers, "Outliers", ifelse(otu_432_1665_toplot$Abundance %in% otu_432_1665.outliers$outliers, "Outliers", "Non-outliers"))
+
+otu_432_1665_toplot$outlier<-factor(otu_432_1665_toplot$outlier, levels=c("Non-outliers", "Outliers"))
+
+otu_432_1665_toplot$facet<-ifelse(otu_432_1665_toplot$Abundance > 20000, "two", ifelse(otu_432_1665_toplot$OTU=="OTU_432" & otu_432_1665_toplot$Abundance >5000, "two", "one"))
+otu_432_1665_toplot$facet<-factor(otu_432_1665_toplot$facet, levels=c("two", "one"))
+
+myformula <- formula(Abundance~poly(SCFA))
+models<-dlply(otu_432_1665_toplot[otu_432_1665_toplot$outlier == "Non-outliers" & !is.na(otu_432_1665_toplot$SCFA) & otu_432_1665_toplot$OTU == "OTU_432", ], .(foam.type, genus), function(x) lm(myformula, x))
+ldply(models, coef)
+l_ply(models, summary, .print=T)
+
+> ldply(models, coef)
+  foam.type         genus (Intercept) poly(SCFA)
+1   No-foam Lactobacillus   1326.7975 3030.11896
+2     Crust Lactobacillus    803.3619  555.46140
+3      Foam Lactobacillus    461.3645   14.75326
+> l_ply(models, summary, .print=T)
+
+Call:
+lm(formula = myformula, data = x)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-1726.8  -866.7  -214.3   724.3  2510.4 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)   1326.8      279.5   4.746 0.000187 ***
+poly(SCFA)    3030.1     1218.5   2.487 0.023577 *  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 1218 on 17 degrees of freedom
+Multiple R-squared:  0.2667,	Adjusted R-squared:  0.2236 
+F-statistic: 6.184 on 1 and 17 DF,  p-value: 0.02358
+
+
+Call:
+lm(formula = myformula, data = x)
+
+Residuals:
+      1       2       3       4       5       6 
+ 326.37   95.11  543.00  217.10 -719.16 -462.41 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)  
+(Intercept)    803.4      222.5   3.610   0.0226 *
+poly(SCFA)     555.5      545.1   1.019   0.3658  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 545.1 on 4 degrees of freedom
+Multiple R-squared:  0.2061,	Adjusted R-squared:  0.007615 
+F-statistic: 1.038 on 1 and 4 DF,  p-value: 0.3658
+
+
+Call:
+lm(formula = myformula, data = x)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-419.3 -318.4 -107.3  237.4  715.4 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)   461.36      74.68   6.178 3.23e-06 ***
+poly(SCFA)     14.75     365.87   0.040    0.968    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 365.9 on 22 degrees of freedom
+Multiple R-squared:  7.39e-05,	Adjusted R-squared:  -0.04538 
+F-statistic: 0.001626 on 1 and 22 DF,  p-value: 0.9682
+
+myformula <- formula(Abundance~poly(SCFA, 2))
+models<-dlply(otu_432_1665_toplot[otu_432_1665_toplot$outlier == "Non-outliers" & !is.na(otu_432_1665_toplot$SCFA) & otu_432_1665_toplot$OTU == "OTU_1665", ], .(foam.type, genus), function(x) lm(myformula, x))
+ldply(models, coef)
+l_ply(models, summary, .print=T)
+
+  foam.type        genus (Intercept) poly(SCFA, 2)1 poly(SCFA, 2)2
+1   No-foam Turicibacter    1608.073    -2416.76156       1019.512
+2     Crust Turicibacter    4025.050      -78.55062      -1734.194
+3      Foam Turicibacter    6283.789    -4130.83847       6845.143
+> l_ply(models, summary, .print=T)
+
+Call:
+lm(formula = myformula, data = x)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-1171.73  -468.14    13.53   388.54  1842.72 
+
+Coefficients:
+               Estimate Std. Error t value Pr(>|t|)    
+(Intercept)      1608.1      159.3  10.097 7.69e-09 ***
+poly(SCFA, 2)1  -2416.8      729.8  -3.311  0.00388 ** 
+poly(SCFA, 2)2   1019.5      729.8   1.397  0.17942    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 729.8 on 18 degrees of freedom
+Multiple R-squared:  0.4178,	Adjusted R-squared:  0.3531 
+F-statistic: 6.459 on 2 and 18 DF,  p-value: 0.007685
+
+
+Call:
+lm(formula = myformula, data = x)
+
+Residuals:
+      1       2       3       4       5 
+ 1408.0  1365.7  -296.4  -352.5 -2124.9 
+
+Coefficients:
+               Estimate Std. Error t value Pr(>|t|)  
+(Intercept)     4025.05     926.01   4.347   0.0491 *
+poly(SCFA, 2)1   -78.55    2070.62  -0.038   0.9732  
+poly(SCFA, 2)2 -1734.19    2070.62  -0.838   0.4904  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 2071 on 2 degrees of freedom
+Multiple R-squared:   0.26,	Adjusted R-squared:  -0.4799 
+F-statistic: 0.3514 on 2 and 2 DF,  p-value: 0.74
+
+
+Call:
+lm(formula = myformula, data = x)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+ -6914  -3458  -1558   2489  10331 
+
+Coefficients:
+               Estimate Std. Error t value Pr(>|t|)    
+(Intercept)        6284       1067   5.887 9.28e-06 ***
+poly(SCFA, 2)1    -4131       5119  -0.807    0.429    
+poly(SCFA, 2)2     6845       5119   1.337    0.196    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 5119 on 20 degrees of freedom
+Multiple R-squared:  0.1087,	Adjusted R-squared:  0.01958 
+F-statistic:  1.22 on 2 and 20 DF,  p-value: 0.3164
+
+pdf("../Manuscript/figures_and_tables/SCFA_vs_lacto_turicibacter.pdf", width=10,height=6)
+ggplot(otu_432_1665_toplot, aes(y=Abundance, x=SCFA, shape = outlier, color = foam.type)) + 
  geom_point(size = 3) +
- scale_shape_manual(values=c(2, 15)) +
- facet_grid(~foam.type) + 
- geom_smooth(method="lm", formula=y ~ poly(x,2), se=F, color = "black") + 
- theme_bw() + 
+ scale_shape_manual(values=c(16:18)) +
+ facet_wrap(~genus, ncol = 2, scale = "free_y") + 
+ geom_smooth(data = otu_432_1665_toplot[otu_432_1665_toplot$OTU == "OTU_432" & otu_432_1665_toplot$outlier == "Non-outliers", ], method="lm", formula=y ~ poly(x), se=F) + 
+  geom_smooth(data = otu_432_1665_toplot[otu_432_1665_toplot$OTU == "OTU_1665" & otu_432_1665_toplot$outlier == "Non-outliers", ], method="lm", formula=y ~ poly(x, 2), se=F) + 
+ theme_classic() + 
+ theme(aspect.ratio =1) +
+ scale_color_manual(values = colors) +
 theme(axis.text.x=element_text(size=15),axis.text.y=element_text(size=15),axis.title.x=element_text(size=18),axis.title.y=element_text(size=18))+
-theme(legend.title=element_blank(),legend.text=element_text(size=15), legend.position=c(0.1, 0.9))+
+theme(legend.title=element_blank(),legend.text=element_text(size=15), legend.position=c(0.1, 0.7))+
 ylab("Relative Abundance (1e-5)") + xlab("SCFA (µg/g)")+
 theme(strip.text.x = element_text(size=15, face="bold"))
+dev.off()
 
 ### uc firmicutes vs lcfa ###
-ggplot(otu_15145, aes(y=Abundance, x=LCFA, shape = genus, linetype=genus)) + 
+otu_15145_toplot<-otu_15145[, c("OTU", "SAMPLES", "LCFA", "genus", "foam.type", "Abundance")]
+
+lcfa.outliers <- ddply(otu_15145_toplot, .(foam.type, genus), summarize, outliers = boxplot.stats(LCFA)$out)
+
+otu_15145.outliers <- ddply(otu_15145_toplot, .(foam.type, genus), summarize, outliers = boxplot.stats(Abundance)$out)
+
+otu_15145_toplot$outlier<-ifelse(otu_15145_toplot$LCFA %in% lcfa.outliers$outliers, "Outliers", ifelse(otu_15145_toplot$Abundance %in% otu_15145.outliers$outliers, "Outliers", "Non-outliers"))
+
+otu_15145_toplot$outlier<-factor(otu_15145_toplot$outlier, levels=c("Non-outliers", "Outliers"))
+
+otu_15145_toplot$facet<-ifelse(otu_15145_toplot$LCFA > 3000, "two", "one")
+
+otu_15145_toplot<-otu_15145_toplot[! is.na(otu_15145_toplot$LCFA), ]
+
+myformula <- formula(Abundance~poly(LCFA, 2))
+models<-dlply(otu_15145_toplot[otu_15145_toplot$outlier == "Non-outliers" & !is.na(otu_15145_toplot$LCFA), ], .(foam.type, genus), function(x) lm(myformula, x))
+ldply(models, coef)
+l_ply(models, summary, .print=T)
+
+ggplot(otu_15145_toplot, aes(y=Abundance, x=LCFA, color = foam.type)) + 
  geom_point(size = 3) +
- scale_shape_manual(values=c(2, 15)) +
- facet_grid(~foam.type, scale="free_x") + 
- geom_smooth(method="lm", formula=y ~ poly(x, 2), se=F, color = "black") + 
- theme_bw() + 
+ scale_shape_manual(values=c(16:18)) +
+#geom_smooth(method="lm", formula=y ~ poly(x, 2), se=F)+
+geom_smooth(data=otu_15145_toplot[otu_15145_toplot$outlier == "Non-outliers", ], method="lm", formula=y ~ poly(x, 2), se=F) + 
+ theme_classic() + 
+ facet_grid(~foam.type, scale="free")+
+ scale_color_manual(values=colors)+
 theme(axis.text.x=element_text(size=15),axis.text.y=element_text(size=15),axis.title.x=element_text(size=18),axis.title.y=element_text(size=18))+
 theme(legend.title=element_blank(),legend.text=element_text(size=15), legend.position=c(0.13, 0.9))+
 ylab("Relative Abundance (1e-5)") + xlab("LCFA (µg/g)")+
