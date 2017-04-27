@@ -1579,12 +1579,18 @@ otu_379<-subset(data_1e5.ftype.core.psmelt, OTU == "OTU_379")
 ### SCFA vs lacto, turicibacter ###
 otu_432_1665<-rbind(otu_432, otu_1665)
 
-# outliers #
-scfa.outliers <- ddply(otu_432_1665, .(foam.type, genus), summarize, outliers = boxplot.stats(SCFA)$out)
-
-otu_432_1665.outliers <- ddply(otu_432_1665, .(foam.type, genus), summarize, outliers = boxplot.stats(Abundance)$out)
+# bivariate outliers #
+install.packages("aplpack")
+library(aplpack)
 
 otu_432_1665_toplot<-otu_432_1665[, c("OTU", "SAMPLES", "foam.type", "genus", "SCFA","Abundance")]
+
+outliers<-dlply(otu_432_1665_toplot, .(foam.type, genus), function(x) compute.bagplot(cbind(x$SCFA, x$Abundance), na.rm=T))
+outliers<-data.frame(unlist(outliers))
+outliers<-subset(outliers, grepl("pxy.outlier", row.names(outliers)))
+
+
+
 
 otu_432_1665_toplot$outlier<-ifelse(otu_432_1665_toplot$SCFA %in% scfa.outliers$outliers, "Outliers", ifelse(otu_432_1665_toplot$Abundance %in% otu_432_1665.outliers$outliers, "Outliers", "Non-outliers"))
 
