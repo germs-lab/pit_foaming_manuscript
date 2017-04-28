@@ -8292,3 +8292,515 @@ ylab("Relative Abundance (1e-5)") + xlab("LCFA (µg/g)")+
 theme(strip.text.x = element_text(size=15, face="bold"))
 save.image("all_16s_physeq.RData")
 savehistory("temp.R")
+ggplot(otu_432_1665_toplot[otu_432_1665_toplot$OTU=="OTU_432", aes(y=Abundance, x=SCFA, shape = outlier, color = foam.type)) + 
+ geom_point(size = 3) +
+ scale_shape_manual(values=c(16:18)) +
+ geom_smooth(data = otu_432_1665_toplot[otu_432_1665_toplot$OTU == "OTU_432" & otu_432_1665_toplot$outlier == "Non-outliers", ], method="lm", formula=y ~ x, se=F) +  
+ theme_classic() + 
+ theme(aspect.ratio =1) +
+ scale_color_manual(values = colors) +
+theme(axis.text.x=element_text(size=15),axis.text.y=element_text(size=15),axis.title.x=element_text(size=18),axis.title.y=element_text(size=18))+
+theme(legend.title=element_blank(),legend.text=element_text(size=15), legend.position=c(0.1, 0.7))+
+ylab("Relative Abundance (1e-5)") + xlab("SCFA (µg/g)")+
+theme(strip.text.x = element_text(size=15, face="bold"))
+ggplot(otu_432_1665_toplot[otu_432_1665_toplot$OTU=="OTU_432", ], aes(y=Abundance, x=SCFA, shape = outlier, color = foam.type)) + 
+ geom_point(size = 3) +
+ scale_shape_manual(values=c(16:18)) +
+ geom_smooth(data = otu_432_1665_toplot[otu_432_1665_toplot$OTU == "OTU_432" & otu_432_1665_toplot$outlier == "Non-outliers", ], method="lm", formula=y ~ x, se=F) +  
+ theme_classic() + 
+ theme(aspect.ratio =1) +
+ scale_color_manual(values = colors) +
+theme(axis.text.x=element_text(size=15),axis.text.y=element_text(size=15),axis.title.x=element_text(size=18),axis.title.y=element_text(size=18))+
+theme(legend.title=element_blank(),legend.text=element_text(size=15), legend.position=c(0.1, 0.7))+
+ylab("Relative Abundance (1e-5)") + xlab("SCFA (µg/g)")+
+theme(strip.text.x = element_text(size=15, face="bold"))
+ggplot(otu_432_1665_toplot[otu_432_1665_toplot$OTU=="OTU_432", ], aes(y=Abundance, x=SCFA, shape = outlier, color = foam.type)) + 
+ geom_point(size = 3) +
+ scale_shape_manual(values=c(16:18)) +
+ geom_smooth(data = otu_432_1665_toplot[otu_432_1665_toplot$OTU == "OTU_432" & otu_432_1665_toplot$outlier == "Non-outliers", ], method="lm", formula=y ~ poly(x, 2), se=F) +  
+ theme_classic() + 
+ theme(aspect.ratio =1) +
+ scale_color_manual(values = colors) +
+theme(axis.text.x=element_text(size=15),axis.text.y=element_text(size=15),axis.title.x=element_text(size=18),axis.title.y=element_text(size=18))+
+theme(legend.title=element_blank(),legend.text=element_text(size=15), legend.position=c(0.1, 0.7))+
+ylab("Relative Abundance (1e-5)") + xlab("SCFA (µg/g)")+
+theme(strip.text.x = element_text(size=15, face="bold"))
+myformula <- formula(Abundance~poly(SCFA, 2))
+models<-dlply(otu_432_1665_toplot[otu_432_1665_toplot$outlier == "Non-outliers" & !is.na(otu_432_1665_toplot$SCFA) & otu_432_1665_toplot$OTU == "OTU_432", ], .(foam.type, genus), function(x) lm(myformula, x))
+ldply(models, coef)
+l_ply(models, summary, .print=T)
+myformula <- formula(SCFA~poly(Abundance, 2))
+models<-dlply(otu_432_1665_toplot[otu_432_1665_toplot$outlier == "Non-outliers" & !is.na(otu_432_1665_toplot$SCFA) & otu_432_1665_toplot$OTU == "OTU_432", ], .(foam.type, genus), function(x) lm(myformula, x))
+ldply(models, coef)
+l_ply(models, summary, .print=T)
+ggplot(otu_432_1665_toplot[otu_432_1665_toplot$OTU=="OTU_432", ], aes(x=Abundance, y=SCFA, shape = outlier, color = foam.type)) + 
+ geom_point(size = 3) +
+ scale_shape_manual(values=c(16:18)) +
+ geom_smooth(data = otu_432_1665_toplot[otu_432_1665_toplot$OTU == "OTU_432" & otu_432_1665_toplot$outlier == "Non-outliers", ], method="lm", formula=y ~ poly(x, 2), se=F) +  
+ theme_classic() + 
+ theme(aspect.ratio =1) +
+ scale_color_manual(values = colors) +
+theme(axis.text.x=element_text(size=15),axis.text.y=element_text(size=15),axis.title.x=element_text(size=18),axis.title.y=element_text(size=18))+
+theme(legend.title=element_blank(),legend.text=element_text(size=15), legend.position=c(0.1, 0.7))+
+ylab("Relative Abundance (1e-5)") + xlab("SCFA (µg/g)")+
+theme(strip.text.x = element_text(size=15, face="bold"))
+dev.off()
+ggplot(otu_432_1665_toplot[otu_432_1665_toplot$OTU=="OTU_432", ], aes(x=Abundance, y=SCFA, shape = outlier, color = foam.type)) + 
+ geom_point(size = 3) +
+ scale_shape_manual(values=c(16:18)) +
+ geom_smooth(data = otu_432_1665_toplot[otu_432_1665_toplot$OTU == "OTU_432" & otu_432_1665_toplot$outlier == "Non-outliers", ], method="lm", formula=y ~ poly(x, 2), se=F) +  
+ theme_classic() + 
+ theme(aspect.ratio =1) +
+ scale_color_manual(values = colors) +
+theme(axis.text.x=element_text(size=15),axis.text.y=element_text(size=15),axis.title.x=element_text(size=18),axis.title.y=element_text(size=18))+
+theme(legend.title=element_blank(),legend.text=element_text(size=15), legend.position=c(0.1, 0.7))+
+ylab("Relative Abundance (1e-5)") + xlab("SCFA (µg/g)")+
+theme(strip.text.x = element_text(size=15, face="bold"))
+myformula <- formula(Abundance~poly(SCFA, 2))
+models<-dlply(otu_432_1665_toplot[otu_432_1665_toplot$outlier == "Non-outliers" & !is.na(otu_432_1665_toplot$SCFA) & otu_432_1665_toplot$OTU == "OTU_432", ], .(foam.type, genus), function(x) lm(myformula, x))
+ldply(models, coef)
+l_ply(models, summary, .print=T)
+ggplot(otu_432_1665_toplot[otu_432_1665_toplot$OTU=="OTU_432", ], aes(y=Abundance, x=SCFA, shape = outlier, color = foam.type)) + 
+ geom_point(size = 3) +
+ scale_shape_manual(values=c(16:18)) +
+ geom_smooth(data = otu_432_1665_toplot[otu_432_1665_toplot$OTU == "OTU_432" & otu_432_1665_toplot$outlier == "Non-outliers", ], method="lm", formula=y ~ poly(x, 2), se=F) +  
+ theme_classic() + 
+ theme(aspect.ratio =1) +
+ scale_color_manual(values = colors) +
+theme(axis.text.x=element_text(size=15),axis.text.y=element_text(size=15),axis.title.x=element_text(size=18),axis.title.y=element_text(size=18))+
+theme(legend.title=element_blank(),legend.text=element_text(size=15), legend.position=c(0.1, 0.7))+
+ylab("Relative Abundance (1e-5)") + xlab("SCFA (µg/g)")+
+theme(strip.text.x = element_text(size=15, face="bold"))
+pdf("../Manuscript/figures_and_tables/SCFA_vs_lacto.pdf", width=6,height=6)
+ggplot(otu_432_1665_toplot[otu_432_1665_toplot$OTU=="OTU_432", ], aes(y=Abundance, x=SCFA, shape = outlier, color = foam.type)) + 
+ geom_point(size = 3) +
+ scale_shape_manual(values=c(16:18)) +
+ geom_smooth(data = otu_432_1665_toplot[otu_432_1665_toplot$OTU == "OTU_432" & otu_432_1665_toplot$outlier == "Non-outliers", ], method="lm", formula=y ~ poly(x, 2), se=F) +  
+ theme_classic() + 
+ theme(aspect.ratio =1) +
+ scale_color_manual(values = colors) +
+theme(axis.text.x=element_text(size=15),axis.text.y=element_text(size=15),axis.title.x=element_text(size=18),axis.title.y=element_text(size=18))+
+theme(legend.title=element_blank(),legend.text=element_text(size=15), legend.position=c(0.1, 0.7))+
+ylab("Relative Abundance (1e-5)") + xlab("SCFA (µg/g)")+
+theme(strip.text.x = element_text(size=15, face="bold"))
+dev.off()
+pdf("../Manuscript/figures_and_tables/SCFA_vs_lacto.pdf", width=8,height=8)
+ggplot(otu_432_1665_toplot[otu_432_1665_toplot$OTU=="OTU_432", ], aes(y=Abundance, x=SCFA, shape = outlier, color = foam.type)) + 
+ geom_point(size = 3) +
+ scale_shape_manual(values=c(16:18)) +
+ geom_smooth(data = otu_432_1665_toplot[otu_432_1665_toplot$OTU == "OTU_432" & otu_432_1665_toplot$outlier == "Non-outliers", ], method="lm", formula=y ~ poly(x, 2), se=F) +  
+ theme_classic() + 
+ theme(aspect.ratio =1) +
+ scale_color_manual(values = colors) +
+theme(axis.text.x=element_text(size=15),axis.text.y=element_text(size=15),axis.title.x=element_text(size=18),axis.title.y=element_text(size=18))+
+theme(legend.title=element_blank(),legend.text=element_text(size=15), legend.position=c(0.1, 0.7))+
+ylab("Relative Abundance (1e-5)") + xlab("SCFA (µg/g)")+
+theme(strip.text.x = element_text(size=15, face="bold"))
+dev.off()
+pdf("../Manuscript/figures_and_tables/SCFA_vs_lacto.pdf", width=6,height=6)
+ggplot(otu_432_1665_toplot[otu_432_1665_toplot$OTU=="OTU_432", ], aes(y=Abundance, x=SCFA, shape = outlier, color = foam.type)) + 
+ geom_point(size = 3) +
+ scale_shape_manual(values=c(16:18)) +
+ geom_smooth(data = otu_432_1665_toplot[otu_432_1665_toplot$OTU == "OTU_432" & otu_432_1665_toplot$outlier == "Non-outliers", ], method="lm", formula=y ~ poly(x, 2), se=F) +  
+ theme_classic() + 
+ theme(aspect.ratio =1) +
+ scale_color_manual(values = colors) +
+theme(axis.text.x=element_text(size=15),axis.text.y=element_text(size=15),axis.title.x=element_text(size=18),axis.title.y=element_text(size=18))+
+theme(legend.title=element_blank(),legend.text=element_text(size=15), legend.position=c(0.2, 0.7))+
+ylab("Relative Abundance (1e-5)") + xlab("SCFA (µg/g)")+
+theme(strip.text.x = element_text(size=15, face="bold"))
+dev.off()
+ggplot(otu_432_1665_toplot, aes(x=Abundance, y=SCFA, shape = outlier, color = foam.type)) + 
+ geom_point(size = 3) +
+ scale_shape_manual(values=c(16:18)) +
+ facet_wrap(~genus, ncol = 2, scale = "free_y") + 
+  geom_smooth(data = otu_432_1665_toplot[otu_432_1665_toplot$OTU == "OTU_1665" & otu_432_1665_toplot$outlier == "Non-outliers", ], method="lm", formula=y ~ poly(x, 2), se=F) + 
+ theme_classic() + 
+ theme(aspect.ratio =1) +
+ scale_color_manual(values = colors) +
+theme(axis.text.x=element_text(size=15),axis.text.y=element_text(size=15),axis.title.x=element_text(size=18),axis.title.y=element_text(size=18))+
+theme(legend.title=element_blank(),legend.text=element_text(size=15), legend.position=c(0.1, 0.7))+
+xlab("Relative Abundance (1e-5)") + ylab("SCFA (µg/g)")+
+theme(strip.text.x = element_text(size=15, face="bold"))
+ggplot(otu_432_1665_toplot[otu_432_1665_toplot$OTU == "OTU_1665", ], aes(x=Abundance, y=SCFA, shape = outlier, color = foam.type)) + 
+ geom_point(size = 3) +
+ scale_shape_manual(values=c(16:18)) +
+  geom_smooth(data = otu_432_1665_toplot[otu_432_1665_toplot$OTU == "OTU_1665" & otu_432_1665_toplot$outlier == "Non-outliers", ], method="lm", formula=y ~ poly(x, 2), se=F) + 
+ theme_classic() + 
+ theme(aspect.ratio =1) +
+ scale_color_manual(values = colors) +
+theme(axis.text.x=element_text(size=15),axis.text.y=element_text(size=15),axis.title.x=element_text(size=18),axis.title.y=element_text(size=18))+
+theme(legend.title=element_blank(),legend.text=element_text(size=15), legend.position=c(0.1, 0.7))+
+xlab("Relative Abundance (1e-5)") + ylab("SCFA (µg/g)")+
+theme(strip.text.x = element_text(size=15, face="bold"))
+ggplot(otu_432_1665_toplot[otu_432_1665_toplot$OTU == "OTU_1665", ], aes(x=Abundance, y=SCFA, shape = outlier, color = foam.type)) + 
+ geom_point(size = 3) +
+ scale_shape_manual(values=c(16:18)) +
+  geom_smooth(data = otu_432_1665_toplot[otu_432_1665_toplot$OTU == "OTU_1665" & otu_432_1665_toplot$outlier == "Non-outliers", ], method="lm", formula=y ~ poly(x, 2), se=F) + 
+ theme_classic() + 
+ theme(aspect.ratio =1) +
+ scale_color_manual(values = colors) +
+theme(axis.text.x=element_text(size=15),axis.text.y=element_text(size=15),axis.title.x=element_text(size=18),axis.title.y=element_text(size=18))+
+theme(legend.title=element_blank(),legend.text=element_text(size=15), legend.position=c(0.7, 0.7))+
+xlab("Relative Abundance (1e-5)") + ylab("SCFA (µg/g)")+
+theme(strip.text.x = element_text(size=15, face="bold"))
+pdf("../Manuscript/figures_and_tables/turicibacter_vs_SCFA.pdf", width=6,height=6)
+ggplot(otu_432_1665_toplot[otu_432_1665_toplot$OTU == "OTU_1665", ], aes(x=Abundance, y=SCFA, shape = outlier, color = foam.type)) + 
+ geom_point(size = 3) +
+ scale_shape_manual(values=c(16:18)) +
+  geom_smooth(data = otu_432_1665_toplot[otu_432_1665_toplot$OTU == "OTU_1665" & otu_432_1665_toplot$outlier == "Non-outliers", ], method="lm", formula=y ~ poly(x, 2), se=F) + 
+ theme_classic() + 
+ theme(aspect.ratio =1) +
+ scale_color_manual(values = colors) +
+theme(axis.text.x=element_text(size=15),axis.text.y=element_text(size=15),axis.title.x=element_text(size=18),axis.title.y=element_text(size=18))+
+theme(legend.title=element_blank(),legend.text=element_text(size=15), legend.position=c(0.7, 0.8))+
+xlab("Relative Abundance (1e-5)") + ylab("SCFA (µg/g)")+
+theme(strip.text.x = element_text(size=15, face="bold"))
+dev.off()
+pdf("../Manuscript/figures_and_tables/turicibacter_vs_SCFA.pdf", width=6,height=6)
+ggplot(otu_432_1665_toplot[otu_432_1665_toplot$OTU == "OTU_1665", ], aes(x=Abundance, y=SCFA, shape = outlier, color = foam.type)) + 
+ geom_point(size = 3) +
+ scale_shape_manual(values=c(16:18)) +
+  geom_smooth(data = otu_432_1665_toplot[otu_432_1665_toplot$OTU == "OTU_1665" & otu_432_1665_toplot$outlier == "Non-outliers", ], method="lm", formula=y ~ poly(x, 2), se=F) + 
+ theme_classic() + 
+ theme(aspect.ratio =1) +
+ scale_color_manual(values = colors) +
+theme(axis.text.x=element_text(size=15),axis.text.y=element_text(size=15),axis.title.x=element_text(size=18),axis.title.y=element_text(size=18))+
+theme(legend.title=element_blank(),legend.text=element_text(size=15), legend.position=c(0.7, 0.8))+
+xlab("Turicibacter Relative Abundance (1e-5)") + ylab("SCFA (µg/g)")+
+theme(strip.text.x = element_text(size=15, face="bold"))
+dev.off()
+pdf("../Manuscript/figures_and_tables/SCFA_vs_lacto.pdf", width=6,height=6)
+ggplot(otu_432_1665_toplot[otu_432_1665_toplot$OTU=="OTU_432", ], aes(y=Abundance, x=SCFA, shape = outlier, color = foam.type)) + 
+ geom_point(size = 3) +
+ scale_shape_manual(values=c(16:18)) +
+ geom_smooth(data = otu_432_1665_toplot[otu_432_1665_toplot$OTU == "OTU_432" & otu_432_1665_toplot$outlier == "Non-outliers", ], method="lm", formula=y ~ poly(x, 2), se=F) +  
+ theme_classic() + 
+ theme(aspect.ratio =1) +
+ scale_color_manual(values = colors) +
+theme(axis.text.x=element_text(size=15),axis.text.y=element_text(size=15),axis.title.x=element_text(size=18),axis.title.y=element_text(size=18))+
+theme(legend.title=element_blank(),legend.text=element_text(size=15), legend.position=c(0.2, 0.7))+
+ylab("Lactobacillus Relative Abundance (1e-5)") + xlab("SCFA (µg/g)")+
+theme(strip.text.x = element_text(size=15, face="bold"))
+dev.off()
+head(otu_15145_toplot)
+outliers<-dlply(otu_15145_toplot, .(foam.type, genus), function(x) compute.bagplot(cbind(x$LCFA, x$Abundance), na.rm=T))
+outliers<-data.frame(unlist(outliers))
+outliers<-subset(outliers, grepl("pxy.outlier", row.names(outliers)))
+dim(outliers)
+outliers
+ggplot(otu_15145_toplot, aes(y=Abundance, x=LCFA, color = foam.type)) + 
+ geom_point(size = 3) +
+ scale_shape_manual(values=c(16:18)) +
+#geom_smooth(method="lm", formula=y ~ poly(x, 2), se=F)+
+geom_smooth(data=otu_15145_toplot[otu_15145_toplot$outlier == "Non-outliers", ], method="lm", formula=y ~ poly(x, 2), se=F) + 
+ theme_classic() + 
+ facet_grid(~foam.type, scale="free")+
+ scale_color_manual(values=colors)+
+theme(axis.text.x=element_text(size=15),axis.text.y=element_text(size=15),axis.title.x=element_text(size=18),axis.title.y=element_text(size=18))+
+theme(legend.title=element_blank(),legend.text=element_text(size=15), legend.position=c(0.13, 0.9))+
+ylab("Relative Abundance (1e-5)") + xlab("LCFA (µg/g)")+
+theme(strip.text.x = element_text(size=15, face="bold"))
+otu_15145_toplot$outlier<-ifelse(grepl("\\b76.|\\b3577.|\\b630.|\\b141.|\\b12680.|\\b1820.", otu_15145_toplot$LCFA) & grepl("\\b116.|\\b1453.|\\b337.|\\b114.|\\b108.|\\b426.", otu_15145_toplot$Abundance, "Outliers", "Non-outliers")
+)
+otu_15145_toplot$outlier<-ifelse(grepl("\\b76.|\\b3577.|\\b630.|\\b141.|\\b12680.|\\b1820.", otu_15145_toplot$LCFA) & grepl("\\b116.|\\b1453.|\\b337.|\\b114.|\\b108.|\\b426.", otu_15145_toplot$Abundance), "Outliers", "Non-outliers")
+head(otu_15145_toplot)
+otu_15145_toplot[otu_15145_toplot$outlier == "Outliers", ]
+otu_15145_toplot$outlier<-ifelse(grepl("\\b76.|\\b3577.|\\b630.|\\b141.|\\b12680.|\\b1820.", otu_15145_toplot$LCFA) | grepl("\\b116.|\\b1453.|\\b337.|\\b114.|\\b108.|\\b426.", otu_15145_toplot$Abundance), "Outliers", "Non-outliers")
+otu_15145_toplot[otu_15145_toplot$outlier == "Outliers", ]
+outliers
+outliers<-dlply(otu_15145_toplot, .(foam.type, genus), function(x) compute.bagplot(cbind(x$LCFA, x$Abundance), na.rm=T))
+outliers$No-foam.unclassified_Firmicutes
+outliers$`No-foam.unclassified_Firmicutes`
+outliers$`No-foam.unclassified_Firmicutes`$pxy.outliers
+otu_15145_toplot$outlier<-factor(otu_15145_toplot$outlier, levels=c("Non-outliers", "Outliers"))
+str(otu_15145_toplot)
+myformula <- formula(Abundance~poly(LCFA, 2))
+models<-dlply(otu_15145_toplot[otu_15145_toplot$outlier == "Non-outliers" & !is.na(otu_15145_toplot$LCFA), ], .(foam.type, genus), function(x) lm(myformula, x))
+ldply(models, coef)
+l_ply(models, summary, .print=T)
+myformula <- formula(LCFA~poly(Abundance, 2))
+models<-dlply(otu_15145_toplot[otu_15145_toplot$outlier == "Non-outliers" & !is.na(otu_15145_toplot$LCFA), ], .(foam.type, genus), function(x) lm(myformula, x))
+ldply(models, coef)
+l_ply(models, summary, .print=T)
+ggplot(otu_15145_toplot, aes(x=Abundance, y=LCFA, color = foam.type)) + 
+ geom_point(size = 3) +
+ scale_shape_manual(values=c(16:18)) +
+#geom_smooth(method="lm", formula=y ~ poly(x, 2), se=F)+
+geom_smooth(data=otu_15145_toplot[otu_15145_toplot$outlier == "Non-outliers", ], method="lm", formula=y ~ poly(x, 2), se=F) + 
+ theme_classic() + 
+ scale_color_manual(values=colors)+
+theme(axis.text.x=element_text(size=15),axis.text.y=element_text(size=15),axis.title.x=element_text(size=18),axis.title.y=element_text(size=18))+
+theme(legend.title=element_blank(),legend.text=element_text(size=15), legend.position=c(0.13, 0.9))+
+xlab("Unclassified Firmicutes Relative Abundance (1e-5)") + ylab("LCFA (µg/g)")+
+theme(strip.text.x = element_text(size=15, face="bold"))
+ggplot(otu_15145_toplot, aes(x=Abundance, y=LCFA, color = foam.type, shape = outlier)) + 
+ geom_point(size = 3) +
+ scale_shape_manual(values=c(16:18)) +
+#geom_smooth(method="lm", formula=y ~ poly(x, 2), se=F)+
+geom_smooth(data=otu_15145_toplot[otu_15145_toplot$outlier == "Non-outliers", ], method="lm", formula=y ~ poly(x, 2), se=F) + 
+ theme_classic() + 
+ scale_color_manual(values=colors)+
+theme(axis.text.x=element_text(size=15),axis.text.y=element_text(size=15),axis.title.x=element_text(size=18),axis.title.y=element_text(size=18))+
+theme(legend.title=element_blank(),legend.text=element_text(size=15), legend.position=c(0.3, 0.9))+
+xlab("Unclassified Firmicutes Relative Abundance (1e-5)") + ylab("LCFA (µg/g)")+
+theme(strip.text.x = element_text(size=15, face="bold"))
+ggplot(otu_15145_toplot, aes(x=Abundance, y=LCFA, color = foam.type, shape = outlier)) + 
+ geom_point(size = 3) +
+ scale_shape_manual(values=c(16:18)) +
+#geom_smooth(method="lm", formula=y ~ poly(x, 2), se=F)+
+geom_smooth(data=otu_15145_toplot[otu_15145_toplot$outlier == "Non-outliers", ], method="lm", formula=y ~ poly(x, 2), se=F) + 
+ theme_classic() + 
+ scale_color_manual(values=colors)+
+theme(axis.text.x=element_text(size=15),axis.text.y=element_text(size=15),axis.title.x=element_text(size=18),axis.title.y=element_text(size=18))+
+theme(legend.title=element_blank(),legend.text=element_text(size=15), legend.position=c(0.7, 0.8))+
+xlab("Unclassified Firmicutes Relative Abundance (1e-5)") + ylab("LCFA (µg/g)")+
+theme(strip.text.x = element_text(size=15, face="bold"))
+head(otu_15145_toplot)
+otu_15145_toplot[otu_15145_toplot$facet, ]
+otu_15145_toplot[otu_15145_toplot$facet=="two", ]
+otu_15145_toplot$facet<-ifelse(otu_15145_toplot$LCFA > 10000, "two", "one")
+otu_15145_toplot$facet<-factor(otu_15145_toplot$facet, levels = c("two", "one"))
+str(otu_15145_toplot)
+ggplot(otu_15145_toplot, aes(x=Abundance, y=LCFA, color = foam.type, shape = outlier)) + 
+ geom_point(size = 3) +
+ scale_shape_manual(values=c(16:18)) +
+#geom_smooth(method="lm", formula=y ~ poly(x, 2), se=F)+
+geom_smooth(data=otu_15145_toplot[otu_15145_toplot$outlier == "Non-outliers", ], method="lm", formula=y ~ poly(x, 2), se=F) + 
+ theme_classic() + 
+ facet_grid(facet~., scale="free") +
+ scale_color_manual(values=colors)+
+theme(axis.text.x=element_text(size=15),axis.text.y=element_text(size=15),axis.title.x=element_text(size=18),axis.title.y=element_text(size=18))+
+theme(legend.title=element_blank(),legend.text=element_text(size=15), legend.position=c(0.7, 0.8))+
+xlab("Unclassified Firmicutes Relative Abundance (1e-5)") + ylab("LCFA (µg/g)")+
+theme(strip.text.x = element_text(size=15, face="bold"))
+otu_15145_toplot$facet<-ifelse(otu_15145_toplot$LCFA > 3000, "two", "one")
+otu_15145_toplot$facet<-factor(otu_15145_toplot$facet, levels = c("two", "one"))
+ggplot(otu_15145_toplot, aes(x=Abundance, y=LCFA, color = foam.type, shape = outlier)) + 
+ geom_point(size = 3) +
+ scale_shape_manual(values=c(16:18)) +
+#geom_smooth(method="lm", formula=y ~ poly(x, 2), se=F)+
+geom_smooth(data=otu_15145_toplot[otu_15145_toplot$outlier == "Non-outliers", ], method="lm", formula=y ~ poly(x, 2), se=F) + 
+ theme_classic() + 
+ facet_grid(facet~., scale="free") +
+ scale_color_manual(values=colors)+
+theme(axis.text.x=element_text(size=15),axis.text.y=element_text(size=15),axis.title.x=element_text(size=18),axis.title.y=element_text(size=18))+
+theme(legend.title=element_blank(),legend.text=element_text(size=15), legend.position=c(0.7, 0.8))+
+xlab("Unclassified Firmicutes Relative Abundance (1e-5)") + ylab("LCFA (µg/g)")+
+theme(strip.text.x = element_text(size=15, face="bold"))
+ggplot(otu_15145_toplot, aes(x=Abundance, y=LCFA, color = foam.type, shape = outlier)) + 
+ geom_point(size = 3) +
+ scale_shape_manual(values=c(16:18)) +
+#geom_smooth(method="lm", formula=y ~ poly(x, 2), se=F)+
+geom_smooth(data=otu_15145_toplot[otu_15145_toplot$outlier == "Non-outliers", ], method="lm", formula=y ~ poly(x, 2), se=F) + 
+ theme_classic() + 
+ facet_grid(facet~., scale="free") +
+ scale_color_manual(values=colors)+
+theme(axis.text.x=element_text(size=15),axis.text.y=element_text(size=15),axis.title.x=element_text(size=18),axis.title.y=element_text(size=18))+
+theme(legend.title=element_blank(),legend.text=element_text(size=15), legend.position=c(0.7, 0.8))+
+xlab("Unclassified Firmicutes Relative Abundance (1e-5)") + ylab("LCFA (µg/g)")+
+theme(strip.text.y = element_blank())
+pdf("../Manuscript/figures_and_tables/uc_firmicutes_vs_lcfa.pdf", width=6,height=12)
+ggplot(otu_15145_toplot, aes(x=Abundance, y=LCFA, color = foam.type, shape = outlier)) + 
+ geom_point(size = 3) +
+ scale_shape_manual(values=c(16:18)) +
+#geom_smooth(method="lm", formula=y ~ poly(x, 2), se=F)+
+geom_smooth(data=otu_15145_toplot[otu_15145_toplot$outlier == "Non-outliers", ], method="lm", formula=y ~ poly(x, 2), se=F) + 
+ theme_classic() + 
+ facet_grid(facet~., scale="free") +
+ scale_color_manual(values=colors)+
+theme(axis.text.x=element_text(size=15),axis.text.y=element_text(size=15),axis.title.x=element_text(size=18),axis.title.y=element_text(size=18))+
+theme(legend.title=element_blank(),legend.text=element_text(size=15), legend.position=c(0.7, 0.8))+
+xlab("Unclassified Firmicutes Relative Abundance (1e-5)") + ylab("LCFA (µg/g)")+
+theme(strip.text.y = element_blank())
+dev.off()
+pdf("../Manuscript/figures_and_tables/uc_firmicutes_vs_lcfa.pdf", width=8,height=10)
+ggplot(otu_15145_toplot, aes(x=Abundance, y=LCFA, color = foam.type, shape = outlier)) + 
+ geom_point(size = 3) +
+ scale_shape_manual(values=c(16:18)) +
+#geom_smooth(method="lm", formula=y ~ poly(x, 2), se=F)+
+geom_smooth(data=otu_15145_toplot[otu_15145_toplot$outlier == "Non-outliers", ], method="lm", formula=y ~ poly(x, 2), se=F) + 
+ theme_classic() + 
+ facet_grid(facet~., scale="free") +
+ scale_color_manual(values=colors)+
+theme(axis.text.x=element_text(size=15),axis.text.y=element_text(size=15),axis.title.x=element_text(size=18),axis.title.y=element_text(size=18))+
+theme(legend.title=element_blank(),legend.text=element_text(size=15), legend.position=c(0.7, 0.8))+
+xlab("Unclassified Firmicutes Relative Abundance (1e-5)") + ylab("LCFA (µg/g)")+
+theme(strip.text.y = element_blank())
+dev.off()
+pdf("../Manuscript/figures_and_tables/uc_firmicutes_vs_lcfa.pdf", width=8,height=10)
+ggplot(otu_15145_toplot, aes(x=Abundance, y=LCFA, color = foam.type, shape = outlier)) + 
+ geom_point(size = 3) +
+ scale_shape_manual(values=c(16:18)) +
+#geom_smooth(method="lm", formula=y ~ poly(x, 2), se=F)+
+geom_smooth(data=otu_15145_toplot[otu_15145_toplot$outlier == "Non-outliers", ], method="lm", formula=y ~ poly(x, 2), se=F) + 
+ theme_classic() + 
+ facet_grid(facet~., scale="free", space="free_y") +
+ scale_color_manual(values=colors)+
+theme(axis.text.x=element_text(size=15),axis.text.y=element_text(size=15),axis.title.x=element_text(size=18),axis.title.y=element_text(size=18))+
+theme(legend.title=element_blank(),legend.text=element_text(size=15), legend.position=c(0.7, 0.8))+
+xlab("Unclassified Firmicutes Relative Abundance (1e-5)") + ylab("LCFA (µg/g)")+
+theme(strip.text.y = element_blank())
+dev.off()
+pdf("../Manuscript/figures_and_tables/uc_firmicutes_vs_lcfa.pdf", width=8,height=10)
+ggplot(otu_15145_toplot, aes(x=Abundance, y=LCFA, color = foam.type, shape = outlier)) + 
+ geom_point(size = 3) +
+ scale_shape_manual(values=c(16:18)) +
+#geom_smooth(method="lm", formula=y ~ poly(x, 2), se=F)+
+geom_smooth(data=otu_15145_toplot[otu_15145_toplot$outlier == "Non-outliers", ], method="lm", formula=y ~ poly(x, 2), se=F) + 
+ theme_classic() + 
+ facet_grid(facet~., scale="free") +
+ scale_color_manual(values=colors)+
+theme(axis.text.x=element_text(size=15),axis.text.y=element_text(size=15),axis.title.x=element_text(size=18),axis.title.y=element_text(size=18))+
+theme(legend.title=element_blank(),legend.text=element_text(size=15), legend.position=c(0.7, 0.8))+
+xlab("Unclassified Firmicutes Relative Abundance (1e-5)") + ylab("LCFA (µg/g)")+
+theme(strip.text.y = element_blank())
+dev.off()
+pdf("../Manuscript/figures_and_tables/uc_firmicutes_vs_lcfa.pdf", width=8,height=10)
+ggplot(otu_15145_toplot, aes(x=Abundance, y=LCFA, color = foam.type, shape = outlier)) + 
+ geom_point(size = 3) +
+ scale_shape_manual(values=c(16:18)) +
+#geom_smooth(method="lm", formula=y ~ poly(x, 2), se=F)+
+geom_smooth(data=otu_15145_toplot[otu_15145_toplot$outlier == "Non-outliers", ], method="lm", formula=y ~ poly(x, 2), se=F) + 
+ theme_classic() + 
+#facet_grid(facet~., scale="free") +
+ scale_color_manual(values=colors)+
+theme(axis.text.x=element_text(size=15),axis.text.y=element_text(size=15),axis.title.x=element_text(size=18),axis.title.y=element_text(size=18))+
+theme(legend.title=element_blank(),legend.text=element_text(size=15), legend.position=c(0.7, 0.8))+
+xlab("Unclassified Firmicutes Relative Abundance (1e-5)") + ylab("LCFA (µg/g)")+
+theme(strip.text.y = element_blank())
+dev.off()
+pdf("../Manuscript/figures_and_tables/uc_firmicutes_vs_lcfa.pdf", width=8,height=10)
+ggplot(otu_15145_toplot, aes(x=Abundance, y=LCFA, color = foam.type, shape = outlier)) + 
+ geom_point(size = 3) +
+ scale_shape_manual(values=c(16:18)) +
+#geom_smooth(method="lm", formula=y ~ poly(x, 2), se=F)+
+geom_smooth(data=otu_15145_toplot[otu_15145_toplot$outlier == "Non-outliers", ], method="lm", formula=y ~ poly(x, 2), se=F) + 
+ theme_classic() + 
+facet_grid(facet~., scale="free") +
+ scale_color_manual(values=colors)+
+theme(axis.text.x=element_text(size=15),axis.text.y=element_text(size=15),axis.title.x=element_text(size=18),axis.title.y=element_text(size=18))+
+theme(legend.title=element_blank(),legend.text=element_text(size=15), legend.position=c(0.7, 0.8))+
+xlab("Unclassified Firmicutes Relative Abundance (1e-5)") + ylab("LCFA (µg/g)")+
+theme(strip.text.y = element_blank())
+dev.off()
+dim(otu_15145_1665)
+head(otu_15145_1665)
+outliers<-dlply(otu_15145_1665, .(foam.type, genus), function(x) compute.bagplot(cbind(x$unclassified_Firmicutes, x$Turicibacter), na.rm=T))
+outliers<-data.frame(unlist(outliers))
+outliers<-dlply(otu_15145_1665, .(foam.type), function(x) compute.bagplot(cbind(x$unclassified_Firmicutes, x$Turicibacter), na.rm=T))
+outliers<-data.frame(unlist(outliers))
+outliers<-subset(outliers, grepl("pxy.outlier", row.names(outliers)))
+dim(outliers)
+head(outliers)
+outliers$ftype<-data.frame(do.call('rbind', strsplit(as.character(row.names(outliers), ".", fixed=T)))[, 1]
+outliers$ftype<-data.frame(do.call('rbind', strsplit(as.character(row.names(outliers), ".", fixed=T))))[, 1]
+outliers$ftype<-data.frame(do.call('rbind', strsplit(as.character(row.names(outliers), split =".", fixed=T))))[, 1]
+outliers$ftype<-data.frame(do.call('rbind', strsplit(as.character(row.names(outliers)), ".", fixed=T)))[, 1]
+head(outliers)
+unique(outliers$ftype)
+outliers<-dlply(otu_15145_1665, .(foam.type), function(x) compute.bagplot(cbind(x$unclassified_Firmicutes, x$Turicibacter), na.rm=T))
+outliers$`No-foam`$pxy.outlier
+outliers.df<-rbind(outliers$`No-foam`$pxy.outlier, outliers$Crust$pxy.outlier, outliers$Foam$pxy.outlier)
+dim(outliers.df)
+head(outliers.df)
+otu_15145_1665$outlier<-ifelse(otu_15145_1665$unclassified_Firmicutes %in% outliers.df[, 1] & otu_15145_1665$Turicibacter %in% outliers.df[, 2], "Outliers", "Non-outliers")
+head(otu_15145_1665)
+otu_15145_1665[otu_15145_1665$outlier == "Outliers", ]
+otu_15145_1665$outlier<-factor(otu_15145_1665$outlier, levels=c("Non-outliers", "Outliers"))
+myformula <- formula(unclassified_Firmicutes ~ poly(Turicibacter, 2))
+models<-dlply(otu_15145_1665[otu_15145_1665$outlier == "Non-outliers", ], .(foam.type), function(x) lm(myformula, x))
+ldply(models, coef)
+l_ply(models, summary, .print=T)
+myformula <- formula(Turicibacter ~ poly(unclassified_Firmicutes, 2))
+models<-dlply(otu_15145_1665[otu_15145_1665$outlier == "Non-outliers", ], .(foam.type), function(x) lm(myformula, x))
+ldply(models, coef)
+l_ply(models, summary, .print=T)
+myformula <- formula(Turicibacter ~ poly(unclassified_Firmicutes))
+models<-dlply(otu_15145_1665[otu_15145_1665$outlier == "Non-outliers", ], .(foam.type), function(x) lm(myformula, x))
+ldply(models, coef)
+l_ply(models, summary, .print=T)
+myformula <- formula(unclassified_Firmicutes ~ poly(Turicibacter))
+models<-dlply(otu_15145_1665[otu_15145_1665$outlier == "Non-outliers", ], .(foam.type), function(x) lm(myformula, x))
+ldply(models, coef)
+l_ply(models, summary, .print=T)
+ggplot(otu_15145_1665, aes(y=unclassified_Firmicutes, x=Turicibacter, fill=foam.type, shape = outlier, color=foam.type)) + 
+ geom_point(size = 3) +
+ scale_shape_manual(values=c(16:18)) +
+ scale_color_manual(values=colors) +
+  scale_fill_manual(values=colors) +
+ geom_smooth(data = otu_15145_1665[otu_15145_1665$outlier == "Non-outliers", ], method="lm", formula=y ~ poly(x, 2), se=F) + 
+ theme_bw() + 
+theme(axis.text.x=element_text(size=15),axis.text.y=element_text(size=15),axis.title.x=element_text(size=18),axis.title.y=element_text(size=18))+
+theme(legend.title=element_blank(),legend.text=element_text(size=15), legend.position=c(0.13, 0.9))+
+xlab("Turicibacter Relative Abundance (1e-5)") + ylab("Unclassified_Firmicutes Relative abundance (1e-5)")+
+theme(aspect.ratio=1)+
+theme(strip.text.x = element_text(size=15, face="bold"))
+ggplot(otu_15145_1665, aes(y=unclassified_Firmicutes, x=Turicibacter, fill=foam.type, shape = outlier, color=foam.type)) + 
+ geom_point(size = 3) +
+ scale_shape_manual(values=c(16:18)) +
+ scale_color_manual(values=colors) +
+  scale_fill_manual(values=colors) +
+ geom_smooth(data = otu_15145_1665[otu_15145_1665$outlier == "Non-outliers", ], method="lm", formula=y ~ poly(x), se=F) + 
+ theme_classic() + 
+theme(axis.text.x=element_text(size=15),axis.text.y=element_text(size=15),axis.title.x=element_text(size=18),axis.title.y=element_text(size=18))+
+theme(legend.title=element_blank(),legend.text=element_text(size=15), legend.position=c(0.13, 0.9))+
+xlab("Turicibacter Relative Abundance (1e-5)") + ylab("Unclassified_Firmicutes Relative abundance (1e-5)")+
+theme(aspect.ratio=1)+
+theme(strip.text.x = element_text(size=15, face="bold"))
+ggplot(otu_15145_1665, aes(x=unclassified_Firmicutes, y=Turicibacter, fill=foam.type, shape = outlier, color=foam.type)) + 
+ geom_point(size = 3) +
+ scale_shape_manual(values=c(16:18)) +
+ scale_color_manual(values=colors) +
+  scale_fill_manual(values=colors) +
+ geom_smooth(data = otu_15145_1665[otu_15145_1665$outlier == "Non-outliers", ], method="lm", formula=y ~ poly(x), se=F) + 
+ theme_classic() + 
+theme(axis.text.x=element_text(size=15),axis.text.y=element_text(size=15),axis.title.x=element_text(size=18),axis.title.y=element_text(size=18))+
+theme(legend.title=element_blank(),legend.text=element_text(size=15), legend.position=c(0.13, 0.9))+
+xlab("Turicibacter Relative Abundance (1e-5)") + ylab("Unclassified_Firmicutes Relative abundance (1e-5)")+
+theme(aspect.ratio=1)+
+theme(strip.text.x = element_text(size=15, face="bold"))
+myformula <- formula(Turicibacter ~ poly(unclassified_Firmicutes))
+models<-dlply(otu_15145_1665[otu_15145_1665$outlier == "Non-outliers", ], .(foam.type), function(x) lm(myformula, x))
+ldply(models, coef)
+l_ply(models, summary, .print=T)
+myformula <- formula(Turicibacter ~ poly(unclassified_Firmicutes, 2))
+models<-dlply(otu_15145_1665[otu_15145_1665$outlier == "Non-outliers", ], .(foam.type), function(x) lm(myformula, x))
+ldply(models, coef)
+l_ply(models, summary, .print=T)
+ggplot(otu_15145_1665, aes(x=unclassified_Firmicutes, y=Turicibacter, fill=foam.type, shape = outlier, color=foam.type)) + 
+ geom_point(size = 3) +
+ scale_shape_manual(values=c(16:18)) +
+ scale_color_manual(values=colors) +
+  scale_fill_manual(values=colors) +
+ geom_smooth(data = otu_15145_1665[otu_15145_1665$outlier == "Non-outliers", ], method="lm", formula=y ~ poly(x), se=F) + 
+ theme_classic() + 
+theme(axis.text.x=element_text(size=15),axis.text.y=element_text(size=15),axis.title.x=element_text(size=18),axis.title.y=element_text(size=18))+
+theme(legend.title=element_blank(),legend.text=element_text(size=15), legend.position=c(0.13, 0.9))+
+ylab("Turicibacter Relative Abundance (1e-5)") + xlab("Unclassified Firmicutes Relative abundance (1e-5)")+
+theme(aspect.ratio=1)+
+theme(strip.text.x = element_text(size=15, face="bold"))
+pdf("../Manuscript/figures_and_tables/turicibacter_vs_uc_firmicutes.pdf", width=8,height=8)
+ggplot(otu_15145_1665, aes(x=unclassified_Firmicutes, y=Turicibacter, fill=foam.type, shape = outlier, color=foam.type)) + 
+ geom_point(size = 3) +
+ scale_shape_manual(values=c(16:18)) +
+ scale_color_manual(values=colors) +
+  scale_fill_manual(values=colors) +
+ geom_smooth(data = otu_15145_1665[otu_15145_1665$outlier == "Non-outliers", ], method="lm", formula=y ~ poly(x), se=F) + 
+ theme_classic() + 
+theme(axis.text.x=element_text(size=15),axis.text.y=element_text(size=15),axis.title.x=element_text(size=18),axis.title.y=element_text(size=18))+
+theme(legend.title=element_blank(),legend.text=element_text(size=15), legend.position=c(0.13, 0.9))+
+ylab("Turicibacter Relative Abundance (1e-5)") + xlab("Unclassified Firmicutes Relative abundance (1e-5)")+
+theme(aspect.ratio=1)+
+theme(strip.text.x = element_text(size=15, face="bold"))
+dev.off()
+myformula <- formula(SCFA~poly(Abundance))
+models<-dlply(otu_432_1665_toplot[otu_432_1665_toplot$outlier == "Non-outliers" & !is.na(otu_432_1665_toplot$SCFA) & otu_432_1665_toplot$OTU == "OTU_1665", ], .(foam.type, genus), function(x) lm(myformula, x))
+ldply(models, coef)
+l_ply(models, summary, .print=T)
+myformula <- formula(SCFA~poly(Abundance, 2))
+models<-dlply(otu_432_1665_toplot[otu_432_1665_toplot$outlier == "Non-outliers" & !is.na(otu_432_1665_toplot$SCFA) & otu_432_1665_toplot$OTU == "OTU_1665", ], .(foam.type, genus), function(x) lm(myformula, x))
+ldply(models, coef)
+l_ply(models, summary, .print=T)
+save.image("all_16s_physeq.RData")
+savehistory("temp.R")
