@@ -1589,26 +1589,18 @@ outliers<-dlply(otu_432_1665_toplot, .(foam.type, genus), function(x) compute.ba
 outliers<-data.frame(unlist(outliers))
 outliers<-subset(outliers, grepl("pxy.outlier", row.names(outliers)))
 
-
-
-
-otu_432_1665_toplot$outlier<-ifelse(otu_432_1665_toplot$SCFA %in% scfa.outliers$outliers, "Outliers", ifelse(otu_432_1665_toplot$Abundance %in% otu_432_1665.outliers$outliers, "Outliers", "Non-outliers"))
+otu_432_1665_toplot$outlier<-ifelse(otu_432_1665_toplot$genus == "Lactobacillus" & otu_432_1665_toplot$foam.type == "Foam" & grepl("\\b9743.",  otu_432_1665_toplot$SCFA) & grepl("\\b2224.",  otu_432_1665_toplot$Abundance), "Outliers", "Non-outliers")
 
 otu_432_1665_toplot$outlier<-factor(otu_432_1665_toplot$outlier, levels=c("Non-outliers", "Outliers"))
 
 otu_432_1665_toplot$facet<-ifelse(otu_432_1665_toplot$Abundance > 20000, "two", ifelse(otu_432_1665_toplot$OTU=="OTU_432" & otu_432_1665_toplot$Abundance >5000, "two", "one"))
 otu_432_1665_toplot$facet<-factor(otu_432_1665_toplot$facet, levels=c("two", "one"))
 
-myformula <- formula(Abundance~poly(SCFA))
+myformula <- formula(Abundance~poly(SCFA, 2))
 models<-dlply(otu_432_1665_toplot[otu_432_1665_toplot$outlier == "Non-outliers" & !is.na(otu_432_1665_toplot$SCFA) & otu_432_1665_toplot$OTU == "OTU_432", ], .(foam.type, genus), function(x) lm(myformula, x))
 ldply(models, coef)
 l_ply(models, summary, .print=T)
 
-> ldply(models, coef)
-  foam.type         genus (Intercept) poly(SCFA)
-1   No-foam Lactobacillus   1326.7975 3030.11896
-2     Crust Lactobacillus    803.3619  555.46140
-3      Foam Lactobacillus    461.3645   14.75326
 > l_ply(models, summary, .print=T)
 
 Call:
@@ -1616,106 +1608,122 @@ lm(formula = myformula, data = x)
 
 Residuals:
     Min      1Q  Median      3Q     Max 
--1726.8  -866.7  -214.3   724.3  2510.4 
+-7822.6 -3020.3  -601.3   756.0 14763.5 
 
 Coefficients:
-            Estimate Std. Error t value Pr(>|t|)    
-(Intercept)   1326.8      279.5   4.746 0.000187 ***
-poly(SCFA)    3030.1     1218.5   2.487 0.023577 *  
+               Estimate Std. Error t value Pr(>|t|)   
+(Intercept)        4038       1135   3.559  0.00186 **
+poly(SCFA, 2)1    15766       5558   2.836  0.00989 **
+poly(SCFA, 2)2     2847       5558   0.512  0.61389   
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-Residual standard error: 1218 on 17 degrees of freedom
-Multiple R-squared:  0.2667,	Adjusted R-squared:  0.2236 
-F-statistic: 6.184 on 1 and 17 DF,  p-value: 0.02358
+Residual standard error: 5558 on 21 degrees of freedom
+Multiple R-squared:  0.2835,	Adjusted R-squared:  0.2152 
+F-statistic: 4.154 on 2 and 21 DF,  p-value: 0.0302
 
 
 Call:
 lm(formula = myformula, data = x)
 
 Residuals:
-      1       2       3       4       5       6 
- 326.37   95.11  543.00  217.10 -719.16 -462.41 
+      1       2       3       4       5       6       7 
+ 2666.0  -223.5   207.5   299.4  -540.4 -1491.2  -917.8 
 
 Coefficients:
-            Estimate Std. Error t value Pr(>|t|)  
-(Intercept)    803.4      222.5   3.610   0.0226 *
-poly(SCFA)     555.5      545.1   1.019   0.3658  
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+               Estimate Std. Error t value Pr(>|t|)
+(Intercept)      1286.9      616.7   2.087    0.105
+poly(SCFA, 2)1    287.7     1631.6   0.176    0.869
+poly(SCFA, 2)2   -764.7     1631.6  -0.469    0.664
 
-Residual standard error: 545.1 on 4 degrees of freedom
-Multiple R-squared:  0.2061,	Adjusted R-squared:  0.007615 
-F-statistic: 1.038 on 1 and 4 DF,  p-value: 0.3658
+Residual standard error: 1632 on 4 degrees of freedom
+Multiple R-squared:  0.05899,	Adjusted R-squared:  -0.4115 
+F-statistic: 0.1254 on 2 and 4 DF,  p-value: 0.8855
 
 
 Call:
 lm(formula = myformula, data = x)
 
 Residuals:
-   Min     1Q Median     3Q    Max 
--419.3 -318.4 -107.3  237.4  715.4 
+    Min      1Q  Median      3Q     Max 
+-573.53 -337.05  -40.16  261.01  735.34 
 
 Coefficients:
-            Estimate Std. Error t value Pr(>|t|)    
-(Intercept)   461.36      74.68   6.178 3.23e-06 ***
-poly(SCFA)     14.75     365.87   0.040    0.968    
+               Estimate Std. Error t value Pr(>|t|)    
+(Intercept)      513.48      78.17   6.569 1.06e-06 ***
+poly(SCFA, 2)1   502.05     398.58   1.260    0.220    
+poly(SCFA, 2)2   -40.97     398.58  -0.103    0.919    
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-Residual standard error: 365.9 on 22 degrees of freedom
-Multiple R-squared:  7.39e-05,	Adjusted R-squared:  -0.04538 
-F-statistic: 0.001626 on 1 and 22 DF,  p-value: 0.9682
+Residual standard error: 398.6 on 23 degrees of freedom
+Multiple R-squared:  0.06493,	Adjusted R-squared:  -0.01638 
+F-statistic: 0.7986 on 2 and 23 DF,  p-value: 0.4621
 
-myformula <- formula(Abundance~poly(SCFA, 2))
+pdf("../Manuscript/figures_and_tables/SCFA_vs_lacto.pdf", width=6,height=6)
+ggplot(otu_432_1665_toplot[otu_432_1665_toplot$OTU=="OTU_432", ], aes(y=Abundance, x=SCFA, shape = outlier, color = foam.type)) + 
+ geom_point(size = 3) +
+ scale_shape_manual(values=c(16:18)) +
+ geom_smooth(data = otu_432_1665_toplot[otu_432_1665_toplot$OTU == "OTU_432" & otu_432_1665_toplot$outlier == "Non-outliers", ], method="lm", formula=y ~ poly(x, 2), se=F) +  
+ theme_classic() + 
+ theme(aspect.ratio =1) +
+ scale_color_manual(values = colors) +
+theme(axis.text.x=element_text(size=15),axis.text.y=element_text(size=15),axis.title.x=element_text(size=18),axis.title.y=element_text(size=18))+
+theme(legend.title=element_blank(),legend.text=element_text(size=15), legend.position=c(0.2, 0.7))+
+ylab("Lactobacillus Relative Abundance (1e-5)") + xlab("SCFA (µg/g)")+
+theme(strip.text.x = element_text(size=15, face="bold"))
+dev.off()
+
+myformula <- formula(SCFA~poly(Abundance, 2))
 models<-dlply(otu_432_1665_toplot[otu_432_1665_toplot$outlier == "Non-outliers" & !is.na(otu_432_1665_toplot$SCFA) & otu_432_1665_toplot$OTU == "OTU_1665", ], .(foam.type, genus), function(x) lm(myformula, x))
 ldply(models, coef)
 l_ply(models, summary, .print=T)
 
-  foam.type        genus (Intercept) poly(SCFA, 2)1 poly(SCFA, 2)2
-1   No-foam Turicibacter    1608.073    -2416.76156       1019.512
-2     Crust Turicibacter    4025.050      -78.55062      -1734.194
-3      Foam Turicibacter    6283.789    -4130.83847       6845.143
+> ldply(models, coef)
+  foam.type        genus (Intercept) poly(Abundance, 2)1 poly(Abundance, 2)2
+1   No-foam Turicibacter   10206.891           -7801.042           11726.052
+2     Crust Turicibacter    8570.466          -10984.969            5486.595
+3      Foam Turicibacter    5281.902           -5116.444            1077.922
 > l_ply(models, summary, .print=T)
 
 Call:
 lm(formula = myformula, data = x)
 
 Residuals:
-     Min       1Q   Median       3Q      Max 
--1171.73  -468.14    13.53   388.54  1842.72 
+    Min      1Q  Median      3Q     Max 
+-8129.2 -4606.3   468.8  2010.7 11090.0 
 
 Coefficients:
-               Estimate Std. Error t value Pr(>|t|)    
-(Intercept)      1608.1      159.3  10.097 7.69e-09 ***
-poly(SCFA, 2)1  -2416.8      729.8  -3.311  0.00388 ** 
-poly(SCFA, 2)2   1019.5      729.8   1.397  0.17942    
+                    Estimate Std. Error t value Pr(>|t|)    
+(Intercept)            10207       1054   9.679 3.42e-09 ***
+poly(Abundance, 2)1    -7801       5166  -1.510   0.1459    
+poly(Abundance, 2)2    11726       5166   2.270   0.0339 *  
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-Residual standard error: 729.8 on 18 degrees of freedom
-Multiple R-squared:  0.4178,	Adjusted R-squared:  0.3531 
-F-statistic: 6.459 on 2 and 18 DF,  p-value: 0.007685
+Residual standard error: 5166 on 21 degrees of freedom
+Multiple R-squared:  0.2614,	Adjusted R-squared:  0.1911 
+F-statistic: 3.716 on 2 and 21 DF,  p-value: 0.04152
 
 
 Call:
 lm(formula = myformula, data = x)
 
 Residuals:
-      1       2       3       4       5 
- 1408.0  1365.7  -296.4  -352.5 -2124.9 
+    1     2     3     4     5     6     7 
+  231 -1268  5418 -3048 -5543  7088 -2878 
 
 Coefficients:
-               Estimate Std. Error t value Pr(>|t|)  
-(Intercept)     4025.05     926.01   4.347   0.0491 *
-poly(SCFA, 2)1   -78.55    2070.62  -0.038   0.9732  
-poly(SCFA, 2)2 -1734.19    2070.62  -0.838   0.4904  
+                    Estimate Std. Error t value Pr(>|t|)  
+(Intercept)             8570       2151   3.984   0.0163 *
+poly(Abundance, 2)1   -10985       5691  -1.930   0.1258  
+poly(Abundance, 2)2     5487       5691   0.964   0.3896  
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-Residual standard error: 2071 on 2 degrees of freedom
-Multiple R-squared:   0.26,	Adjusted R-squared:  -0.4799 
-F-statistic: 0.3514 on 2 and 2 DF,  p-value: 0.74
+Residual standard error: 5691 on 4 degrees of freedom
+Multiple R-squared:  0.5378,	Adjusted R-squared:  0.3068 
+F-statistic: 2.328 on 2 and 4 DF,  p-value: 0.2136
 
 
 Call:
@@ -1723,85 +1731,233 @@ lm(formula = myformula, data = x)
 
 Residuals:
    Min     1Q Median     3Q    Max 
- -6914  -3458  -1558   2489  10331 
+ -5845  -3079  -1434   3066  12041 
 
 Coefficients:
-               Estimate Std. Error t value Pr(>|t|)    
-(Intercept)        6284       1067   5.887 9.28e-06 ***
-poly(SCFA, 2)1    -4131       5119  -0.807    0.429    
-poly(SCFA, 2)2     6845       5119   1.337    0.196    
+                    Estimate Std. Error t value Pr(>|t|)    
+(Intercept)           5281.9      856.6   6.166 2.27e-06 ***
+poly(Abundance, 2)1  -5116.4     4451.0  -1.150    0.262    
+poly(Abundance, 2)2   1077.9     4451.0   0.242    0.811    
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
-Residual standard error: 5119 on 20 degrees of freedom
-Multiple R-squared:  0.1087,	Adjusted R-squared:  0.01958 
-F-statistic:  1.22 on 2 and 20 DF,  p-value: 0.3164
+Residual standard error: 4451 on 24 degrees of freedom
+Multiple R-squared:  0.05437,	Adjusted R-squared:  -0.02443 
+F-statistic:  0.69 on 2 and 24 DF,  p-value: 0.5112
 
-pdf("../Manuscript/figures_and_tables/SCFA_vs_lacto_turicibacter.pdf", width=10,height=6)
-ggplot(otu_432_1665_toplot, aes(y=Abundance, x=SCFA, shape = outlier, color = foam.type)) + 
+
+pdf("../Manuscript/figures_and_tables/turicibacter_vs_SCFA.pdf", width=6,height=6)
+ggplot(otu_432_1665_toplot[otu_432_1665_toplot$OTU == "OTU_1665", ], aes(x=Abundance, y=SCFA, shape = outlier, color = foam.type)) + 
  geom_point(size = 3) +
  scale_shape_manual(values=c(16:18)) +
- facet_wrap(~genus, ncol = 2, scale = "free_y") + 
- geom_smooth(data = otu_432_1665_toplot[otu_432_1665_toplot$OTU == "OTU_432" & otu_432_1665_toplot$outlier == "Non-outliers", ], method="lm", formula=y ~ poly(x), se=F) + 
   geom_smooth(data = otu_432_1665_toplot[otu_432_1665_toplot$OTU == "OTU_1665" & otu_432_1665_toplot$outlier == "Non-outliers", ], method="lm", formula=y ~ poly(x, 2), se=F) + 
  theme_classic() + 
  theme(aspect.ratio =1) +
  scale_color_manual(values = colors) +
 theme(axis.text.x=element_text(size=15),axis.text.y=element_text(size=15),axis.title.x=element_text(size=18),axis.title.y=element_text(size=18))+
-theme(legend.title=element_blank(),legend.text=element_text(size=15), legend.position=c(0.1, 0.7))+
-ylab("Relative Abundance (1e-5)") + xlab("SCFA (µg/g)")+
+theme(legend.title=element_blank(),legend.text=element_text(size=15), legend.position=c(0.7, 0.8))+
+xlab("Turicibacter Relative Abundance (1e-5)") + ylab("SCFA (µg/g)")+
 theme(strip.text.x = element_text(size=15, face="bold"))
 dev.off()
 
 ### uc firmicutes vs lcfa ###
 otu_15145_toplot<-otu_15145[, c("OTU", "SAMPLES", "LCFA", "genus", "foam.type", "Abundance")]
 
-lcfa.outliers <- ddply(otu_15145_toplot, .(foam.type, genus), summarize, outliers = boxplot.stats(LCFA)$out)
+outliers<-dlply(otu_15145_toplot, .(foam.type, genus), function(x) compute.bagplot(cbind(x$LCFA, x$Abundance), na.rm=T))
+outliers<-data.frame(unlist(outliers))
+outliers<-subset(outliers, grepl("pxy.outlier", row.names(outliers)))
 
-otu_15145.outliers <- ddply(otu_15145_toplot, .(foam.type, genus), summarize, outliers = boxplot.stats(Abundance)$out)
-
-otu_15145_toplot$outlier<-ifelse(otu_15145_toplot$LCFA %in% lcfa.outliers$outliers, "Outliers", ifelse(otu_15145_toplot$Abundance %in% otu_15145.outliers$outliers, "Outliers", "Non-outliers"))
+otu_15145_toplot$outlier<-ifelse(grepl("\\b76.|\\b3577.|\\b630.|\\b141.|\\b12680.|\\b1820.", otu_15145_toplot$LCFA) | grepl("\\b116.|\\b1453.|\\b337.|\\b114.|\\b108.|\\b426.", otu_15145_toplot$Abundance), "Outliers", "Non-outliers")
 
 otu_15145_toplot$outlier<-factor(otu_15145_toplot$outlier, levels=c("Non-outliers", "Outliers"))
 
 otu_15145_toplot$facet<-ifelse(otu_15145_toplot$LCFA > 3000, "two", "one")
+otu_15145_toplot$facet<-factor(otu_15145_toplot$facet, levels = c("two", "one"))
 
 otu_15145_toplot<-otu_15145_toplot[! is.na(otu_15145_toplot$LCFA), ]
 
-myformula <- formula(Abundance~poly(LCFA, 2))
+myformula <- formula(LCFA~poly(Abundance, 2))
 models<-dlply(otu_15145_toplot[otu_15145_toplot$outlier == "Non-outliers" & !is.na(otu_15145_toplot$LCFA), ], .(foam.type, genus), function(x) lm(myformula, x))
 ldply(models, coef)
 l_ply(models, summary, .print=T)
 
-ggplot(otu_15145_toplot, aes(y=Abundance, x=LCFA, color = foam.type)) + 
+> ldply(models, coef)
+  foam.type                   genus (Intercept) poly(Abundance, 2)1
+1   No-foam unclassified_Firmicutes    85.89228            39.23496
+2     Crust unclassified_Firmicutes   524.38524           249.76271
+3      Foam unclassified_Firmicutes   122.64206           467.46968
+  poly(Abundance, 2)2
+1            136.1937
+2          -1122.6319
+3            129.9328
+> l_ply(models, summary, .print=T)
+
+Call:
+lm(formula = myformula, data = x)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-112.33  -65.83  -49.03  -12.45  456.97 
+
+Coefficients:
+                    Estimate Std. Error t value Pr(>|t|)  
+(Intercept)            85.89      32.05   2.680   0.0144 *
+poly(Abundance, 2)1    39.23     153.69   0.255   0.8011  
+poly(Abundance, 2)2   136.19     153.69   0.886   0.3861  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 153.7 on 20 degrees of freedom
+Multiple R-squared:  0.04079,	Adjusted R-squared:  -0.05514 
+F-statistic: 0.4252 on 2 and 20 DF,  p-value: 0.6594
+
+
+Call:
+lm(formula = myformula, data = x)
+
+Residuals:
+      1       2       3       4       5       6       7 
+ 278.40 -502.47  570.75  666.96 -990.81  -49.25   26.41 
+
+Coefficients:
+                    Estimate Std. Error t value Pr(>|t|)
+(Intercept)            524.4      272.9   1.921    0.127
+poly(Abundance, 2)1    249.8      722.0   0.346    0.747
+poly(Abundance, 2)2  -1122.6      722.0  -1.555    0.195
+
+Residual standard error: 722 on 4 degrees of freedom
+Multiple R-squared:  0.3881,	Adjusted R-squared:  0.08215 
+F-statistic: 1.269 on 2 and 4 DF,  p-value: 0.3744
+
+
+Call:
+lm(formula = myformula, data = x)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-292.51  -59.99  -40.11   39.67  445.58 
+
+Coefficients:
+                    Estimate Std. Error t value Pr(>|t|)    
+(Intercept)           122.64      31.88   3.847 0.000775 ***
+poly(Abundance, 2)1   467.47     165.67   2.822 0.009439 ** 
+poly(Abundance, 2)2   129.93     165.67   0.784 0.440531    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 165.7 on 24 degrees of freedom
+Multiple R-squared:  0.2633,	Adjusted R-squared:  0.2019 
+F-statistic: 4.289 on 2 and 24 DF,  p-value: 0.02556
+
+pdf("../Manuscript/figures_and_tables/uc_firmicutes_vs_lcfa.pdf", width=8,height=10)
+ggplot(otu_15145_toplot, aes(x=Abundance, y=LCFA, color = foam.type, shape = outlier)) + 
  geom_point(size = 3) +
  scale_shape_manual(values=c(16:18)) +
 #geom_smooth(method="lm", formula=y ~ poly(x, 2), se=F)+
 geom_smooth(data=otu_15145_toplot[otu_15145_toplot$outlier == "Non-outliers", ], method="lm", formula=y ~ poly(x, 2), se=F) + 
  theme_classic() + 
- facet_grid(~foam.type, scale="free")+
+facet_grid(facet~., scale="free") +
  scale_color_manual(values=colors)+
 theme(axis.text.x=element_text(size=15),axis.text.y=element_text(size=15),axis.title.x=element_text(size=18),axis.title.y=element_text(size=18))+
-theme(legend.title=element_blank(),legend.text=element_text(size=15), legend.position=c(0.13, 0.9))+
-ylab("Relative Abundance (1e-5)") + xlab("LCFA (µg/g)")+
-theme(strip.text.x = element_text(size=15, face="bold"))
+theme(legend.title=element_blank(),legend.text=element_text(size=15), legend.position=c(0.7, 0.8))+
+xlab("Unclassified Firmicutes Relative Abundance (1e-5)") + ylab("LCFA (µg/g)")+
+theme(strip.text.y = element_blank())
+dev.off()
 
 
 ### uc firmicutes vs turicibacter ###
 otu_15145_1665 <- merge(otu_15145[, c("SAMPLES", "Abundance", "foam.type")], otu_1665[, c("SAMPLES", "Abundance")], "SAMPLES")
 
-ggplot(otu_15145_1665, aes(y=unclassified_Firmicutes, x=Turicibacter, fill=foam.type, shape = foam.type, color=foam.type)) + 
+outliers<-dlply(otu_15145_1665, .(foam.type), function(x) compute.bagplot(cbind(x$unclassified_Firmicutes, x$Turicibacter), na.rm=T))
+outliers.df<-rbind(outliers$`No-foam`$pxy.outlier, outliers$Crust$pxy.outlier, outliers$Foam$pxy.outlier)
+
+otu_15145_1665$outlier<-ifelse(otu_15145_1665$unclassified_Firmicutes %in% outliers.df[, 1] & otu_15145_1665$Turicibacter %in% outliers.df[, 2], "Outliers", "Non-outliers")
+otu_15145_1665$outlier<-factor(otu_15145_1665$outlier, levels=c("Non-outliers", "Outliers"))
+
+
+myformula <- formula(Turicibacter ~ poly(unclassified_Firmicutes))
+models<-dlply(otu_15145_1665[otu_15145_1665$outlier == "Non-outliers", ], .(foam.type), function(x) lm(myformula, x))
+ldply(models, coef)
+l_ply(models, summary, .print=T)
+
+> ldply(models, coef)
+  foam.type (Intercept) poly(unclassified_Firmicutes)
+1   No-foam    1747.939                      4261.294
+2     Crust    2867.463                     12362.128
+3      Foam    5951.154                     48834.476
+> l_ply(models, summary, .print=T)
+
+Call:
+lm(formula = myformula, data = x)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-1838.7  -900.4  -382.4   469.5  5238.2 
+
+Coefficients:
+                              Estimate Std. Error t value Pr(>|t|)    
+(Intercept)                     1747.9      103.7  16.857  < 2e-16 ***
+poly(unclassified_Firmicutes)   4261.3     1274.2   3.344  0.00104 ** 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 1274 on 149 degrees of freedom
+Multiple R-squared:  0.06982,	Adjusted R-squared:  0.06358 
+F-statistic: 11.18 on 1 and 149 DF,  p-value: 0.001043
+
+
+Call:
+lm(formula = myformula, data = x)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-3942.5 -1212.4  -255.2  1100.5  4656.2 
+
+Coefficients:
+                              Estimate Std. Error t value Pr(>|t|)    
+(Intercept)                       2868        171  16.770  < 2e-16 ***
+poly(unclassified_Firmicutes)    12362       1631   7.579 3.15e-11 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 1631 on 89 degrees of freedom
+Multiple R-squared:  0.3922,	Adjusted R-squared:  0.3854 
+F-statistic: 57.44 on 1 and 89 DF,  p-value: 3.148e-11
+
+
+Call:
+lm(formula = myformula, data = x)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-10891.0  -2275.0   -765.4   1296.4  15139.1 
+
+Coefficients:
+                              Estimate Std. Error t value Pr(>|t|)    
+(Intercept)                     5951.2      292.3   20.36   <2e-16 ***
+poly(unclassified_Firmicutes)  48834.5     4325.4   11.29   <2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 4325 on 217 degrees of freedom
+Multiple R-squared:   0.37,	Adjusted R-squared:  0.3671 
+F-statistic: 127.5 on 1 and 217 DF,  p-value: < 2.2e-16
+
+pdf("../Manuscript/figures_and_tables/turicibacter_vs_uc_firmicutes.pdf", width=8,height=8)
+ggplot(otu_15145_1665, aes(x=unclassified_Firmicutes, y=Turicibacter, fill=foam.type, shape = outlier, color=foam.type)) + 
  geom_point(size = 3) +
  scale_shape_manual(values=c(16:18)) +
  scale_color_manual(values=colors) +
   scale_fill_manual(values=colors) +
- geom_smooth(method="lm", formula=y ~ poly(x, 2), se=F) + 
- theme_bw() + 
+ geom_smooth(data = otu_15145_1665[otu_15145_1665$outlier == "Non-outliers", ], method="lm", formula=y ~ poly(x), se=F) + 
+ theme_classic() + 
 theme(axis.text.x=element_text(size=15),axis.text.y=element_text(size=15),axis.title.x=element_text(size=18),axis.title.y=element_text(size=18))+
 theme(legend.title=element_blank(),legend.text=element_text(size=15), legend.position=c(0.13, 0.9))+
-xlab("Turicibacter Relative Abundance (1e-5)") + ylab("Unclassified_Firmicutes Relative abundance (1e-5)")+
+ylab("Turicibacter Relative Abundance (1e-5)") + xlab("Unclassified Firmicutes Relative abundance (1e-5)")+
 theme(aspect.ratio=1)+
 theme(strip.text.x = element_text(size=15, face="bold"))
+dev.off()
+
 
 ### for bacteria and methanogen correlations #####
 otu_663<-subset(data_1e5.ftype.core.psmelt, OTU == "OTU_663")
