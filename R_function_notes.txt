@@ -2326,3 +2326,56 @@ xlab("Lascolabacillus Relative Abundance (1e-5)") + ylab("Unclassified Archaea (
 facet_grid(~outlier_261, scale = "free_x")+
 theme(strip.text.x = element_blank())
 dev.off()
+
+####
+### revision
+####
+
+## heatmap to show sample dynamics
+pdf("../Manuscript/es_and_t/resubmission/sample_dynamics_heatmap.pdf", height=3, width = 11)
+ggplot(si, aes(y=myear, x=id, fill = foam.type)) + geom_tile() + scale_fill_manual(values=colors) + theme_bw() +
+xlab("Sampling Barns") + theme(legend.title=element_blank()) +
+theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5),axis.title.y=element_blank(),axis.title.x=element_text(size=14)) +
+theme(aspect.ratio = 13/46)
+dev.off()
+# clustering doesn't work because too many na's... 
+library("cluster")
+hclustfunc <- function(x) hclust(x, method="complete")
+distfunc <- function(x) daisy(x,metric="gower")
+
+temp <- si[, c("id", "myear", "foam.type", "sub_barn")]
+temp$pits <- paste0(temp$id, "_", temp$sub_barn)
+temp_new <- dcast(temp, pits ~ myear, value.var="foam.type")
+row.names(temp_new) <- temp_new$pits
+
+d <- distfunc(temp_new)
+fit<-hclustfunc(d)
+temp_new <- temp_new[fit$order, ]
+
+### trying to order the barns to look better
+temp_new <- temp[ duplicated(temp[, c("id", "myear")]), ]
+temp_new <- temp[ temp$id %in% temp_new$id & temp$myear %in% temp_new$myear, ]
+
+
+test <- plyr::ddply(temp, "id", summarise, freq=length(unique(myear)), foam_count = length(foam.type[foam.type == "Foam"])/length(foam.type[!is.na(foam.type)]))
+test <- (test[order(-test$foam_count, -test$freq), ])
+test$index <- seq(1, length(test$id))
+test$id <- reorder(test$id, test$index)
+temp$id <- factor(temp$id, levels=levels(test$id))
+
+p1 <- temp %>% ungroup() %>% arrange(as.integer(id)) %>% ggplot(aes(y=myear, x=id, fill = foam.type))
+p1 + geom_tile() + scale_fill_manual(values=colors) + theme_bw() +
+xlab("Sampling Barns") + theme(legend.title=element_blank()) +
+theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5),axis.title.y=element_blank(),axis.title.x=element_text(size=14)) +
+theme(aspect.ratio = 13/46) + facet_grid(~id)
+
+library(grid)
+p1 <- temp %>% ungroup() %>% arrange(as.integer(id)) %>% ggplot(aes(y=myear, x=pits, fill = foam.type))
+p1 + geom_tile() + scale_fill_manual(values=colors) + theme_bw() + 
+theme(legend.title=element_blank()) +
+xlab("Sampling Farms") +
+theme(axis.text.x = element_blank(),axis.title.y=element_blank(),axis.ticks.x=element_blank()) +
+facet_grid(~id, scale="free_x", space="free_x") +
+theme(panel.spacing = unit(0, "lines"))+ 
+theme(strip.text.x = element_text(size=12, angle=-90, hjust = 0.5, vjust=0),strip.background = element_rect(colour="white", fill="white")) +
+theme(panel.border = element_rect(color = NA, size=0))

@@ -8804,3 +8804,5 @@ ldply(models, coef)
 l_ply(models, summary, .print=T)
 save.image("all_16s_physeq.RData")
 savehistory("temp.R")
+
+plot_bar(data_1e5.ftype, "SAMPLES", fill="phylum") + geom_bar(aes(color=phylum, fill=phylum), stat="identity", position="stack")
