@@ -1,3 +1,11 @@
+library(ggthemes)
+library(dplyr)
+library(reshape2)
+library(ggplot2)
+
+setwd("/Users/fanyang/GoogleDrives/snisiarc@gmail.com/Manure Foaming/R_allsamples")
+
+
 ### mcra adonis only ###
 totu<-t(data.frame(otu_table(mcra_1e5_ftype.phy)))
 si<-data.frame(sample_data(mcra_1e5_ftype.phy))
@@ -986,7 +994,26 @@ plot_grid(p1, p2, labels=c("A", "B"), ncol=2, nrow=1, label_size = 25)
 ggplot(ft_collections, aes(x=time_index, y=percent, color=foam.type)) + geom_point(size=3)+stat_smooth(method="lm", formula="y~poly(x,2)", se=FALSE)+theme_classic() +theme(axis.line.x = element_line(colour = 'black', size=0.5, linetype='solid'),axis.line.y = element_line(colour = 'black', size=0.5, linetype='solid')) + theme(axis.title.x=element_blank(), axis.title.y=element_text(size=14, face="bold")) + scale_x_continuous(breaks=seq(1, 13), labels=levels(ft_collections$myear))+theme(legend.position=c(1,0), legend.justification=c(1,0))+ theme(legend.title=element_blank())+theme(axis.text.x=element_text(angle=45, hjust=1, vjust=1, size=12, face="bold"), axis.text.y=element_text(size=12, face="bold"), axis.title.x=element_blank()) + labs(y="Percent of Samples Collected (%)") + theme(legend.text=element_text(size=12, face="bold")) + scale_color_brewer(palette="Dark2", labels=c("No-foam", "Crust", "Foam"))
 
 pdf("../Manuscript/figures_and_tables/sample_collections_foamtype.pdf", width=6)
-ggplot(ft_collections, aes(x=time_index, y=percent)) + geom_rangeframe(lwd=2) + theme_tufte() + theme(axis.ticks.x = element_line(size = 1.5), axis.ticks.y = element_line(size = 1.5), axis.ticks.length = unit(0.3, "cm"))+ scale_y_continuous(breaks = extended_range_breaks()(round(ft_collections$percent, 2))) + geom_point(aes(color=foam.type), size=3)+stat_smooth(data=crust, aes(x=time_index, y=percent), method="lm", formula = "y ~ x", se = FALSE, color = "#D95F02")+stat_smooth(data=nf, aes(x=time_index, y=percent), method="lm", formula = "y ~ x", se = FALSE, color = "#1B9E77") + stat_smooth(data=foam, aes(x=time_index, y=percent), method="lm", formula="y~poly(x,2)", se=FALSE, color = "#7570B3") + theme(axis.title.x=element_blank(), axis.title.y=element_text(size=14, face="bold")) + scale_x_continuous(breaks=seq(1, 13), labels=levels(ft_collections$myear))+theme(legend.position=c(1,0), legend.justification=c(1,0))+ theme(legend.title=element_blank())+theme(axis.text.x=element_text(angle=45, hjust=1, vjust=1, size=12, face="bold"), axis.text.y=element_text(size=12, face="bold"), axis.title.x=element_blank()) + labs(y="Percent of Samples Collected (%)") + theme(legend.text=element_text(size=12, face="bold"), legend.background=element_rect(color="black")) + scale_color_brewer(palette="Dark2", labels=c("No-foam", "Crust", "Foam")) + theme(aspect.ratio = 1)
+(ggplot(ft_collections, aes(x=time_index, y=percent)) 
+	+ geom_rangeframe(lwd=2) 
+	+ theme_tufte() 
+	+ theme(axis.ticks.x = element_line(size = 1.5), axis.ticks.y = element_line(size = 1.5), axis.ticks.length = unit(0.3, "cm"))
+	+ scale_y_continuous(breaks = extended_range_breaks()(round(ft_collections$percent, 0))) 
+	+ geom_point(aes(color=foam.type, shape=foam.type), size=3.5)
+	+ stat_smooth(data=crust, aes(x=time_index, y=percent), method="lm", formula = "y ~ x", se = FALSE, color = "#D95F02")
+	+ stat_smooth(data=nf, aes(x=time_index, y=percent), method="lm", formula = "y ~ x", se = FALSE, color = "#1B9E77") 
+	+ stat_smooth(data=foam, aes(x=time_index, y=percent), method="lm", formula="y~poly(x,2)", se=FALSE, color = "#7570B3") 
+	+ theme(axis.title.x=element_blank(), axis.title.y=element_text(size=14, face="bold")) 
+	+ scale_x_continuous(breaks=seq(1, 13), labels=levels(ft_collections$myear))
+	+ theme(legend.position=c(0.95, 0.02), legend.justification=c(1,0))
+	+ theme(legend.title=element_blank())
+	+ theme(axis.text.x=element_text(angle=45, hjust=1, vjust=1, size=12, face="bold"), axis.text.y=element_text(size=12, face="bold"), axis.title.x=element_blank()) 
+	+ labs(y="Percent of Samples Collected (%)", shape='', color='') 
+	+ theme(legend.text=element_text(size=12, face="bold"), legend.background=element_rect(color="black")) 
+	+ scale_color_brewer(name='', palette="Dark2", labels=c("No-foam", "Crust", "Foam")) 
+	+ scale_shape_manual(values=c(15, 16, 17), name='', labels=c("No-foam", "Crust", "Foam"))
+	+ theme(aspect.ratio = 1)
+)
 dev.off()
 
 ####### lm prediction #########
@@ -1516,6 +1543,13 @@ ggplot(fr.derep.meta.sig.uniq.mm_diet.top5, aes(x=plot_label, y=coefficient, fil
          
          
 ##### core net work important otu's ####
+> subset(fr.derep.otu.sig, Var1 == "SCFA" & class.2 == "Bacilli" | Var2 == "SCFA" & class.1 == "Bacilli")
+     Var2    Var1 coefficient foam.type dependence_type   otu.1       genus.1
+1390 SCFA OTU_432   0.6739131   No Foam        Spearman OTU_432 Lactobacillus
+     class.1 otu.2 genus.2 class.2
+1390 Bacilli  SCFA    SCFA    SCFA
+
+
 > subset(fr.derep.otu.sig, Var1 == "LCFA" & class.2 == "unclassified_Firmicutes" | Var2 == "LCFA" & class.1 == "unclassified_Firmicutes")
         Var2 Var1 coefficient foam.type dependence_type otu.1 genus.1 class.1
 96 OTU_15145 LCFA   0.4548479      Foam        Spearman  LCFA    LCFA    LCFA
@@ -2625,3 +2659,32 @@ xlab("Lascolabacillus Relative Abundance (1e-5)") + ylab("Unclassified Archaea (
 theme(aspect.ratio=1)
 
 dev.off()
+
+################
+# farm sample type by month
+################
+tmp <- si %>% group_by(id) %>% summarise(frac_foam = length(foam.type[foam.type == 'Foam'])/length(foam.type)) %>% arrange(desc(frac_foam)) %>% data.frame()
+
+tmp$id <- reorder(tmp$id, tmp$frac_foam)
+# get new farm id
+tmp$new_id <- seq(1, length(tmp$id))
+
+# add new farm id
+new_si <- inner_join(si, tmp[, c('id', 'new_id')], by='id')
+
+# figS1 sample_dynamics_heatmap.pdf
+(ggplot(new_si, aes(x=sub_barn, y=myear, fill=foam.type))
+	+ geom_tile()
+	+ facet_grid(~new_id, scale='free_x', space='free')
+	+ scale_fill_brewer(palette='Dark2')
+	+ theme_bw()
+	+ labs(x='Farm ID', fill='')
+	+ theme(strip.text.x=element_text(angle=0)
+		, axis.text.x=element_blank()
+		, axis.ticks.x=element_blank()
+		, axis.title.y=element_blank()
+		, panel.spacing=unit(0, 'lines')
+		, legend.position='bottom'
+		)
+)
+
