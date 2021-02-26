@@ -8804,6 +8804,7 @@ ldply(models, coef)
 l_ply(models, summary, .print=T)
 save.image("all_16s_physeq.RData")
 savehistory("temp.R")
+
 load("all_16s_physeq.RData")
 library(ggplot2)
 myformula <- formula(SCFA~poly(Abundance, 2))

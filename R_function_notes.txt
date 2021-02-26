@@ -2656,7 +2656,128 @@ geom_smooth(data = otu_202_261_10061[otu_202_261_10061$otu_261_outlier == "Non-o
 theme(axis.text.x=element_text(size=15),axis.text.y=element_text(size=15),axis.title.x=element_text(size=18),axis.title.y=element_text(size=18))+
 theme(legend.title=element_blank(),legend.text=element_text(size=15), legend.position=c(0.8, 0.8))+
 xlab("Lascolabacillus Relative Abundance (1e-5)") + ylab("Unclassified Archaea (OTU_261) Relative abundance (1e-5)")+
-theme(aspect.ratio=1)
+#theme(aspect.ratio=1)+
+facet_grid(~outlier_261, scale = "free_x")+
+theme(strip.text.x = element_blank())
+dev.off()
+
+####
+### revision
+####
+
+## heatmap to show sample dynamics
+pdf("../Manuscript/es_and_t/resubmission/sample_dynamics_heatmap.pdf", height=3, width = 11)
+ggplot(si, aes(y=myear, x=id, fill = foam.type)) + geom_tile() + scale_fill_manual(values=colors) + theme_bw() +
+xlab("Sampling Barns") + theme(legend.title=element_blank()) +
+theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5),axis.title.y=element_blank(),axis.title.x=element_text(size=14)) +
+theme(aspect.ratio = 13/46)
+dev.off()
+# clustering doesn't work because too many na's... 
+library("cluster")
+hclustfunc <- function(x) hclust(x, method="complete")
+distfunc <- function(x) daisy(x,metric="gower")
+
+temp <- si[, c("id", "myear", "foam.type", "sub_barn")]
+temp$pits <- paste0(temp$id, "_", temp$sub_barn)
+temp_new <- dcast(temp, pits ~ myear, value.var="foam.type")
+row.names(temp_new) <- temp_new$pits
+
+d <- distfunc(temp_new)
+fit<-hclustfunc(d)
+temp_new <- temp_new[fit$order, ]
+
+### trying to order the barns to look better
+temp_new <- temp[ duplicated(temp[, c("id", "myear")]), ]
+temp_new <- temp[ temp$id %in% temp_new$id & temp$myear %in% temp_new$myear, ]
+
+
+test <- plyr::ddply(temp, "id", summarise, freq=length(unique(myear)), foam_count = length(foam.type[foam.type == "Foam"])/length(foam.type[!is.na(foam.type)]))
+test <- (test[order(-test$foam_count, -test$freq), ])
+test$index <- seq(1, length(test$id))
+test$id <- reorder(test$id, test$index)
+temp$id <- factor(temp$id, levels=levels(test$id))
+
+p1 <- temp %>% ungroup() %>% arrange(as.integer(id)) %>% ggplot(aes(y=myear, x=id, fill = foam.type))
+p1 + geom_tile() + scale_fill_manual(values=colors) + theme_bw() +
+xlab("Sampling Barns") + theme(legend.title=element_blank()) +
+theme(axis.text.x = element_text(angle = -90, hjust = 0, vjust=0.5),axis.title.y=element_blank(),axis.title.x=element_text(size=14)) +
+theme(aspect.ratio = 13/46) + facet_grid(~id)
+
+library(grid)
+p1 <- temp %>% ungroup() %>% arrange(as.integer(id)) %>% ggplot(aes(y=myear, x=pits, fill = foam.type))
+p1 + geom_tile() + scale_fill_manual(values=colors) + theme_bw() + 
+theme(legend.title=element_blank()) +
+xlab("Sampling Farms") +
+theme(axis.text.x = element_blank(),axis.title.y=element_blank(),axis.ticks.x=element_blank()) +
+facet_grid(~id, scale="free_x", space="free_x") +
+theme(panel.spacing = unit(0, "lines"))+ 
+theme(strip.text.x = element_text(size=12, angle=-90, hjust = 0.5, vjust=0),strip.background = element_rect(colour="white", fill="white")) +
+theme(panel.border = element_rect(color = NA, size=0))
+dev.off()
+
+
+data_1e5.ftype.psmelt <- psmelt(data_1e5.ftype)
+data_1e5.ftype.psmelt <- subset(data_1e5.ftype.psmelt, Abundance > 0)
+ftype.phylum <- ddply(data_1e5.ftype.psmelt, .(SAMPLES, foam.type, id, phylum), summarise, TOTAL= sum(Abundance))
+
+p <- ggplot(ftype.phylum, aes(x=SAMPLES, y=TOTAL, fill=phylum)) + geom_bar(stat="identity") +> heme(axis.text.x = element_blank()) + facet_grid(foam.type ~., scale="free_x")
+
+phylum.rank <- ddply(data_1e5.ftype.psmelt, .(phylum), summarise, total_phylum = sum(Abundance))
+ phylum.rank <- phylum.rank[order( -phylum.rank$total_phylum), ]
+phylum.rank$phylum <- reorder(phylum.rank$phylum, phylum.rank$total_phylum)
+
+ftype.phylum$phylum <- factor(ftype.phylum$phylum, levels = levels(phylum.rank$phylum))
+
+ftype.phylum$percent_10 <- ifelse(ftype.phylum$TOTAL >= 10 *1000, as.character(ftype.phylum$phylum), "Other")
+ftype.phylum.10perc <- plyr::ddply(ftype.phylum, .(SAMPLES, foam.type, id, percent_10), summarise, SUM = sum(TOTAL))
+
+phylum.other <- phylum.rank[ phylum.rank$phylum %in% unique(ftype.phylum.10perc$percent_10), ]
+phylum.other$phylum <- reorder(phylum.other$phylum, phylum.other$total_phylum)
+phylum.other$phylum <- droplevels(phylum.other$phylum)
+ftype.phylum.10perc$percent_10 <- factor( ftype.phylum.10perc$percent_10, levels = c(levels(phylum.other$phylum), "Other"))
+
+
+other.rank <- subset(ftype.phylum.10perc, percent_10 == "Other")
+other.rank <- other.rank[ order(other.rank$foam.type, -other.rank$SUM), ]
+other.rank$new_samples <- paste(other.rank$SAMPLES, other.rank$foam.type, sep="_")
+other.rank$index <- seq(1, length(other.rank$SAMPLES))
+other.rank$new_samples <- reorder(other.rank$new_samples, other.rank$index)
+
+ftype.phylum.10perc$new_samples <- paste(ftype.phylum.10perc$SAMPLES, ftype.phylum.10perc$foam.type, sep="_")
+ftype.phylum.10perc <- merge(ftype.phylum.10perc, other.rank[, 6:7])
+ftype.phylum.10perc$SAMPLES <- reorder(ftype.phylum.10perc$SAMPLES, ftype.phylum.10perc$index)
+
+
+ftype.phylum.10perc$foam.type <- gsub("\\bF\\b", "Foam", ftype.phylum.10perc$foam.type)
+ftype.phylum.10perc$foam.type <- gsub("\\bC\\b", "Crust", ftype.phylum.10perc$foam.type)
+ftype.phylum.10perc$foam.type <- gsub("\\bNF\\b", "No-foam", ftype.phylum.10perc$foam.type)
+ftype.phylum.10perc$foam.type <- factor(ftype.phylum.10perc$foam.type, levels = c("Foam", "Crust", "No-foam"))
+
+p <- ftype.phylum.10perc %>% ungroup() %>% arrange(as.integer(percent_10)) %>% ggplot(aes(x=SAMPLES, y=SUM, fill=percent_10, color=percent_10)) + geom_bar(stat="identity") 
+
+pdf("test.pdf", width=12, height=5)
+p + facet_grid(. ~ foam.type, scale="free") + theme_bw() + scale_fill_brewer(palette="Dark2") + scale_color_brewer(palette="Dark2") + xlab("Samples") + ylab("Relative Abundance (1E-3 %)") + theme(axis.text.x=element_blank(), axis.ticks.x=element_blank()) + guides(fill=guide_legend(title="Phylum"), color=guide_legend(title="Phylum"))
+
+dev.off()
+
+## percentage of unclassified at phylum level
+data_1e5.ftype.psmelt$classfied_phylum <- ifelse(grepl("unclas", ignore.case=T, phylum), "Unclassified", "Classified")
+unclassified <- ddply(data_1e5.ftype.psmelt, .(Sample, foam.type, classfied_phylum), summarise, SUM = sum(Abundance))
+
+unclassified$new_samples <- paste(unclassified$Sample, unclassified$foam.type, sep="_")
+
+unclassified$foam.type <- gsub("\\bF\\b", "Foam", unclassified$foam.type)
+unclassified$foam.type <- gsub("\\bC\\b", "Crust", unclassified$foam.type)
+unclassified$foam.type <- gsub("\\bNF\\b", "No-foam", unclassified$foam.type)
+unclassified$foam.type <- factor(unclassified$foam.type, levels = c("Foam", "Crust", "No-foam"))
+unclassified <- merge(unclassified, other.rank[, 6:7], by="new_samples")
+unclassified$Sample <- reorder(unclassified$Sample, unclassified$index)
+
+
+p <- unclassified %>% ungroup() %>% arrange(as.integer(classfied_phylum)) %>% ggplot(aes(x=Sample, y=SUM, fill=classfied_phylum, color=classfied_phylum)) + geom_bar(stat="identity") 
+
+pdf("test.pdf", width=12, height=5)
+p + facet_grid(. ~ foam.type, scale="free") + theme_bw() + scale_fill_manual(values=c("grey", "red")) + scale_color_manual(values=c("grey", "red")) + xlab("Sample") + ylab("Relative Abundance (1E-3 %)") + theme(axis.text.x=element_blank(), axis.ticks.x=element_blank()) + theme(legend.title = element_blank())
 
 dev.off()
 
